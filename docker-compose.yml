@@ -1,46 +1,69 @@
-version: '3.7'
+version: "3.7"
 
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: posyandu_app
-    volumes:
-      - .:/var/www
-    ports:
-      - "8585:8080"
-    depends_on:
-      - db
-      - redis
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: posyandu_app
+        ports:
+            - "8080:8080" # Aplikasi Laravel pada port 8080
+        volumes:
+            - .:/var/www # Menggunakan volume untuk sinkronisasi file
+        depends_on:
+            - db
+            - redis
+        environment:
+            - NODE_ENV=production
+        networks:
+            - posyandu_net
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:8080"]
+            interval: 30s
+            retries: 5
+            start_period: 30s
+            timeout: 10s
 
-  db:
-    image: postgres:latest
-    container_name: posyandu_db
-    environment:
-      POSTGRES_DB: posyandu
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+    db:
+        image: postgres:13
+        container_name: posyandu_db
+        environment:
+            POSTGRES_DB: posyandu
+            POSTGRES_USER: posyandu_user
+            POSTGRES_PASSWORD: password
+        ports:
+            - "5454:5432" # Gunakan port 5432 untuk host dan container
+        volumes:
+            - db_data:/var/lib/postgresql/data
+        networks:
+            - posyandu_net
 
-  redis:
-    image: redis:latest
-    container_name: posyandu_redis
-    volumes:
-      - redis_data:/data
+    redis:
+        image: redis:alpine
+        container_name: posyandu_redis
+        ports:
+            - "6363:6379" # Redis di port 6379
+        networks:
+            - posyandu_net
 
-  nginx:
-    image: nginx:latest
-    container_name: posyandu_nginx
-    volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - .:/var/www
-    ports:
-      - "85:80"
-    depends_on:
-      - app
+    nginx:
+        image: nginx:alpine
+        container_name: posyandu_nginx
+        ports:
+            - "8181:80" # Nginx di port 8081
+        volumes:
+            - ./nginx/default.conf:/etc/nginx/conf.d/default.conf # File konfigurasi Nginx
+            - .:/var/www # Menghubungkan direktori aplikasi Laravel dengan Nginx
+        depends_on:
+            - app # Pastikan Nginx hanya dijalankan setelah Laravel siap
+        networks:
+            - posyandu_net
+        command: nginx -g 'daemon off;' # Pastikan Nginx tetap berjalan di foreground
 
 volumes:
-  postgres_data:
-  redis_data:
+    db_data:
+        driver: local
+
+networks:
+    posyandu_net:
+        driver: bridge

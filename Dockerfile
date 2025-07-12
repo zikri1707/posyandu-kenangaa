@@ -1,32 +1,49 @@
-# Use an official PHP image as a base
-FROM php:8.0-fpm
+# Gunakan PHP 8.2 sebagai base image
+FROM php:8.2-fpm
 
-# Install necessary dependencies
-RUN apt-get update && apt-get install -y libpng-dev libjpeg-dev libfreetype6-dev zip git libxml2-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo pdo_mysql
+# Install dependencies yang dibutuhkan untuk PHP dan ekstensi lainnya
+RUN apt-get update && apt-get install -y \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    git \
+    unzip \
+    curl \
+    libzip-dev \
+    zlib1g-dev \
+    libpq-dev \
+    && apt-get clean
+
+# Install ekstensi PHP untuk PostgreSQL
+RUN docker-php-ext-install pdo pdo_pgsql pgsql
+
+# Install Node.js v18.x dan npm
+RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs
 
 # Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Install Node.js
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \
-    && apt-get install -y nodejs
+# Install PHP extensions yang dibutuhkan oleh Laravel
+RUN docker-php-ext-install pdo pdo_pgsql pgsql
 
-# Set the working directory inside the container
+# Set working directory
 WORKDIR /var/www
 
-# Copy the application into the container
+# Salin hanya package.json dan package-lock.json untuk mengoptimalkan cache Docker
+COPY package*.json ./
+
+# Install dependensi Node.js
+RUN npm install --frozen-lockfile
+
+# Salin semua file proyek setelah dependensi terinstal
 COPY . .
 
-# Install Composer dependencies
-RUN composer install
+# Install dependensi PHP dan optimasi autoloader
+RUN composer install --no-dev --optimize-autoloader
 
-# Install npm dependencies
-RUN npm install
-
-# Expose port 8080 for the application
+# Expose port yang digunakan oleh aplikasi Laravel
 EXPOSE 8080
 
-# Set the entrypoint for the application
+# Command untuk menjalankan aplikasi Laravel
 CMD ["php-fpm"]
