@@ -18,7 +18,7 @@
 │   │   │   ├── PosyanduController.php    # Controller untuk mengelola data Posyandu (CRUD)
 │   │   │   └── PedukuhanController.php   # Controller untuk mengelola data Pedukuhan
 │   │   ├── Livewire                   # Folder untuk Livewire component
-│   │   │   ├── AdminDashboard.php        # Komponen Livewire untuk Dashboard Admin (pengelolaan admin)
+│   │   │   ├── UserDashboard.php         # Komponen Livewire untuk Dashboard User (pengelolaan user) memiliki role 'superadmin', 'admin', 'coordinator', 'staff', 'medical', 'patient', 'partner'
 │   │   │   ├── PatientManagement.php     # Komponen Livewire untuk mengelola pasien
 │   │   │   ├── ScheduleManagement.php    # Komponen Livewire untuk mengelola jadwal
 │   │   │   ├── GalleryManagement.php     # Komponen Livewire untuk mengelola galeri
