@@ -14,21 +14,25 @@ class User extends Authenticatable
     /**
      * The attributes that are mass assignable.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $fillable = [
-        'name', 
-        'email', 
-        'password', 
-        'role', // role untuk mengelola jenis role pengguna
-        'is_active', 
-        'verified_email'
+        'name',
+        'email',
+        'username',
+        'password',
+        'role',
+        'is_active',
+        'verified_email',
+        'attempt_login',
+        'block_expires',
+        'email_verified_at'
     ];
 
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $hidden = [
         'password',
@@ -38,79 +42,95 @@ class User extends Authenticatable
     /**
      * The attributes that should be cast.
      *
-     * @return array<string, string>
+     * @var array<string, string>
      */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'is_active' => 'boolean',
+        'verified_email' => 'boolean',
+        'block_expires' => 'datetime',
+    ];
 
     /**
      * Role constants
      */
     const ROLE_SUPERADMIN = 'superadmin';
     const ROLE_ADMIN = 'admin';
-    const ROLE_MANAGER = 'manager';
+    const ROLE_COORDINATOR = 'coordinator';
     const ROLE_STAFF = 'staff';
     const ROLE_MEDICAL = 'medical';
     const ROLE_PATIENT = 'patient';
     const ROLE_PARTNER = 'partner';
 
     /**
-     * Cek apakah user adalah SuperAdmin
+     * Get available roles
      */
-    public function isSuperAdmin()
+    public static function getRoles(): array
+    {
+        return [
+            self::ROLE_SUPERADMIN,
+            self::ROLE_ADMIN,
+            self::ROLE_COORDINATOR,
+            self::ROLE_STAFF,
+            self::ROLE_MEDICAL,
+            self::ROLE_PATIENT,
+            self::ROLE_PARTNER,
+        ];
+    }
+
+    /**
+     * Check if user is SuperAdmin
+     */
+    public function isSuperAdmin(): bool
     {
         return $this->role === self::ROLE_SUPERADMIN;
     }
 
     /**
-     * Cek apakah user adalah Admin
+     * Check if user is Admin
      */
-    public function isAdmin()
+    public function isAdmin(): bool
     {
         return $this->role === self::ROLE_ADMIN;
     }
 
     /**
-     * Cek apakah user adalah Manager
+     * Check if user is Coordinator
      */
-    public function isManager()
+    public function isCoordinator(): bool
     {
-        return $this->role === self::ROLE_MANAGER;
+        return $this->role === self::ROLE_COORDINATOR;
     }
 
     /**
-     * Cek apakah user adalah Staff
+     * Check if user is Staff
      */
-    public function isStaff()
+    public function isStaff(): bool
     {
         return $this->role === self::ROLE_STAFF;
     }
 
     /**
-     * Cek apakah user adalah Medical (Dokter/Tenaga Medis)
+     * Check if user is Medical
      */
-    public function isMedical()
+    public function isMedical(): bool
     {
         return $this->role === self::ROLE_MEDICAL;
     }
 
     /**
-     * Cek apakah user adalah Patient
+     * Check if user is Patient
      */
-    public function isPatient()
+    public function isPatient(): bool
     {
         return $this->role === self::ROLE_PATIENT;
     }
 
     /**
-     * Cek apakah user adalah Partner
+     * Check if user is Partner
      */
-    public function isPartner()
+    public function isPartner(): bool
     {
         return $this->role === self::ROLE_PARTNER;
     }
@@ -118,13 +138,14 @@ class User extends Authenticatable
     /**
      * Get the user's initials
      */
-    public function initials(): string
+    public function getInitialsAttribute(): string
     {
         return Str::of($this->name)
             ->explode(' ')
             ->take(2)
             ->map(fn ($word) => Str::substr($word, 0, 1))
-            ->implode('');
+            ->implode('')
+            ->upper();
     }
 
     /**
@@ -168,7 +189,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Setting default values for the user model
+     * Boot the model
      */
     protected static function booted()
     {
@@ -176,13 +197,14 @@ class User extends Authenticatable
             if (empty($user->role)) {
                 $user->role = self::ROLE_ADMIN;
             }
-
             if (is_null($user->is_active)) {
                 $user->is_active = true;
             }
-
             if (is_null($user->verified_email)) {
                 $user->verified_email = false;
+            }
+            if (is_null($user->attempt_login)) {
+                $user->attempt_login = 0;
             }
         });
     }
