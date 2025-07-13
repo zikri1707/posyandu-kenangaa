@@ -1,5 +1,3 @@
-version: "3.7"
-
 services:
     app:
         build:
@@ -9,7 +7,8 @@ services:
         ports:
             - "8080:8080" # Aplikasi Laravel pada port 8080
         volumes:
-            - .:/var/www # Menggunakan volume untuk sinkronisasi file
+            - ./:/var/www/html:delegated
+            - ./app/Http/Middleware:/var/www/html/app/Http/Middleware  # Mount spesifik
         depends_on:
             - db
             - redis
@@ -32,7 +31,7 @@ services:
             POSTGRES_USER: posyandu_user
             POSTGRES_PASSWORD: password
         ports:
-            - "5454:5432" # Gunakan port 5432 untuk host dan container
+            - "5454:5432"
         volumes:
             - db_data:/var/lib/postgresql/data
         networks:
@@ -42,7 +41,7 @@ services:
         image: redis:alpine
         container_name: posyandu_redis
         ports:
-            - "6363:6379" # Redis di port 6379
+            - "6363:6379"
         networks:
             - posyandu_net
 
@@ -50,12 +49,12 @@ services:
         image: nginx:alpine
         container_name: posyandu_nginx
         ports:
-            - "8181:80" # Nginx di port 8081
+            - "8181:80"
         volumes:
-            - ./nginx/default.conf:/etc/nginx/conf.d/default.conf # File konfigurasi Nginx
-            - .:/var/www # Menghubungkan direktori aplikasi Laravel dengan Nginx
+            - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+            - .:/var/www
         depends_on:
-            - app # Pastikan Nginx hanya dijalankan setelah Laravel siap
+            - app
         networks:
             - posyandu_net
         command: nginx -g 'daemon off;' # Pastikan Nginx tetap berjalan di foreground

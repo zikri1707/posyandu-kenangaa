@@ -15,18 +15,26 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('username')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
+            $table->enum('role', ['superadmin', 'admin', 'coordinator', 'staff', 'medical', 'patient', 'partner'])->default('admin');
+            $table->boolean('is_active')->default(true);
+            $table->boolean('verified_email')->default(false);
+            $table->integer('attempt_login')->default(0);
+            $table->timestamp('block_expires')->nullable();
             $table->timestamps();
         });
 
+        // Tabel password_reset_tokens
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });
 
+        // Tabel sessions
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->foreignId('user_id')->nullable()->index();

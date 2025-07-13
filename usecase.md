@@ -40,7 +40,3 @@ usecaseDiagram
         - Akses terbatas untuk modul lainnya
     end note
 ```
-
-```
-
-```

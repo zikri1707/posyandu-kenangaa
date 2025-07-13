@@ -9,7 +9,7 @@
 │   ├── Exceptions                  # Folder untuk menangani exceptions (error)
 │   ├── Http
 │   │   ├── Controllers             # Folder untuk Controller yang menangani request dan response
-│   │   │   ├── AdminController.php       # Controller untuk aksi terkait Admin (manajemen admin)
+│   │   │   ├── UserController.php       # Controller untuk aksi terkait User (manajemen user) memiliki role 'superadmin', 'admin', 'coordinator', 'staff', 'medical', 'patient', 'partner'
 │   │   │   ├── PatientController.php     # Controller untuk mengelola data pasien (CRUD)
 │   │   │   ├── ScheduleController.php    # Controller untuk mengelola jadwal (CRUD)
 │   │   │   ├── GalleryController.php     # Controller untuk mengelola galeri gambar (CRUD)
@@ -27,15 +27,14 @@
 │   │   │   ├── PedukuhanManagement.php   # Komponen Livewire untuk mengelola Pedukuhan
 │   │   │   └── SearchComponent.php       # Komponen Livewire untuk pencarian dinamis
 │   │   ├── Middleware                 # Folder untuk middleware (fungsi perantara)
-│   │   │   ├── AdminMiddleware.php       # Middleware untuk akses Admin (akses terbatas)
-│   │   │   ├── SuperAdminMiddleware.php  # Middleware untuk akses SuperAdmin (akses terbatas)
+│   │   │   ├── UserMiddleware.php       # Middleware untuk akses User (akses terbatas) memiliki role 'superadmin', 'admin', 'coordinator', 'staff', 'medical', 'patient', 'partner'
 │   │   │   ├── PatientMiddleware.php     # Middleware untuk akses data pasien (akses terbatas)
 │   │   │   ├── Authenticate.php         # Middleware untuk otentikasi (login, autentikasi pengguna)
 │   │   │   ├── CheckUserStatus.php      # Middleware untuk memeriksa status akun pengguna (aktif/tidak aktif)
 │   │   │   ├── VerifyEmailMiddleware.php # Middleware untuk verifikasi email pengguna
 │   │   │   └── PedukuhanMiddleware.php   # Middleware untuk akses data Pedukuhan
 │   │   └── Requests                    # Folder untuk file validasi request (menjaga integritas data)
-│   │       ├── AdminRequest.php          # Validasi data Admin
+│   │       ├── UserRequest.php          # Validasi data User memiliki role 'superadmin', 'admin', 'coordinator', 'staff', 'medical', 'patient', 'partner'
 │   │       ├── PatientRequest.php        # Validasi data pasien
 │   │       ├── ScheduleRequest.php       # Validasi data jadwal
 │   │       ├── GalleryRequest.php        # Validasi data galeri
@@ -43,7 +42,7 @@
 │   │       ├── MedicalRecordRequest.php  # Validasi data catatan medis
 │   │       └── PedukuhanRequest.php      # Validasi data Pedukuhan
 │   ├── Models                          # Folder untuk model (struktur data yang terhubung dengan database)
-│   │   ├── User.php                      # Model untuk User, mewakili data pengguna aplikasi
+│   │   ├── User.php                      # Model untuk User, mewakili data pengguna aplikasi memiliki role 'superadmin', 'admin', 'coordinator', 'staff', 'medical', 'patient', 'partner'
 │   │   ├── Posyandu.php                 # Model untuk Posyandu, mewakili data posyandu
 │   │   ├── Pedukuhan.php                # Model untuk Pedukuhan, mewakili data pedukuhan
 │   │   ├── Schedule.php                 # Model untuk Jadwal, mewakili data jadwal layanan
@@ -64,7 +63,7 @@
 │   └── filesystems.php                  # File konfigurasi untuk cloud storage (Backblaze B2)
 ├── database
 │   ├── migrations                     # Folder untuk migration (struktur tabel database)
-│   │   ├── create_users_table.php       # Migration untuk tabel users
+│   │   ├── create_users_table.php       # Migration untuk tabel users memiliki role 'superadmin', 'admin', 'coordinator', 'staff', 'medical', 'patient', 'partner'
 │   │   ├── create_posyandus_table.php   # Migration untuk tabel posyandu
 │   │   ├── create_schedules_table.php   # Migration untuk tabel jadwal
 │   │   ├── create_galleries_table.php   # Migration untuk tabel galeri
