@@ -9,7 +9,7 @@
 │   ├── Exceptions                  # Error handling
 │   ├── Http
 │   │   ├── Controllers             # Controllers handling requests and responses
-│   │   │   ├── Admin
+│   │   │   ├── Web
 │   │   │   │   ├── ArticleController.php         # Manages articles (CRUD)
 │   │   │   │   ├── GalleryController.php         # Manages gallery images (CRUD)
 │   │   │   │   ├── MedicalRecordController.php   # Manages medical records (CRUD)
@@ -18,6 +18,15 @@
 │   │   │   │   ├── PosyanduController.php        # Manages Posyandu data (CRUD)
 │   │   │   │   ├── ScheduleController.php        # Manages schedules (CRUD)
 │   │   │   │   └── UserController.php            # Manages user actions for 'superadmin', 'admin', etc.
+│   │   │   ├── API
+│   │   │   │   ├── ArticleApiController.php         # Manages articles (CRUD)
+│   │   │   │   ├── GalleryApiController.php         # Manages gallery images (CRUD)
+│   │   │   │   ├── MedicalApiRecordController.php   # Manages medical records (CRUD)
+│   │   │   │   ├── PatientApiController.php         # Manages patient data (CRUD)
+│   │   │   │   ├── PedukuhanApiController.php       # Manages Pedukuhan data (CRUD)
+│   │   │   │   ├── PosyanduApiController.php        # Manages Posyandu data (CRUD)
+│   │   │   │   ├── ScheduleApiController.php        # Manages schedules (CRUD)
+│   │   │   │   └── UserApiController.php            # Manages user actions for 'superadmin', 'admin', etc.
 │   │   │   ├── Auth
 │   │   │   │   ├── ConfirmPasswordController.php # Manages password confirmation actions
 │   │   │   │   ├── LoginController.php           # Manages login actions
@@ -73,7 +82,7 @@
 │   ├── database.php                     # Database configuration
 │   ├── livewire.php                     # Livewire configuration
 │   ├── volt.php                         # Frontend Volt integration configuration
-│   └── filesystems.php                  # Cloud storage configuration (Backblaze B2)
+│   └── filesystems.php                  # File storage configuration
 ├── database
 │   ├── migrations                     # Database migration files
 │   │   ├── create_users_table.php       # Users table migration
@@ -99,8 +108,12 @@
 │   │   └── app.css                      # Global CSS
 │   ├── js                               # JavaScript files
 │   └── storage                           # Static storage for images, icons
-│   │   ├── icons                        # Static icons
-│   │   └── images                       # Static images
+│   │   ├── icons                        # Static and dynamic regex icons
+│   │   │   ├── static
+│   │   │   ├── dynamic
+│   │   └── images                       # Static and dynamic regex images
+│   │   │   ├── static
+│   │   │   ├── dynamic
 ├── resources
 │   ├── views
 │   │   ├── auth
@@ -249,6 +262,9 @@
 │   │   ├── vendor
 │   │   │   ├── volt.blade.php           # Layout untuk komponen eksternal dari Volt
 │   │   │   └── livewire-scripts.blade.php # Skrip khusus untuk Livewire
+│   │   ├── partials
+│   │   │   ├── head.blade.php   
+│   │   │   └── settings-heading.blade.php 
 │   │   ├── lang
 │   │   ├── notifications                   # Folder untuk tampilan notifikasi
 │   │   │   ├── info.blade.php              # Tampilan untuk notifikasi informasi
@@ -285,7 +301,6 @@
 ├── composer.json
 ├── docker-compose.yml
 └── Dockerfile
-
 ```
 
 ### **Penjelasan Komentar:**
@@ -302,3 +317,4 @@
 * **Notifications**: Menyediakan notifikasi untuk pengguna aplikasi, seperti notifikasi sukses atau error.
 
 Struktur ini telah diatur agar setiap bagian aplikasi dapat dikembangkan dan dipelihara dengan mudah, memungkinkan fleksibilitas dalam penambahan fitur atau pembaruan.
+
