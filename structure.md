@@ -104,15 +104,29 @@
 │   │   │   ├── reset-password.blade.php # Reset password page view
 │   │   │   ├── verify-email.blade.php   # Email verification page view
 │   │   │   └── confirm-password.blade.php   # Password confirmation page view
+│   ├── views
 │   │   ├── livewire
-│   │   │   ├── admin-dashboard.blade.php # Admin Dashboard
-│   │   │   ├── patient-management.blade.php # Patient management view
-│   │   │   ├── schedule-management.blade.php # Schedule management view
-│   │   │   ├── gallery-management.blade.php # Gallery management view
-│   │   │   ├── article-management.blade.php # Article management view
-│   │   │   ├── medical-record-management.blade.php # Medical record management view
-│   │   │   ├── pedukuhan-management.blade.php # Pedukuhan management view
-│   │   │   └── search.blade.php           # Search view
+│   │   │   ├── authentication                 # Komponen Livewire untuk autentikasi
+│   │   │   │   ├── login.blade.php            # Komponen login
+│   │   │   │   ├── register.blade.php         # Komponen register
+│   │   │   │   ├── forgot-password.blade.php  # Komponen lupa password
+│   │   │   │   ├── reset-password.blade.php   # Komponen reset password
+│   │   │   │   ├── verify-email.blade.php     # Komponen verifikasi email
+│   │   │   │   └── confirm-password.blade.php # Komponen konfirmasi password
+│   │   │   ├── settings                       # Komponen Livewire untuk pengaturan
+│   │   │   │   ├── appearance.blade.php       # Pengaturan tampilan (appearance)
+│   │   │   │   ├── delete-user-form.blade.php # Penghapusan pengguna
+│   │   │   │   ├── password.blade.php         # Pengaturan kata sandi
+│   │   │   │   └── profile.blade.php          # Pengaturan profil pengguna
+│   │   │   ├── admin                           # Komponen Livewire untuk Admin Dashboard
+│   │   │   │   ├── admin-dashboard.blade.php  # Dashboard Admin
+│   │   │   │   ├── patient-management.blade.php # Manajemen pasien
+│   │   │   │   ├── schedule-management.blade.php # Manajemen jadwal
+│   │   │   │   ├── gallery-management.blade.php # Manajemen galeri
+│   │   │   │   ├── article-management.blade.php # Manajemen artikel
+│   │   │   │   ├── medical-record-management.blade.php # Manajemen catatan medis
+│   │   │   │   ├── pedukuhan-management.blade.php # Manajemen pedukuhan
+│   │   │   │   └── search.blade.php           # Fitur pencarian
 │   │   ├── admin
 │   │   │   ├── dashboard.blade.php       # Admin Dashboard main page
 │   │   │   ├── patient-management
