@@ -9,16 +9,31 @@
 │   ├── Exceptions                  # Error handling
 │   ├── Http
 │   │   ├── Controllers             # Controllers handling requests and responses
-│   │   │   ├── Auth
-│   │   │   │   └── VerifyEmailController.php
-│   │   │   ├── UserController.php       # Manages user actions for 'superadmin', 'admin', etc.
-│   │   │   ├── PatientController.php     # Manages patient data (CRUD)
-│   │   │   ├── ScheduleController.php    # Manages schedules (CRUD)
-│   │   │   ├── GalleryController.php     # Manages gallery images (CRUD)
-│   │   │   ├── ArticleController.php     # Manages articles (CRUD)
-│   │   │   ├── MedicalRecordController.php # Manages medical records (CRUD)
-│   │   │   ├── PosyanduController.php    # Manages Posyandu data (CRUD)
-│   │   │   └── PedukuhanController.php   # Manages Pedukuhan data
+│   │   │   ├── Admin
+│   │   │   │   ├── UserController.php       # Manages user actions for 'superadmin', 'admin', etc.
+│   │   │   │   ├── PatientController.php     # Manages patient data (CRUD)
+│   │   │   │   ├── ScheduleController.php    # Manages schedules (CRUD)
+│   │   │   │   ├── GalleryController.php     # Manages gallery images (CRUD)
+│   │   │   │   ├── ArticleController.php     # Manages articles (CRUD)
+│   │   │   │   ├── MedicalRecordController.php # Manages medical records (CRUD)
+│   │   │   │   ├── PosyanduController.php    # Manages Posyandu data (CRUD)
+│   │   │   │   └── PedukuhanController.php   # Manages Pedukuhan data
+│   │   │   ├──Auth
+│   │   │   │   ├──
+│   │   │       └── VerifyEmailController.php
+│   │   │   ├── Controller.php
+│   │   │   └── Dashboard.php
+│   │   ├── Livewire                   # Livewire components
+│   │   │   ├── Action
+│   │   │   │   └── Logout.php
+│   │   │   ├── UserDashboard.php         # User Dashboard for management
+│   │   │   ├── PatientManagement.php     # Manages patient data dynamically
+│   │   │   ├── ScheduleManagement.php    # Manages schedules dynamically
+│   │   │   ├── GalleryManagement.php     # Manages gallery dynamically
+│   │   │   ├── ArticleManagement.php     # Manages articles dynamically
+│   │   │   ├── MedicalRecordManagement.php # Manages medical records dynamically
+│   │   │   ├── PedukuhanManagement.php   # Manages Pedukuhan dynamically
+│   │   │   └── SearchComponent.php       # Dynamic search component
 │   │   ├── Middleware                 # Middleware for request filtering and authentication
 │   │   │   ├── UserMiddleware.php       # User access control based on roles
 │   │   │   ├── PatientMiddleware.php     # Patient access control
@@ -34,17 +49,6 @@
 │   │       ├── ArticleRequest.php        # Article data validation
 │   │       ├── MedicalRecordRequest.php  # Medical record data validation
 │   │       └── PedukuhanRequest.php      # Pedukuhan data validation
-│   ├── Livewire                   # Livewire components
-│   │   ├── Action
-│   │   │   └── Logout.php
-│   │   ├── UserDashboard.php         # User Dashboard for management
-│   │   ├── PatientManagement.php     # Manages patient data dynamically
-│   │   ├── ScheduleManagement.php    # Manages schedules dynamically
-│   │   ├── GalleryManagement.php     # Manages gallery dynamically
-│   │   ├── ArticleManagement.php     # Manages articles dynamically
-│   │   ├── MedicalRecordManagement.php # Manages medical records dynamically
-│   │   ├── PedukuhanManagement.php   # Manages Pedukuhan dynamically
-│   │   └── SearchComponent.php       # Dynamic search component
 │   ├── Models                          # Eloquent models for database interaction
 │   │   ├── User.php                      # User model
 │   │   ├── Posyandu.php                 # Posyandu model
@@ -231,4 +235,3 @@
 * **Notifications**: Menyediakan notifikasi untuk pengguna aplikasi, seperti notifikasi sukses atau error.
 
 Struktur ini telah diatur agar setiap bagian aplikasi dapat dikembangkan dan dipelihara dengan mudah, memungkinkan fleksibilitas dalam penambahan fitur atau pembaruan.
-
