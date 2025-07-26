@@ -196,7 +196,6 @@
 │   │   │   │   ├── settings                     # Komponen untuk pengaturan Admin
 │   │   │   │   │   ├── layout.blade.php         # Layout pengaturan admin
 │   │   │   │   └── sidebar.blade.php            # Sidebar untuk pengaturan admin
-│   │   │   │
 │   │   │   ├── ui                              # Komponen UI umum dan digunakan di berbagai bagian
 │   │   │   │   ├── navbar.blade.php             # Navbar untuk Admin Dashboard
 │   │   │   │   ├── footer.blade.php             # Footer untuk Admin Dashboard
@@ -250,16 +249,16 @@
 │   │   ├── vendor
 │   │   │   ├── volt.blade.php           # Layout untuk komponen eksternal dari Volt
 │   │   │   └── livewire-scripts.blade.php # Skrip khusus untuk Livewire
-│   │   ├── welcome.blade.php            # Halaman pertama setelah login
-│   ├── lang
-│   ├── notifications                   # Folder untuk tampilan notifikasi
-│   │   ├── info.blade.php              # Tampilan untuk notifikasi informasi
-│   │   ├── success.blade.php           # Tampilan untuk notifikasi sukses
-│   │   ├── warning.blade.php           # Tampilan untuk notifikasi warning
-│   │   └── error.blade.php             # Tampilan untuk notifikasi error
-│   ├── errors
-│   │   ├── 404.blade.php               # Custom 404 error page
-│   │   └── 500.blade.php               # Custom 500 error page
+│   │   ├── lang
+│   │   ├── notifications                   # Folder untuk tampilan notifikasi
+│   │   │   ├── info.blade.php              # Tampilan untuk notifikasi informasi
+│   │   │   ├── success.blade.php           # Tampilan untuk notifikasi sukses
+│   │   │   ├── warning.blade.php           # Tampilan untuk notifikasi warning
+│   │   │   └── error.blade.php             # Tampilan untuk notifikasi error
+│   │   ├── errors
+│   │   │   ├── 404.blade.php               # Custom 404 error page
+│   │   │   └── 500.blade.php               # Custom 500 error page
+│   │   └── welcome.blade.php            # Halaman pertama setelah login
 ├── routes
 │   ├── api.php
 │   ├── channels.php
