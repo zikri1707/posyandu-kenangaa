@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class LanguageSelector extends Component
+class ThemeSelector extends Component
 {
     /**
      * Create a new component instance.
@@ -21,6 +21,6 @@ class LanguageSelector extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.settings.language-selector');
+        return view('components.settings.theme-selector');
     }
 }

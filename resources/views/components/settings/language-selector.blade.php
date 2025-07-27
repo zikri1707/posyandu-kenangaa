@@ -1,3 +1,3 @@
 <div>
-    <!-- Simplicity is the essence of happiness. - Cedric Bledsoe -->
+    <!-- Well begun is half done. - Aristotle -->
 </div>

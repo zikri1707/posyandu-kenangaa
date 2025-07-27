@@ -1,12 +1,12 @@
 <?php
 
-namespace App\View\Components\Settings;
+namespace App\View\Components\Forms;
 
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class LanguageSelector extends Component
+class ValidationSummary extends Component
 {
     /**
      * Create a new component instance.
@@ -21,6 +21,6 @@ class LanguageSelector extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.settings.language-selector');
+        return view('components.forms.validation-summary');
     }
 }

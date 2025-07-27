@@ -229,7 +229,7 @@
 │   │   │   │   │   └── auth.blade.php            # Layout khusus untuk halaman autentikasi (login, register)
 │   │   │   │   ├── settings                     # Komponen untuk pengaturan Admin
 │   │   │   │   │   ├── layout.blade.php         # Layout pengaturan admin
-│   │   │   │   └── sidebar.blade.php            # Sidebar untuk pengaturan admin
+│   │   │   │   │   └── sidebar.blade.php            # Sidebar untuk pengaturan admin
 │   │   │   ├── ui                              # Komponen UI umum dan digunakan di berbagai bagian
 │   │   │   │   ├── navbar.blade.php             # Navbar untuk Admin Dashboard
 │   │   │   │   ├── footer.blade.php             # Footer untuk Admin Dashboard
@@ -326,15 +326,15 @@
 
 ### **Penjelasan Komentar:**
 
--   **Controllers**: Menangani permintaan HTTP (CRUD) untuk entitas seperti **Admin**, **Pasien**, **Jadwal**, **Galeri**, **Artikel**, dan **Catatan Medis**.
--   **Livewire**: Komponen untuk memperbarui tampilan secara dinamis menggunakan **Livewire** tanpa memuat ulang halaman.
--   **Middleware**: Menyaring permintaan dan memverifikasi hak akses pengguna (misalnya **Admin**, **SuperAdmin**, **Pasien**).
--   **Models**: Model Eloquent untuk berinteraksi dengan database. Mewakili entitas dan relasinya.
--   **Requests**: Memvalidasi data yang dikirimkan oleh pengguna untuk memastikan data yang diterima sah.
--   **Migrations**: Struktur tabel database yang diperlukan untuk aplikasi.
--   **Seeders**: Mengisi database dengan data dummy atau data awal.
--   **Views**: Menyimpan template tampilan aplikasi, dengan folder berbeda untuk halaman **admin**, **auth**, **livewire**, dan **components**.
--   **Routes**: Menyimpan definisi rute aplikasi untuk **API**, **web**, dan **auth**.
--   **Notifications**: Menyediakan notifikasi untuk pengguna aplikasi, seperti notifikasi sukses atau error.
+- **Controllers**: Menangani permintaan HTTP (CRUD) untuk entitas seperti **Admin**, **Pasien**, **Jadwal**, **Galeri**, **Artikel**, dan **Catatan Medis**.
+- **Livewire**: Komponen untuk memperbarui tampilan secara dinamis menggunakan **Livewire** tanpa memuat ulang halaman.
+- **Middleware**: Menyaring permintaan dan memverifikasi hak akses pengguna (misalnya **Admin**, **SuperAdmin**, **Pasien**).
+- **Models**: Model Eloquent untuk berinteraksi dengan database. Mewakili entitas dan relasinya.
+- **Requests**: Memvalidasi data yang dikirimkan oleh pengguna untuk memastikan data yang diterima sah.
+- **Migrations**: Struktur tabel database yang diperlukan untuk aplikasi.
+- **Seeders**: Mengisi database dengan data dummy atau data awal.
+- **Views**: Menyimpan template tampilan aplikasi, dengan folder berbeda untuk halaman **admin**, **auth**, **livewire**, dan **components**.
+- **Routes**: Menyimpan definisi rute aplikasi untuk **API**, **web**, dan **auth**.
+- **Notifications**: Menyediakan notifikasi untuk pengguna aplikasi, seperti notifikasi sukses atau error.
 
 Struktur ini telah diatur agar setiap bagian aplikasi dapat dikembangkan dan dipelihara dengan mudah, memungkinkan fleksibilitas dalam penambahan fitur atau pembaruan.
