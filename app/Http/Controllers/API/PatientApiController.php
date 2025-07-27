@@ -9,6 +9,18 @@ use Illuminate\Support\Facades\Auth;
 
 class PatientApiController extends Controller
 {
+    public function index()
+    {
+        $patients = Patient::all();
+        return view('patients.index', compact('patients'));
+    }
+
+    public function store(Request $request)
+    {
+        Patient::create($request->all());
+        return redirect()->route('patients.index');
+    }
+    
     public function show($id)
     {
         // Cek apakah pengguna yang sedang login adalah pemilik data

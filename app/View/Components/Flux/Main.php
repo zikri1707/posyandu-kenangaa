@@ -1,7 +1,5 @@
 <?php
 
-// app/View/Components/Flux/Main.php
-
 namespace App\View\Components\Flux;
 
 use Illuminate\View\Component;

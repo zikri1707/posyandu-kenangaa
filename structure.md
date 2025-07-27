@@ -35,19 +35,44 @@
 │   │   │   │   ├── VerifyEmailController.php     # Handles email verification
 │   │   │   ├── Controller.php                    # Base controller class (if any)
 │   │   │   └── DashboardController.php           # Dashboard controller for managing main dashboard logic
-│   │   ├── Livewire                   # Livewire components
-│   │   │   ├── Action
+│   │   ├── Livewire/
+│   │   │   ├── Auth/               # Komponen terkait autentikasi (login, register, etc.)
+│   │   │   │   ├── Login.php
+│   │   │   │   ├── Register.php
+│   │   │   │   ├── ForgotPassword.php
+│   │   │   │   ├── ResetPassword.php
+│   │   │   │   ├── ConfirmPassword.php
+│   │   │   │   └── VerifyEmail.php
+│   │   │   ├── Admin/                         # Komponen khusus untuk dashboard admin
+│   │   │   │   ├── AdminDashboard.php
+│   │   │   │   ├── Management/
+│   │   │   │   │   ├── PatientManagement.php
+│   │   │   │   │   ├── ScheduleManagement.php
+│   │   │   │   │   ├── GalleryManagement.php
+│   │   │   │   │   ├── ArticleManagement.php
+│   │   │   │   │   ├── MedicalRecordManagement.php
+│   │   │   │   │   ├── PedukuhanManagement.php
+│   │   │   │   │   ├──PosyanduManagement.php
+│   │   │   │   │   └── UserManagement.php
+│   │   │   ├── User/                          # Komponen untuk dashboard pengguna umum
+│   │   │   │   ├── UserDashboard.php
+│   │   │   │   ├── Profile/
+│   │   │   │   │   ├── UserProfile.php
+│   │   │   │   ├── Settings/                      # Pengaturan lainnya
+│   │   │   │   │   ├── Appearance.php
+│   │   │   │   │   ├── Password.php
+│   │   │   │   │   ├── Profile.php
+│   │   │   │   │   └── DeleteUserForm.php
+│   │   │   ├── Action/                        # Komponen terkait aksi pengguna (logout, etc.)
+│   │   │   │   │   ResetPassword.php
+│   │   │   │   │   DeleteAccount.php
+│   │   │   │   │   UpdateProfile.php
 │   │   │   │   └── Logout.php
-│   │   │   ├── UserDashboard.php         # User Dashboard for management
-│   │   │   ├── PatientManagement.php     # Manages patient data dynamically
-│   │   │   ├── ScheduleManagement.php    # Manages schedules dynamically
-│   │   │   ├── GalleryManagement.php     # Manages gallery dynamically
-│   │   │   ├── ArticleManagement.php     # Manages articles dynamically
-│   │   │   ├── MedicalRecordManagement.php # Manages medical records dynamically
-│   │   │   ├── PedukuhanManagement.php   # Manages Pedukuhan dynamically
-│   │   │   ├── AdminDashboard.php
-│   │   │   ├── PosyanduManagement.php
-│   │   │   └── SearchComponent.php       # Dynamic search component
+│   │   │   ├── Shared/                        # Komponen bersama yang digunakan di banyak tempat
+│   │   │   │   ├── SearchComponent.php        # Fitur pencarian dinamis
+│   │   │   │   └── Notification.php
+│   │   │   └── Misc/                          # Komponen lain yang tidak terklasifikasi
+│   │   │   │   └── ErrorPage.php
 │   │   ├── Middleware                 # Middleware for request filtering and authentication
 │   │   │   ├── UserMiddleware.php       # User access control based on roles
 │   │   │   ├── Authenticate.php         # Authentication middleware
@@ -59,7 +84,7 @@
 │   │   │   ├── ScheduleRequest.php       # Schedule data validation
 │   │   │   ├── GalleryRequest.php        # Gallery data validation
 │   │   │   ├── ArticleRequest.php        # Article data validation
-│   │   │   ├── MedicalRecordRequest.php  # Medical record data validation 
+│   │   │   ├── MedicalRecordRequest.php  # Medical record data validation
 │   │   │   ├── PosyanduRequest.php
 │   │   │   └── PedukuhanRequest.php      # Pedukuhan data validation
 │   │   └── Kernel.php
@@ -121,70 +146,66 @@
 │   │   │   ├── register.blade.php       # Register page view
 │   │   │   ├── reset-password.blade.php # Reset password page view
 │   │   │   ├── verify-email.blade.php   # Email verification page view
+│   │   │   ├── forgot-password.blade.php # Forgot Password page view
 │   │   │   └── confirm-password.blade.php   # Password confirmation page view
-│   │   ├── livewire
-│   │   │   ├── authentication                 # Komponen Livewire untuk autentikasi
-│   │   │   │   ├── login.blade.php            # Komponen login
-│   │   │   │   ├── register.blade.php         # Komponen register
+│   │   ├── livewire/                      # View untuk Livewire Components
+│   │   │   ├── auth/                      # View untuk komponen autentikasi
+│   │   │   │   ├── login.blade.php        # Komponen login
+│   │   │   │   ├── register.blade.php     # Komponen register
 │   │   │   │   ├── forgot-password.blade.php  # Komponen lupa password
-│   │   │   │   ├── reset-password.blade.php   # Komponen reset password
-│   │   │   │   ├── verify-email.blade.php     # Komponen verifikasi email
-│   │   │   │   └── confirm-password.blade.php # Komponen konfirmasi password
-│   │   │   ├── settings                       # Komponen Livewire untuk pengaturan
+│   │   │   │   ├── confirm-password.blade.php  # Komponen konfirmasi password
+│   │   │   │   ├── verify-email.blade.php    # Komponen verifikasi email
+│   │   │   │   └── reset-password.blade.php  # Komponen reset password
+│   │   │   ├── settings/                  # View untuk pengaturan pengguna
 │   │   │   │   ├── appearance.blade.php       # Pengaturan tampilan (appearance)
-│   │   │   │   ├── delete-user-form.blade.php # Penghapusan pengguna
-│   │   │   │   ├── password.blade.php         # Pengaturan kata sandi
-│   │   │   │   └── profile.blade.php          # Pengaturan profil pengguna
-│   │   │   ├── admin                           # Komponen Livewire untuk Admin Dashboard
-│   │   │   │   ├── admin-dashboard.blade.php  # Dashboard Admin
-│   │   │   │   ├── patient-management.blade.php # Manajemen pasien
-│   │   │   │   ├── schedule-management.blade.php # Manajemen jadwal
-│   │   │   │   ├── gallery-management.blade.php # Manajemen galeri
-│   │   │   │   ├── article-management.blade.php # Manajemen artikel
-│   │   │   │   ├── medical-record-management.blade.php # Manajemen catatan medis
-│   │   │   │   ├── pedukuhan-management.blade.php # Manajemen pedukuhan
-│   │   │   │   └── search.blade.php           # Fitur pencarian
+│   │   │   │   ├── delete-user-form.blade.php # Pengaturan untuk menghapus akun
+│   │   │   │   ├── password.blade.php        # Pengaturan password
+│   │   │   │   └── profile.blade.php         # Pengaturan profil pengguna
+│   │   │   ├── admin/                     # View untuk admin dashboard dan manajemen
+│   │   │   │   ├── admin-dashboard.blade.php  # Halaman utama admin dashboard
+│   │   │   │   ├── patient-management/       # Manajemen Pasien
+│   │   │   │   │   ├── index.blade.php      # Daftar pasien
+│   │   │   │   │   ├── create.blade.php     # Formulir untuk menambah pasien
+│   │   │   │   │   ├── update.blade.php     # Formulir untuk memperbarui data pasien
+│   │   │   │   │   ├── details.blade.php    # Halaman detail pasien
+│   │   │   │   │   ├── delete.blade.php     # Konfirmasi penghapusan pasien
+│   │   │   │   │   └── search.blade.php     # Halaman pencarian pasien
+│   │   │   │   ├── pedukuhan-management/    # Manajemen Pedukuhan
+│   │   │   │   │   ├── index.blade.php      # Daftar pedukuhan
+│   │   │   │   │   ├── create.blade.php     # Formulir untuk menambah pedukuhan
+│   │   │   │   │   ├── update.blade.php     # Formulir untuk memperbarui pedukuhan
+│   │   │   │   │   └── delete.blade.php     # Konfirmasi penghapusan pedukuhan
+│   │   │   │   ├── schedule-management/     # Manajemen Jadwal
+│   │   │   │   │   ├── index.blade.php      # Daftar jadwal
+│   │   │   │   │   ├── create.blade.php     # Formulir untuk menambah jadwal
+│   │   │   │   │   ├── update.blade.php     # Formulir untuk memperbarui jadwal
+│   │   │   │   │   └── delete.blade.php     # Konfirmasi penghapusan jadwal
+│   │   │   │   ├── gallery-management/      # Manajemen Galeri
+│   │   │   │   │   ├── index.blade.php      # Daftar galeri
+│   │   │   │   │   ├── create.blade.php     # Formulir untuk menambah gambar ke galeri
+│   │   │   │   │   ├── update.blade.php     # Formulir untuk memperbarui galeri
+│   │   │   │   │   └── delete.blade.php     # Konfirmasi penghapusan gambar dari galeri
+│   │   │   │   ├── article-management/      # Manajemen Artikel
+│   │   │   │   │   ├── index.blade.php      # Daftar artikel
+│   │   │   │   │   ├── create.blade.php     # Formulir untuk menambah artikel
+│   │   │   │   │   ├── update.blade.php     # Formulir untuk memperbarui artikel
+│   │   │   │   │   └── delete.blade.php     # Konfirmasi penghapusan artikel
+│   │   │   │   ├── medical-record-management/ # Manajemen Rekam Medis
+│   │   │   │   │   ├── index.blade.php      # Daftar catatan medis
+│   │   │   │   │   ├── create.blade.php     # Formulir untuk menambah catatan medis
+│   │   │   │   │   ├── update.blade.php     # Formulir untuk memperbarui catatan medis
+│   │   │   │   │   └── delete.blade.php     # Konfirmasi penghapusan catatan medis
+│   │   │   │   ├── user-management/         # Manajemen Pengguna
+│   │   │   │   │   ├── index.blade.php      # Daftar pengguna
+│   │   │   │   │   ├── create.blade.php     # Formulir untuk menambah pengguna
+│   │   │   │   │   ├── update.blade.php     # Formulir untuk memperbarui data pengguna
+│   │   │   │   │   └── delete.blade.php     # Konfirmasi penghapusan pengguna
+│   │   │   ├── shared/                     # Komponen bersama untuk tampilan umum
+│   │   │   │   ├── search.blade.php        # Komponen pencarian
+│   │   │   │   ├── notification.blade.php  # Komponen notifikasi
+│   │   │   │   └── error-page.blade.php    # Halaman error
 │   │   ├── admin
 │   │   │   ├── dashboard.blade.php       # Admin Dashboard main page
-│   │   │   ├── patient-management
-│   │   │   │   ├── index.blade.php      # Daftar pasien
-│   │   │   │   ├── create.blade.php     # Formulir untuk menambah pasien
-│   │   │   │   ├── update.blade.php     # Formulir untuk memperbarui data pasien
-│   │   │   │   ├── details.blade.php    # Tampilan detail pasien
-│   │   │   │   ├── delete.blade.php     # Konfirmasi penghapusan pasien
-│   │   │   │   ├── search.blade.php     # Hapus halaman pencarian
-│   │   │   ├── pedukuhan-management
-│   │   │   │   ├── index.blade.php      # Daftar pedukuhan
-│   │   │   │   ├── create.blade.php     # Formulir untuk menambah pedukuhan
-│   │   │   │   ├── update.blade.php     # Formulir untuk memperbarui pedukuhan
-│   │   │   │   ├── delete.blade.php     # Konfirmasi penghapusan pedukuhan
-│   │   │   ├── schedule-management
-│   │   │   │   ├── index.blade.php      # Daftar jadwal
-│   │   │   │   ├── create.blade.php     # Formulir untuk menambah jadwal
-│   │   │   │   ├── update.blade.php     # Formulir untuk memperbarui jadwal
-│   │   │   │   ├── details.blade.php    # Tampilan detail jadwal
-│   │   │   │   ├── delete.blade.php     # Konfirmasi penghapusan jadwal
-│   │   │   ├── gallery-management
-│   │   │   │   ├── index.blade.php      # Daftar galeri
-│   │   │   │   ├── create.blade.php     # Formulir untuk menambah gambar ke galeri
-│   │   │   │   ├── update.blade.php     # Formulir untuk memperbarui galeri
-│   │   │   │   ├── delete.blade.php     # Konfirmasi penghapusan gambar dari galeri
-│   │   │   ├── article-management
-│   │   │   │   ├── index.blade.php      # Daftar artikel
-│   │   │   │   ├── create.blade.php     # Formulir untuk menambah artikel
-│   │   │   │   ├── update.blade.php     # Formulir untuk memperbarui artikel
-│   │   │   │   ├── delete.blade.php     # Konfirmasi penghapusan artikel
-│   │   │   ├── medical-record-management
-│   │   │   │   ├── index.blade.php      # Daftar catatan medis
-│   │   │   │   ├── details.blade.php    # Tampilan detail catatan medis
-│   │   │   │   ├── create.blade.php     # Formulir untuk menambah catatan medis
-│   │   │   │   ├── update.blade.php     # Formulir untuk memperbarui catatan medis
-│   │   │   │   ├── delete.blade.php     # Konfirmasi penghapusan catatan medis
-│   │   │   ├── user-management
-│   │   │   │   ├── index.blade.php      # Daftar pengguna
-│   │   │   │   ├── create.blade.php     # Formulir untuk menambah pengguna
-│   │   │   │   ├── update.blade.php     # Formulir untuk memperbarui data pengguna
-│   │   │   │   ├── delete.blade.php     # Konfirmasi penghapusan pengguna
 │   │   ├── components
 │   │   │   ├── layouts                    # Layouts utama dan elemen UI umum
 │   │   │   │   ├── app
@@ -263,8 +284,8 @@
 │   │   │   ├── volt.blade.php           # Layout untuk komponen eksternal dari Volt
 │   │   │   └── livewire-scripts.blade.php # Skrip khusus untuk Livewire
 │   │   ├── partials
-│   │   │   ├── head.blade.php   
-│   │   │   └── settings-heading.blade.php 
+│   │   │   ├── head.blade.php
+│   │   │   └── settings-heading.blade.php
 │   │   ├── lang
 │   │   ├── notifications                   # Folder untuk tampilan notifikasi
 │   │   │   ├── info.blade.php              # Tampilan untuk notifikasi informasi
@@ -305,16 +326,15 @@
 
 ### **Penjelasan Komentar:**
 
-* **Controllers**: Menangani permintaan HTTP (CRUD) untuk entitas seperti **Admin**, **Pasien**, **Jadwal**, **Galeri**, **Artikel**, dan **Catatan Medis**.
-* **Livewire**: Komponen untuk memperbarui tampilan secara dinamis menggunakan **Livewire** tanpa memuat ulang halaman.
-* **Middleware**: Menyaring permintaan dan memverifikasi hak akses pengguna (misalnya **Admin**, **SuperAdmin**, **Pasien**).
-* **Models**: Model Eloquent untuk berinteraksi dengan database. Mewakili entitas dan relasinya.
-* **Requests**: Memvalidasi data yang dikirimkan oleh pengguna untuk memastikan data yang diterima sah.
-* **Migrations**: Struktur tabel database yang diperlukan untuk aplikasi.
-* **Seeders**: Mengisi database dengan data dummy atau data awal.
-* **Views**: Menyimpan template tampilan aplikasi, dengan folder berbeda untuk halaman **admin**, **auth**, **livewire**, dan **components**.
-* **Routes**: Menyimpan definisi rute aplikasi untuk **API**, **web**, dan **auth**.
-* **Notifications**: Menyediakan notifikasi untuk pengguna aplikasi, seperti notifikasi sukses atau error.
+-   **Controllers**: Menangani permintaan HTTP (CRUD) untuk entitas seperti **Admin**, **Pasien**, **Jadwal**, **Galeri**, **Artikel**, dan **Catatan Medis**.
+-   **Livewire**: Komponen untuk memperbarui tampilan secara dinamis menggunakan **Livewire** tanpa memuat ulang halaman.
+-   **Middleware**: Menyaring permintaan dan memverifikasi hak akses pengguna (misalnya **Admin**, **SuperAdmin**, **Pasien**).
+-   **Models**: Model Eloquent untuk berinteraksi dengan database. Mewakili entitas dan relasinya.
+-   **Requests**: Memvalidasi data yang dikirimkan oleh pengguna untuk memastikan data yang diterima sah.
+-   **Migrations**: Struktur tabel database yang diperlukan untuk aplikasi.
+-   **Seeders**: Mengisi database dengan data dummy atau data awal.
+-   **Views**: Menyimpan template tampilan aplikasi, dengan folder berbeda untuk halaman **admin**, **auth**, **livewire**, dan **components**.
+-   **Routes**: Menyimpan definisi rute aplikasi untuk **API**, **web**, dan **auth**.
+-   **Notifications**: Menyediakan notifikasi untuk pengguna aplikasi, seperti notifikasi sukses atau error.
 
 Struktur ini telah diatur agar setiap bagian aplikasi dapat dikembangkan dan dipelihara dengan mudah, memungkinkan fleksibilitas dalam penambahan fitur atau pembaruan.
-
