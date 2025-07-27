@@ -6,6 +6,7 @@ use Livewire\Component;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Support\Facades\Hash;  // Add this line to import Hash facade
 
 class ResetPassword extends Component
 {
@@ -28,7 +29,7 @@ class ResetPassword extends Component
         $status = Password::reset(
             ['email' => $this->email, 'password' => $this->password, 'password_confirmation' => $this->password_confirmation, 'token' => $this->token],
             function ($user) {
-                $user->password = \Hash::make($this->password);
+                $user->password = Hash::make($this->password);  // Use Hash facade here
                 $user->save();
                 event(new PasswordReset($user));
             }

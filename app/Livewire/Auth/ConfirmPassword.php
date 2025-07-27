@@ -4,6 +4,7 @@ namespace App\Livewire\Auth;
 
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;  // Add this line to import the Hash facade
 
 class ConfirmPassword extends Component
 {
@@ -17,7 +18,7 @@ class ConfirmPassword extends Component
     {
         $this->validate();
 
-        if (Auth::user()->password !== \Hash::make($this->password)) {
+        if (Auth::user()->password !== Hash::make($this->password)) {  // Use Hash facade here
             session()->flash('error', 'The password entered is incorrect.');
             return;
         }

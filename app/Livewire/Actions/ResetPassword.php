@@ -4,6 +4,7 @@ namespace App\Livewire\Actions;
 
 use Livewire\Component;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Hash;  // Add this line to import the Hash facade
 use Illuminate\Validation\ValidationException;
 
 class ResetPassword extends Component
@@ -32,7 +33,7 @@ class ResetPassword extends Component
                 'token' => $this->token,
             ],
             function ($user) {
-                $user->password = \Hash::make($this->password);
+                $user->password = Hash::make($this->password);  // Using Hash facade here
                 $user->save();
             }
         );
