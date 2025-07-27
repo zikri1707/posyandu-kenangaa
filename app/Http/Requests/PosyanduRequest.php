@@ -15,10 +15,16 @@ class PosyanduRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'address' => 'nullable|string|max:1000',
-            'phone' => 'nullable|string|max:20',
-            'logo_photo' => 'nullable|image|max:2048',
-            'pedukuhan_id' => 'required|exists:pedukuhans,id',
+            'address' => 'required|string|max:500',
+            'unique_code' => 'required|string|max:100',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'name.required' => 'Nama Posyandu wajib diisi.',
+            'address.required' => 'Alamat Posyandu wajib diisi.',
         ];
     }
 }

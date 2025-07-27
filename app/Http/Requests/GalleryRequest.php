@@ -6,20 +6,26 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class GalleryRequest extends FormRequest
 {
-    public function authorize(): bool
+    public function authorize()
     {
         return true;
     }
 
-    public function rules(): array
+    public function rules()
     {
         return [
-            'posyandu_id' => 'required|exists:posyandus,id',
-            'title' => 'required|string|max:100',
+            'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'photo' => $this->isMethod('POST') ? 'required|image|mimes:jpeg,png,jpg|max:5120' : 'sometimes|image|mimes:jpeg,png,jpg|max:5120',
-            'type' => 'required|in:activity,education,announcement,other',
-            'is_featured' => 'sometimes|boolean'
+            'photo' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'title.required' => 'Judul gambar wajib diisi.',
+            'photo.required' => 'Foto gambar wajib diunggah.',
+            'photo.image' => 'File yang diunggah harus berupa gambar.',
         ];
     }
 }

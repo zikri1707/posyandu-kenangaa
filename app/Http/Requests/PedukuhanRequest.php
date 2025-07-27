@@ -6,23 +6,25 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class PedukuhanRequest extends FormRequest
 {
-    public function authorize(): bool
+    public function authorize()
     {
         return true;
     }
 
-    public function rules(): array
+    public function rules()
     {
         return [
-            'name' => 'required|string|max:100|unique:pedukuhans,name,'.$this->pedukuhan?->id,
-            'postal_code' => 'required|string|max:10',
-            'village' => 'required|string|max:100',
-            'subdistrict' => 'required|string|max:100',
-            'city' => 'required|string|max:100',
-            'province' => 'required|string|max:100',
-            'geo_location' => 'nullable|json',
-            'population' => 'nullable|integer',
-            'area_size' => 'nullable|numeric'
+            'name' => 'required|string|max:255',
+            'postal_code' => 'required|string|max:5',
+            'geo_location' => 'required|json',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'name.required' => 'Nama pedukuhan wajib diisi.',
+            'postal_code.required' => 'Kode pos wajib diisi.',
         ];
     }
 }

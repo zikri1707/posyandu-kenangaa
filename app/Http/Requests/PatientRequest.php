@@ -6,25 +6,29 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class PatientRequest extends FormRequest
 {
-    public function authorize(): bool
+    public function authorize()
     {
         return true;
     }
 
-    public function rules(): array
+    public function rules()
     {
         return [
-            'posyandu_id' => 'required|exists:posyandus,id',
-            'id_number' => 'required|string|max:20|unique:patients,id_number,'.$this->patient?->id,
             'full_name' => 'required|string|max:255',
+            'age_category' => 'required|string|in:child,adult,elderly',
+            'gender' => 'required|string|in:male,female',
             'birth_date' => 'required|date',
-            'gender' => 'required|in:L,P',
-            'address' => 'required|string',
+            'address' => 'required|string|max:500',
             'phone_number' => 'required|string|max:15',
-            'age_category' => 'required|in:bayi,balita,remaja,dewasa,lansia',
-            'profile_photo' => 'sometimes|image|mimes:jpeg,png,jpg|max:2048',
-            'blood_type' => 'nullable|string|max:2',
-            'family_card_number' => 'nullable|string|max:20'
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'full_name.required' => 'Nama lengkap wajib diisi.',
+            'age_category.required' => 'Kategori usia wajib diisi.',
+            'gender.required' => 'Jenis kelamin wajib diisi.',
         ];
     }
 }
