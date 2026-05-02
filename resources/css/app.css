@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import './globals.css';
 @import '../../vendor/livewire/flux/dist/flux.css';
 
 @source '../views';
@@ -96,6 +97,17 @@
     --color-accent:                    #00685f;
     --color-accent-content:            #00685f;
     --color-accent-foreground:         #ffffff;
+
+    /* ── Premium Palette (From Globals) ── */
+    --color-p:                         oklch(20.47% 0.1065 174); /* Teal Dark */
+    --color-p-focus:                   oklch(15.47% 0.0865 174);
+    --color-s:                         oklch(35% 0.05 215);      /* Slate */
+    --color-acc:                       oklch(60% 0.15 174);     /* Accent */
+    
+    /* ── Effects ── */
+    --glass-blur:                      20px;
+    --glass-opacity:                   0.7;
+    --premium-shadow:                  0 20px 40px -15px rgba(0, 104, 95, 0.15);
 }
 
 /* Dark mode overrides */

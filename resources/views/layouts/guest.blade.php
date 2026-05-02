@@ -15,20 +15,6 @@
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    <style>
-        body { font-family: 'Public Sans', sans-serif; background: #fdfdfd; }
-        .font-jakarta { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .auth-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 104, 95, 0.1);
-        }
-        /* Focus state for better accessibility */
-        input:focus { border-color: #00685f !important; border-width: 2px !important; }
-        /* Larger tap targets for older fingers */
-        label { margin-bottom: 0.75rem !important; display: block; font-size: 1.125rem !important; }
-        input[type="checkbox"] { width: 1.5rem; height: 1.5rem; }
-    </style>
 </head>
 <body class="antialiased text-slate-800">
     <div class="min-h-screen grid grid-cols-1 lg:grid-cols-2">

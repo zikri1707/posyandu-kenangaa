@@ -4,7 +4,7 @@
     $baseClasses = 'inline-flex items-center justify-center font-bold transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none min-h-[44px] min-w-[44px]';
     
     $variants = [
-        'primary' => 'bg-teal-600 text-white hover:bg-teal-700 shadow-sm',
+        'primary' => 'bg-premium-gradient btn-premium text-white shadow-lg',
         'secondary' => 'bg-slate-800 text-white hover:bg-slate-900 shadow-sm',
         'outline' => 'bg-transparent border border-slate-300 text-slate-700 hover:bg-slate-50',
         'danger' => 'bg-red-600 text-white hover:bg-red-700 shadow-sm',

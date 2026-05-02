@@ -30,7 +30,6 @@ use App\Livewire\Admin\Management\ArticleManagement;
 use App\Livewire\Admin\Management\MedicalRecordManagement;
 use App\Livewire\Admin\Management\UserManagement;
 use App\Livewire\Admin\Management\PedukuhanManagement;
-use App\Livewire\Admin\ActivityLogViewer;
 
 // Home Page - Public Home
 Route::get('/', [PublicController::class, 'home'])->name('public.home');

@@ -17,12 +17,6 @@
 
     <!-- Material Symbols -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
-    <style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-            vertical-align: middle;
-        }
-    </style>
 
     <!-- Chart.js for Growth Charts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -35,7 +29,7 @@
     
     @stack('styles')
 </head>
-<body class="font-sans antialiased" style="background:#f8fafc; color:#0f172a;">
+<body class="font-sans antialiased bg-slate-50 text-slate-900">
 
     <div class="min-h-screen flex overflow-hidden bg-dashboard">
         <!-- Sidebar -->
