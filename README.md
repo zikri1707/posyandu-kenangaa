@@ -63,7 +63,7 @@ Aplikasi ini dibangun dengan menggunakan **Laravel** untuk backend dan **Tailwin
    Pertama, clone repository ini ke komputer lokal Anda menggunakan perintah Git:
    
    ```bash
-   git clone https://github.com/ahmadrizal1st/posyandu-admin-dashboard.git
+   git clone https://github.com/Alarave/posyandu-admin.git
    cd posyandu-admin-dashboard
    ```
 
@@ -112,7 +112,7 @@ Kami menyambut kontribusi dari komunitas untuk meningkatkan aplikasi ini. Beriku
 
 ## Repository GitHub
 
-[https://github.com/ahmadrizal1st/posyandu-admin-dashboard.git](https://github.com/ahmadrizal1st/posyandu-admin-dashboard.git)
+[https://github.com/Alarave/posyandu-admin.git](https://github.com/Alarave/posyandu-admin.git)
 
 ### Penjelasan Perubahan:
 
