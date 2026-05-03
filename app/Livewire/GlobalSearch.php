@@ -17,8 +17,8 @@ class GlobalSearch extends Component
         ];
 
         if (strlen($this->search) >= 2) {
-            $results['patients'] = \App\Models\Patient::where('name', 'like', '%' . $this->search . '%')
-                ->orWhere('nik', 'like', '%' . $this->search . '%')
+            $results['patients'] = \App\Models\Patient::where('full_name', 'like', '%' . $this->search . '%')
+                ->orWhere('id_number', 'like', '%' . $this->search . '%')
                 ->limit(5)->get();
 
             $results['schedules'] = \App\Models\Schedule::where('title', 'like', '%' . $this->search . '%')

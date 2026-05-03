@@ -38,11 +38,11 @@
                         @foreach($results['patients'] as $patient)
                             <a href="{{ route('admin.patients.show', $patient->id) }}" class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl transition-colors group">
                                 <div class="w-8 h-8 rounded-lg bg-teal-50 flex items-center justify-center text-teal-600 font-bold text-xs group-hover:bg-teal-100 transition-colors">
-                                    {{ substr($patient->name, 0, 1) }}
+                                    {{ substr($patient->full_name, 0, 1) }}
                                 </div>
                                 <div>
-                                    <p class="text-[13px] font-bold text-slate-800">{{ $patient->name }}</p>
-                                    <p class="text-[11px] text-slate-500">{{ $patient->nik }}</p>
+                                    <p class="text-[13px] font-bold text-slate-800">{{ $patient->full_name }}</p>
+                                    <p class="text-[11px] text-slate-500">{{ $patient->id_number }}</p>
                                 </div>
                             </a>
                         @endforeach
