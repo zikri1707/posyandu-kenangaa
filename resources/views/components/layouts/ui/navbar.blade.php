@@ -68,19 +68,7 @@
     <div class="flex items-center gap-2 md:gap-3 flex-shrink-0">
 
         {{-- ── Search (desktop) ── --}}
-        <div class="hidden lg:flex items-center relative" id="searchWrapper">
-            <i class="fas fa-search absolute left-3.5 text-slate-400 pointer-events-none" style="font-size:12px;"></i>
-            <input id="globalSearch"
-                type="text"
-                placeholder="Cari pasien, jadwal, artikel…"
-                class="h-10 pl-9 pr-4 rounded-xl border border-slate-200 bg-slate-50
-                       text-slate-700 placeholder-slate-400 text-[14px] font-bold
-                       focus:outline-none focus:ring-4 focus:ring-slate-900/5 focus:border-slate-300
-                       focus:bg-white transition-all duration-200"
-                style="width:220px;"
-                onfocus="this.style.width='280px'"
-                onblur="this.style.width='220px'">
-        </div>
+        @livewire('global-search')
 
         {{-- ── Mobile search toggle ── --}}
         <button id="mobileSearchBtn"
