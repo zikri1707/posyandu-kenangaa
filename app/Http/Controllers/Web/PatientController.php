@@ -16,25 +16,6 @@ class PatientController extends Controller
         private ActivityLogService $activityLogService
     ) {}
 
-    /**
-     * Display a listing of patients.
-     */
-    public function index(Request $request)
-    {
-        $this->authorize('viewAny', Patient::class);
-
-        $patients = Patient::with('posyandu')
-            ->accessibleBy(auth()->user())
-            ->when($request->search, fn($q) => $q->where(function($q2) use ($request) {
-                $q2->where('full_name', 'like', '%'.$request->search.'%')
-                   ->orWhere('id_number', 'like', '%'.$request->search.'%');
-            }))
-            ->when($request->category, fn($q) => $q->where('category', $request->category))
-            ->latest()
-            ->paginate(10);
-
-        return view('livewire.admin.patient-management.index', compact('patients'));
-    }
 
     /**
      * Show the form for creating a new patient.

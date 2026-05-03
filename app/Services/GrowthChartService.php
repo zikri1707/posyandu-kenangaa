@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\Patient;
 use App\Models\WhoWeightForAge;
 use App\Models\WhoHeightForAge;
-use App\Models\WhoWeightForHeight;
 use Illuminate\Support\Collection;
 
 /**
@@ -54,13 +53,13 @@ class GrowthChartService
             ->orderBy('age_months')
             ->get();
 
-        // LMS to SD conversion for plotting
+        // Use pre-calculated SD columns for better performance and consistency
         return [
             'labels' => $references->pluck('age_months')->toArray(),
             'datasets' => [
                 $this->createReferenceDataset('Median', $references->pluck('m_value'), '#22c55e', 3),
-                $this->createReferenceDataset('-2 SD', $this->calculateLmsPercentile($references, -2), '#eab308', 1, 'dash'),
-                $this->createReferenceDataset('-3 SD', $this->calculateLmsPercentile($references, -3), '#ef4444', 1, 'dash'),
+                $this->createReferenceDataset('-2 SD', $references->pluck('sd_minus2'), '#eab308', 1, 'dash'),
+                $this->createReferenceDataset('-3 SD', $references->pluck('sd_minus3'), '#ef4444', 1, 'dash'),
                 $this->createChildDataset('Tinggi Badan Anak', $this->mapRecordsToAge($patient, $records, 'height'), '#3b82f6'),
             ]
         ];
@@ -116,24 +115,6 @@ class GrowthChartService
         return $data;
     }
 
-    /**
-     * Menghitung nilai fisik dari Z-Score menggunakan parameter LMS.
-     * Rumus: y = M * (1 + L * S * Z)^(1/L)
-     */
-    private function calculateLmsPercentile(Collection $references, float $z): array
-    {
-        return $references->map(function ($ref) use ($z) {
-            $l = (float) $ref->l_value;
-            $m = (float) $ref->m_value;
-            $s = (float) $ref->s_value;
-
-            if (abs($l) < 0.0001) {
-                return $m * exp($s * $z);
-            }
-            
-            return $m * pow(1 + $l * $s * $z, 1 / $l);
-        })->toArray();
-    }
 
     private function normalizeGender(?string $gender): string
     {

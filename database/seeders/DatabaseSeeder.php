@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             WhoWeightForAgeSeeder::class,  // Reference data - seed first
+            WhoHeightForAgeSeeder::class,  // Reference data TB/U
             PedukuhanSeeder::class,
             PosyanduSeeder::class,
             UserSeeder::class,
