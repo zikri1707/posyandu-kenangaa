@@ -83,12 +83,11 @@
         <div class="px-6 py-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 bg-slate-50/50">
             <h3 class="text-sm font-bold text-slate-700">Daftar Unit Posyandu</h3>
             <form method="GET" action="{{ route('admin.posyandu.index') }}" class="flex items-center gap-2">
-                <div class="relative">
-                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[16px]">search</span>
+                <div class="relative group">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-600 transition-colors pointer-events-none text-[18px]">search</span>
                     <input type="text" name="search" value="{{ request('search') }}"
                            placeholder="Cari posyandu..."
-                           class="h-9 pl-9 pr-4 border border-slate-200 rounded-lg text-sm font-medium text-slate-700 placeholder:text-slate-400
-                                  focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition bg-white">
+                           class="search-input-premium h-10 pl-11 pr-4">
                 </div>
                 <button type="submit"
                         class="h-9 px-4 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-colors">

@@ -79,11 +79,11 @@
     {{-- ── Filters ── --}}
     <div class="bg-white rounded-3xl border border-slate-100 p-4 shadow-sm flex flex-wrap items-center justify-between gap-4">
         <div class="flex flex-wrap items-center gap-3 flex-1">
-            <div class="relative min-w-[300px]">
-                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-[20px]">search</span>
+            <div class="relative min-w-[300px] group">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-600 transition-colors pointer-events-none text-[20px]">search</span>
                 <input type="text" wire:model.live.debounce.300ms="search" 
                        placeholder="Cari agenda atau lokasi..."
-                       class="w-full h-12 pl-12 pr-4 border border-slate-100 rounded-2xl text-sm font-bold text-slate-700 placeholder:text-slate-400 focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/5 transition-all bg-slate-50/50">
+                       class="search-input-premium w-full">
             </div>
 
             <select wire:model.live="status"

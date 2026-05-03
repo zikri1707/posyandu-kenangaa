@@ -65,10 +65,10 @@
         <div class="flex flex-wrap items-center gap-4">
             {{-- Search Input (Livewire) --}}
             <div class="flex-1 min-w-[280px] relative group">
-                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-600 transition-colors">search</span>
+                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-600 transition-colors pointer-events-none">search</span>
                 <input type="text" wire:model.live.debounce.300ms="search"
                        placeholder="Cari NIK atau nama..."
-                       class="w-full h-12 pl-12 pr-12 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-medium text-slate-700 placeholder:text-slate-400 focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all shadow-sm focus:bg-white">
+                       class="search-input-premium w-full">
                 
                 {{-- Loading Spinner --}}
                 <div wire:loading wire:target="search" class="absolute right-12 top-1/2 -translate-y-1/2">

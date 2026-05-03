@@ -52,11 +52,11 @@
     <div class="flex flex-col md:flex-row items-center gap-4">
         
         {{-- Search Input --}}
-        <div class="relative w-full md:flex-1">
-            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-[20px]">search</span>
+        <div class="relative w-full md:flex-1 group">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-600 transition-colors pointer-events-none text-[20px]">search</span>
             <input type="text" wire:model.live.debounce.300ms="search"
                   placeholder="Cari judul, isi, atau kategori..."
-                  class="w-full h-12 pl-12 pr-4 border border-slate-100 rounded-2xl text-sm font-semibold text-slate-700 placeholder:text-slate-400 focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all bg-slate-50/50 hover:bg-white">
+                  class="search-input-premium w-full">
         </div>
 
         {{-- Filters Group --}}
