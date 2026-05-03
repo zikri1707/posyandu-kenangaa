@@ -1,242 +1,209 @@
 @extends('layouts.app')
 
-@section('title', 'Import Data Warga')
+@section('title', 'Tambah Banyak Warga')
 
 @section('content')
-<div class="max-w-2xl mx-auto space-y-6">
+<div class="max-w-5xl mx-auto space-y-10 py-6">
 
     {{-- ── Header ── --}}
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-            <h1 class="text-xl font-bold text-slate-900">Import Data Warga</h1>
-            <p class="text-sm text-slate-500 mt-0.5">Unggah file CSV atau Excel untuk import data massal</p>
+            <h1 class="text-3xl font-black text-slate-900 tracking-tight">Tambah Banyak Warga</h1>
+            <p class="text-base text-slate-500 mt-1">Gunakan fitur ini untuk memasukkan data laporan bulanan sekaligus.</p>
         </div>
         <a href="{{ route('admin.patients.index') }}"
-           class="flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors">
-            <span class="material-symbols-outlined text-[18px]">arrow_back</span>
-            Kembali
+           class="inline-flex items-center gap-3 px-6 py-3 rounded-2xl bg-white border border-slate-200 text-sm font-black text-slate-600 hover:bg-slate-50 transition-all w-fit shadow-sm">
+            <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+            Kembali ke Daftar
         </a>
     </div>
 
-    {{-- ── Form Card ── --}}
-    <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-
-        {{-- Header --}}
-        <div class="px-6 py-4 border-b border-slate-200 flex items-center gap-3">
-            <div class="w-9 h-9 bg-teal-50 rounded-xl flex items-center justify-center text-teal-600">
-                <span class="material-symbols-outlined text-[20px]">upload_file</span>
-            </div>
+    {{-- ── Progress Steps (Visual Guide for Kader) ── --}}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 flex items-center gap-5 shadow-sm">
+            <div class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl font-black">1</div>
             <div>
-                <h2 class="text-sm font-bold text-slate-900">Unggah File</h2>
-                <p class="text-xs text-slate-400">Format: CSV, XLSX, atau XLS — Maks. 5 MB</p>
+                <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Langkah Pertama</p>
+                <p class="text-base font-black text-slate-800">Unduh Contoh File</p>
+            </div>
+        </div>
+        <div class="bg-white p-6 rounded-3xl border border-amber-200 bg-amber-50/30 flex items-center gap-5 shadow-sm">
+            <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl font-black">2</div>
+            <div>
+                <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Langkah Kedua</p>
+                <p class="text-base font-black text-slate-800">Isi Data Laporan</p>
+            </div>
+        </div>
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 flex items-center gap-5 shadow-sm">
+            <div class="w-12 h-12 rounded-2xl bg-teal-100 text-teal-600 flex items-center justify-center text-xl font-black">3</div>
+            <div>
+                <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Langkah Terakhir</p>
+                <p class="text-base font-black text-slate-800">Unggah & Selesai</p>
+            </div>
+        </div>
+    </div>
+
+    {{-- ── Main Content Area ── --}}
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        
+        {{-- Left: Upload Form --}}
+        <div class="lg:col-span-7 space-y-8">
+            <div class="bg-white border border-slate-200 rounded-[3rem] shadow-2xl overflow-hidden border-t-[12px] border-t-teal-600">
+                <div class="p-10 md:p-14">
+                    <form action="{{ route('admin.patients.import.store') }}" method="POST"
+                          enctype="multipart/form-data" class="space-y-10">
+                        @csrf
+
+                        @if($errors->any())
+                        <div class="p-6 bg-red-50 border border-red-100 text-red-800 rounded-[2rem] text-sm flex gap-4 animate-in slide-in-from-top-4 duration-300">
+                            <span class="material-symbols-outlined text-red-500 text-[24px]">error</span>
+                            <ul class="list-disc list-inside space-y-1">
+                                @foreach($errors->all() as $error)
+                                    <li class="font-bold">{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                        @endif
+
+                        {{-- Posyandu Selection (Only for Super Admin) --}}
+                        @if(auth()->user()->isSuperAdmin())
+                        <div class="space-y-4">
+                            <label class="block text-base font-black text-slate-800 ml-2">
+                                1. Pilih Lokasi Posyandu <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <span class="absolute left-5 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400">health_and_safety</span>
+                                <select name="posyandu_id"
+                                        class="w-full h-16 pl-14 pr-10 rounded-[1.5rem] border-2 border-slate-100 bg-slate-50 text-base font-black text-slate-700
+                                               focus:outline-none focus:border-teal-500 focus:bg-white focus:ring-8 focus:ring-teal-500/10 transition-all appearance-none
+                                               @error('posyandu_id') border-red-200 bg-red-50 @enderror">
+                                    <option value="">-- Pilih Posyandu --</option>
+                                    @foreach($posyandus as $pos)
+                                        <option value="{{ $pos->id }}" {{ old('posyandu_id') == $pos->id ? 'selected' : '' }}>
+                                            {{ $pos->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        @else
+                        <input type="hidden" name="posyandu_id" value="{{ auth()->user()->posyandu_id }}">
+                        @endif
+
+                        {{-- File Upload --}}
+                        <div class="space-y-4">
+                            <label class="block text-base font-black text-slate-800 ml-2">
+                                2. Pilih File Laporan (Excel) <span class="text-red-500">*</span>
+                            </label>
+                            
+                            <div id="dropzone"
+                                 class="relative border-4 border-dashed border-slate-100 rounded-[2.5rem] p-12 text-center cursor-pointer
+                                        hover:border-teal-400 hover:bg-teal-50/50 transition-all group shadow-inner
+                                        @error('file') border-red-200 bg-red-50 @enderror"
+                                 onclick="document.getElementById('fileInput').click()">
+                                <input type="file" id="fileInput" name="file" accept=".csv,.xlsx,.xls"
+                                       class="hidden" onchange="handleFileSelect(this)">
+                                
+                                <div id="dropzoneContent" class="space-y-4">
+                                    <div class="w-24 h-24 bg-white rounded-3xl flex items-center justify-center mx-auto mb-2 shadow-sm group-hover:scale-110 group-hover:bg-teal-100 transition-all duration-500">
+                                        <span class="material-symbols-outlined text-[48px] text-slate-300 group-hover:text-teal-600 transition-colors">cloud_upload</span>
+                                    </div>
+                                    <div>
+                                        <p class="text-xl font-black text-slate-800">Klik untuk Mencari File</p>
+                                        <p class="text-sm text-slate-400 mt-2">Atau geser file laporan Anda ke kotak ini</p>
+                                    </div>
+                                    <div class="inline-flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-full text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                        Mendukung .xlsx, .xls, .csv
+                                    </div>
+                                </div>
+
+                                <div id="fileSelected" class="hidden animate-in fade-in zoom-in duration-500">
+                                    <div class="w-24 h-24 bg-teal-100 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-sm">
+                                        <span class="material-symbols-outlined text-[48px] text-teal-600" style="font-variation-settings:'FILL' 1;">description</span>
+                                    </div>
+                                    <p id="fileName" class="text-xl font-black text-teal-900 break-all px-6"></p>
+                                    <p id="fileSize" class="text-sm text-teal-600/60 mt-2"></p>
+                                    <button type="button" onclick="clearFile(event)"
+                                            class="mt-6 px-6 py-2 bg-red-50 text-red-600 rounded-2xl text-xs font-black hover:bg-red-100 transition-all">
+                                        Hapus & Ganti File
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-6">
+                            <button type="submit" id="submitBtn"
+                                    class="w-full h-20 bg-teal-600 text-white rounded-[2rem] text-xl font-black hover:bg-teal-700 active:scale-[0.97]
+                                           transition-all flex items-center justify-center gap-4 shadow-2xl shadow-teal-600/30 disabled:opacity-50 group">
+                                <span class="material-symbols-outlined text-[32px] group-hover:translate-y-[-2px] transition-transform">cloud_done</span>
+                                Simpan Data Laporan
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
 
-        <form action="{{ route('admin.patients.import.store') }}" method="POST"
-              enctype="multipart/form-data" class="p-6 space-y-5">
-            @csrf
-
-            @if($errors->any())
-            <div class="flex items-start gap-3 px-4 py-3 bg-red-50 border border-red-200 text-red-800 rounded-xl text-sm">
-                <span class="material-symbols-outlined text-red-500 text-[20px] flex-shrink-0 mt-0.5">error</span>
-                <ul class="space-y-1">
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-            @endif
-
-            {{-- Posyandu (superadmin only) --}}
-            @if(auth()->user()->isSuperAdmin())
-            <div>
-                <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
-                    Posyandu Tujuan <span class="text-red-500">*</span>
-                </label>
-                <div class="relative">
-                    <span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-[18px]">health_and_safety</span>
-                    <select name="posyandu_id"
-                            class="w-full h-11 pl-10 pr-4 rounded-xl border border-slate-300 text-sm font-medium text-slate-700
-                                   focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 transition appearance-none bg-white
-                                   @error('posyandu_id') border-red-400 @enderror">
-                        <option value="">Pilih Posyandu</option>
-                        @foreach($posyandus as $pos)
-                            <option value="{{ $pos->id }}" {{ old('posyandu_id') == $pos->id ? 'selected' : '' }}>
-                                {{ $pos->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                @error('posyandu_id')
-                    <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
-            @else
-            <input type="hidden" name="posyandu_id" value="{{ auth()->user()->posyandu_id }}">
-            @endif
-
-            {{-- File Upload --}}
-            <div>
-                <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
-                    File CSV / XLSX <span class="text-red-500">*</span>
-                </label>
-
-                {{-- Peringatan XLS --}}
-                <div class="mb-3 flex items-start gap-3 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl text-sm">
-                    <span class="material-symbols-outlined text-amber-600 text-[18px] flex-shrink-0 mt-0.5" style="font-variation-settings:'FILL' 1;">warning</span>
-                    <div>
-                        <p class="font-bold text-amber-800">File .xls tidak didukung</p>
-                        <p class="text-amber-700 text-xs mt-0.5">
-                            Jika file Anda berformat <strong>.xls</strong> (Excel lama), buka di Excel lalu:
-                            <strong>File → Save As → CSV UTF-8 (*.csv)</strong> atau <strong>Excel Workbook (*.xlsx)</strong>
-                        </p>
-                    </div>
-                </div>
-                <div id="dropzone"
-                     class="relative border-2 border-dashed border-slate-300 rounded-xl p-8 text-center cursor-pointer
-                            hover:border-teal-400 hover:bg-teal-50/30 transition-all
-                            @error('file') border-red-400 bg-red-50 @enderror"
-                     onclick="document.getElementById('fileInput').click()">
-                    <input type="file" id="fileInput" name="file" accept=".csv,.xlsx"
-                           class="hidden" onchange="handleFileSelect(this)">
-                    <div id="dropzoneContent">
-                        <span class="material-symbols-outlined text-[40px] text-slate-300 mb-3 block">cloud_upload</span>
-                        <p class="text-sm font-semibold text-slate-600">Klik untuk pilih file atau drag & drop</p>
-                        <p class="text-xs text-slate-400 mt-1">CSV atau XLSX — Maksimal 5 MB</p>
-                        <p class="text-xs text-red-400 mt-1 font-medium">⚠ File .xls tidak didukung, simpan ulang sebagai .csv atau .xlsx</p>
-                    </div>
-                    <div id="fileSelected" class="hidden">
-                        <span class="material-symbols-outlined text-[40px] text-teal-500 mb-3 block" style="font-variation-settings:'FILL' 1;">description</span>
-                        <p id="fileName" class="text-sm font-bold text-teal-700"></p>
-                        <p id="fileSize" class="text-xs text-slate-400 mt-1"></p>
-                        <button type="button" onclick="clearFile(event)"
-                                class="mt-2 text-xs text-red-500 hover:underline">Hapus file</button>
-                    </div>
-                </div>
-                @error('file')
-                    <p class="mt-1 text-xs text-red-600 flex items-center gap-1">
-                        <span class="material-symbols-outlined text-[13px]">error</span>{{ $message }}
-                    </p>
-                @enderror
-            </div>
-
-            {{-- Format Info --}}
-            <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
-                <div class="flex items-start gap-3">
-                    <span class="material-symbols-outlined text-teal-600 text-[18px] flex-shrink-0 mt-0.5">table_chart</span>
-                    <div class="w-full">
-                        <p class="text-xs font-bold text-slate-700 mb-3">Format Kolom yang Didukung (Format Excel Posyandu):</p>
-
-                        {{-- Kolom Data Warga --}}
-                        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Data Warga</p>
-                        <div class="flex flex-wrap gap-1.5 mb-3">
-                            @foreach([
-                                ['NIK', 'opsional'],
-                                ['nama_anak', 'wajib'],
-                                ['tgl_lahir', 'wajib'],
-                                ['jk', 'L/P'],
-                                ['nm_ortu', ''],
-                                ['RT', ''],
-                                ['RW', ''],
-                                ['ALAMAT', ''],
-                            ] as [$col, $note])
-                            <div class="flex items-center gap-1">
-                                <code class="text-[10px] bg-white border border-slate-200 px-1.5 py-0.5 rounded font-mono text-teal-700">{{ $col }}</code>
-                                @if($note)
-                                <span class="text-[9px] {{ $note === 'wajib' ? 'text-red-500 font-bold' : 'text-slate-400' }}">{{ $note }}</span>
-                                @endif
-                            </div>
-                            @endforeach
-                        </div>
-
-                        {{-- Kolom Rekam Medis --}}
-                        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Data Pengukuran (Rekam Medis)</p>
-                        <div class="flex flex-wrap gap-1.5">
-                            @foreach([
-                                ['TANGGAL UKUR', ''],
-                                ['BERAT', 'kg'],
-                                ['TINGGI', 'cm'],
-                                ['LILA', 'cm'],
-                                ['lingkar_kepala', 'cm'],
-                                ['CARA UKUR', ''],
-                                ['vitamin', 'Ya/Tidak'],
-                                ['asi_bulan_0', ''],
-                                ['Imunisasi', ''],
-                            ] as [$col, $note])
-                            <div class="flex items-center gap-1">
-                                <code class="text-[10px] bg-white border border-slate-200 px-1.5 py-0.5 rounded font-mono text-blue-700">{{ $col }}</code>
-                                @if($note)
-                                <span class="text-[9px] text-slate-400">{{ $note }}</span>
-                                @endif
-                            </div>
-                            @endforeach
-                        </div>
-
-                        <p class="text-[10px] text-slate-400 mt-2.5">
-                            <span class="text-red-500 font-bold">*</span> Wajib diisi.
-                            Jika NIK tidak ada, sistem akan membuat ID sementara.
-                            Data pengukuran akan disimpan sebagai Rekam Medis otomatis.
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Download Template --}}
-            <div class="flex items-center gap-3 p-3 bg-blue-50 rounded-xl border border-blue-100">
-                <span class="material-symbols-outlined text-blue-600 text-[18px]">download</span>
-                <p class="text-sm text-blue-800 flex-1">
-                    Belum punya template?
+        {{-- Right: Instructions & Help --}}
+        <div class="lg:col-span-5 space-y-8">
+            
+            {{-- Step 1 Download --}}
+            <div class="bg-blue-600 rounded-[3rem] p-10 text-white shadow-2xl shadow-blue-600/30 relative overflow-hidden group">
+                <div class="absolute right-0 top-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700"></div>
+                <div class="relative z-10">
+                    <h3 class="text-2xl font-black mb-3">Langkah 1: Unduh Contoh</h3>
+                    <p class="text-blue-100 text-base mb-8 leading-relaxed">Gunakan file contoh ini sebagai acuan agar data warga tidak tertukar atau salah masuk.</p>
                     <a href="{{ route('admin.patients.template') }}"
-                       class="font-bold underline hover:text-blue-900">Download template CSV</a>
-                    sebagai panduan.
-                </p>
+                       class="inline-flex items-center gap-4 px-8 py-5 bg-white text-blue-700 rounded-[1.5rem] font-black hover:bg-blue-50 transition-all active:scale-95 shadow-xl w-full justify-center text-lg">
+                        <span class="material-symbols-outlined text-[24px]">download</span>
+                        Download Contoh
+                    </a>
+                </div>
             </div>
 
-            {{-- Actions --}}
-            <div class="border-t border-slate-100 pt-5 flex items-center justify-between gap-3">
-                <a href="{{ route('admin.patients.index') }}"
-                   class="h-11 px-6 flex items-center gap-2 rounded-xl border border-slate-300 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-colors">
-                    <span class="material-symbols-outlined text-[18px]">close</span>
-                    Batal
-                </a>
-                <button type="submit" id="submitBtn"
-                        class="h-11 px-8 bg-teal-600 text-white rounded-xl text-sm font-bold hover:bg-teal-700 active:scale-95
-                               transition-all flex items-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
-                    <span class="material-symbols-outlined text-[18px]">upload</span>
-                    Mulai Import
-                </button>
+            {{-- Column Guide --}}
+            <div class="bg-white border border-slate-200 rounded-[3rem] p-10 shadow-sm">
+                <h3 class="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-8">Panduan Isi Kolom</h3>
+                
+                <div class="space-y-8">
+                    <div class="flex gap-5">
+                        <div class="w-12 h-12 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center flex-shrink-0 font-black text-xl">!</div>
+                        <div>
+                            <p class="text-lg font-black text-slate-800">Data Wajib</p>
+                            <p class="text-sm text-slate-500 mt-1 leading-relaxed">Nama Anak, Tanggal Lahir, dan Jenis Kelamin (L/P).</p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-5">
+                        <div class="w-12 h-12 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center flex-shrink-0 font-black text-xl">✓</div>
+                        <div>
+                            <p class="text-lg font-black text-slate-800">Hasil Timbangan</p>
+                            <p class="text-sm text-slate-500 mt-1 leading-relaxed">Bisa langsung mengisi Berat, Tinggi, dan Imunisasi.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-5">
+                        <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0 font-black text-xl italic">i</div>
+                        <div>
+                            <p class="text-lg font-black text-slate-800">Format Tanggal</p>
+                            <p class="text-sm text-slate-500 mt-1 leading-relaxed">Gunakan format Tahun-Bulan-Hari (misal: 2022-08-06).</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </form>
-    </div>
 
-    {{-- ── Catatan Penting ── --}}
-    <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5 flex gap-4">
-        <span class="material-symbols-outlined text-amber-600 flex-shrink-0 mt-0.5" style="font-variation-settings:'FILL' 1;">warning</span>
-        <div>
-            <h4 class="font-bold text-amber-900 text-sm mb-2">Cara Konversi File .xls ke .csv (Wajib Dibaca)</h4>
-            <ol class="text-sm text-amber-800/80 space-y-1 list-decimal list-inside mb-3">
-                <li>Buka file <strong>.xls</strong> di Microsoft Excel</li>
-                <li>Klik <strong>File → Save As</strong></li>
-                <li>Pilih format: <strong>"CSV UTF-8 (Comma delimited) (*.csv)"</strong></li>
-                <li>Klik <strong>Save</strong> → klik <strong>Yes</strong> jika ada konfirmasi</li>
-                <li>Upload file <strong>.csv</strong> yang baru tersimpan</li>
-            </ol>
-            <p class="text-xs text-amber-700 font-semibold">Atau simpan sebagai <strong>.xlsx</strong> (Excel Workbook) jika ingin tetap dalam format Excel.</p>
-        </div>
-    </div>
-
-    {{-- ── Catatan Teknis ── --}}
-    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 flex gap-4">
-        <span class="material-symbols-outlined text-slate-500 flex-shrink-0 mt-0.5">info</span>
-        <div>
-            <h4 class="font-bold text-slate-700 text-sm mb-1">Catatan Import</h4>
-            <ul class="text-sm text-slate-600 space-y-1 list-disc list-inside">
-                <li>Kolom NIK <strong>opsional</strong> — jika tidak ada, sistem membuat ID sementara.</li>
-                <li>Data pengukuran (BERAT, TINGGI, dll.) otomatis disimpan sebagai <strong>Rekam Medis</strong>.</li>
-                <li>Warga yang sudah terdaftar (nama + tanggal lahir sama) akan <strong>diperbarui</strong>.</li>
-                <li>Format tanggal: <code class="bg-slate-100 px-1 rounded text-xs">2022-08-06</code>, <code class="bg-slate-100 px-1 rounded text-xs">6 Aug 2022</code>, atau serial Excel.</li>
-                <li>Jenis kelamin: <code class="bg-slate-100 px-1 rounded text-xs">L</code> atau <code class="bg-slate-100 px-1 rounded text-xs">P</code>.</li>
-            </ul>
+            {{-- Support & Support --}}
+            <div class="bg-teal-50 rounded-[3rem] p-10 border border-teal-100 flex gap-6">
+                <div class="w-14 h-14 bg-teal-200/50 rounded-2xl flex items-center justify-center flex-shrink-0">
+                    <span class="material-symbols-outlined text-teal-700 text-[32px]">verified</span>
+                </div>
+                <div>
+                    <h4 class="text-lg font-black text-teal-900 mb-2">Bisa Pakai Excel Lama</h4>
+                    <p class="text-sm text-teal-800/70 leading-relaxed font-medium">
+                        Kabar baik! Sekarang Ibu Kader bisa langsung mengunggah file Excel format lama <strong>(.xls)</strong> tanpa harus diubah-ubah lagi.
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -261,18 +228,23 @@ function clearFile(e) {
     document.getElementById('fileSelected').classList.add('hidden');
 }
 
-// Drag & drop
+// Drag & drop logic
 const dropzone = document.getElementById('dropzone');
-dropzone.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    dropzone.classList.add('border-teal-500', 'bg-teal-50/50');
+['dragenter', 'dragover'].forEach(eventName => {
+    dropzone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        dropzone.classList.add('border-teal-500', 'bg-teal-50/80');
+    }, false);
 });
-dropzone.addEventListener('dragleave', () => {
-    dropzone.classList.remove('border-teal-500', 'bg-teal-50/50');
+
+['dragleave', 'drop'].forEach(eventName => {
+    dropzone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('border-teal-500', 'bg-teal-50/80');
+    }, false);
 });
+
 dropzone.addEventListener('drop', (e) => {
-    e.preventDefault();
-    dropzone.classList.remove('border-teal-500', 'bg-teal-50/50');
     const file = e.dataTransfer.files[0];
     if (file) {
         const input = document.getElementById('fileInput');
@@ -288,11 +260,11 @@ document.querySelector('form').addEventListener('submit', function() {
     const btn = document.getElementById('submitBtn');
     btn.disabled = true;
     btn.innerHTML = `
-        <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+        <svg class="animate-spin h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
         </svg>
-        Mengimport...
+        <span class="font-black">Sedang Menyimpan...</span>
     `;
 });
 </script>

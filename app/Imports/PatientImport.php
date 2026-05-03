@@ -69,14 +69,6 @@ class PatientImport
     {
         $extension = strtolower($file->getClientOriginalExtension());
 
-        if ($extension === 'xls') {
-            throw new \InvalidArgumentException(
-                'File .xls (format Excel 97-2003) tidak dapat diproses langsung. ' .
-                'Silakan buka file di Excel, lalu pilih "Save As" → format "CSV UTF-8 (Comma delimited) (*.csv)" ' .
-                'atau "Excel Workbook (*.xlsx)", kemudian upload file baru tersebut.'
-            );
-        }
-
         $parser = $this->resolveParser($extension);
         $rows   = $parser->parse($file->getRealPath());
 
@@ -97,10 +89,11 @@ class PatientImport
     private function resolveParser(string $extension): FileParserInterface
     {
         return match ($extension) {
-            'csv'  => new CsvFileParser(),
-            'xlsx' => new XlsxFileParser(),
+            'csv'   => new CsvFileParser(),
+            'xlsx'  => new XlsxFileParser(),
+            'xls'   => new \App\Imports\Parsers\XlsFileParser(),
             default => throw new \InvalidArgumentException(
-                "Format '{$extension}' tidak didukung. Gunakan CSV atau XLSX."
+                "Format '{$extension}' tidak didukung. Gunakan CSV, XLSX, atau XLS."
             ),
         };
     }
