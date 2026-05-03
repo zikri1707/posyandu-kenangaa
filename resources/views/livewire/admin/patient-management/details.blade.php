@@ -199,18 +199,36 @@
         <livewire:admin.patient-management.growth-chart :patient-id="$patient->id" />
     @endif
 
-    {{-- TABEL HISTORI KESEHATAN --}}
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200">
-            <h3 class="font-semibold text-gray-800">
-                <i class="fas fa-history mr-2 text-blue-500"></i>Riwayat Rekam Medis Bulanan
-            </h3>
-            @can('update', $patient)
-            <a href="{{ route('admin.medical-records.create', ['patient_id' => $patient->id]) }}"
-               class="inline-flex items-center px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-lg transition shadow-sm">
-                <i class="fas fa-plus mr-1"></i> Tambah Rekam Medis
-            </a>
-            @endcan
+    {{-- TABEL HISTORI KESEHATAN ── --}}
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden" id="medical-history-section">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center px-6 py-4 border-b border-gray-200 gap-4">
+            <div class="flex items-center gap-3">
+                <h3 class="font-semibold text-gray-800">
+                    <i class="fas fa-history mr-2 text-blue-500"></i>Riwayat Rekam Medis
+                </h3>
+            </div>
+            
+            <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                {{-- Local Search for History --}}
+                <form action="{{ url()->current() }}#medical-history-section" method="GET" class="relative flex-1 md:flex-none md:w-64">
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                    <input type="text" name="history_search" value="{{ request('history_search') }}"
+                           placeholder="Cari diagnosa atau catatan..."
+                           class="w-full h-9 pl-9 pr-4 bg-gray-50 border border-gray-200 rounded-lg text-xs font-medium focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white transition-all">
+                    @if(request('history_search'))
+                        <a href="{{ url()->current() }}#medical-history-section" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors">
+                            <i class="fas fa-times-circle"></i>
+                        </a>
+                    @endif
+                </form>
+
+                @can('update', $patient)
+                <a href="{{ route('admin.medical-records.create', ['patient_id' => $patient->id]) }}"
+                   class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition shadow-sm">
+                    <i class="fas fa-plus mr-1.5"></i> Tambah Rekam Medis
+                </a>
+                @endcan
+            </div>
         </div>
 
         @if($medicalRecords->isEmpty())

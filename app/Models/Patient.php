@@ -23,6 +23,28 @@ class Patient extends Model
         'id_number'  => EncryptedCast::class,
     ];
 
+    /**
+     * Boot function to handle model events.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saving(function ($model) {
+            if ($model->isDirty('id_number') && !empty($model->id_number)) {
+                $model->id_number_hash = static::generateBlindIndex($model->id_number);
+            }
+        });
+    }
+
+    /**
+     * Generate a deterministic hash for searching (Blind Index).
+     */
+    public static function generateBlindIndex($value): string
+    {
+        return hash_hmac('sha256', $value, config('app.encryption_key') ?? 'default_pepper');
+    }
+
     // Relationship with Posyandu
     public function posyandu()
     {

@@ -6,6 +6,7 @@ use App\Models\Patient;
 use App\Models\MedicalRecord;
 use App\Models\Schedule;
 use App\Livewire\Shared\BaseAdminComponent;
+use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
 class AdminDashboard extends BaseAdminComponent
@@ -31,80 +32,99 @@ class AdminDashboard extends BaseAdminComponent
 
     protected function loadStatistics()
     {
-        $currentMonth = Carbon::now()->month;
-        $currentYear = Carbon::now()->year;
+        $user = Auth::user();
+        $posyanduId = $user->isSuperAdmin() ? null : $user->posyandu_id;
+        $year = now()->year;
+        $key = "year_{$year}";
 
-        // Terapkan scope posyandu menggunakan Trait di BaseAdminComponent
-        $patientQuery = $this->applyPosyanduScope(Patient::query());
-        $scheduleQuery = $this->applyPosyanduScope(Schedule::query());
-        $medicalRecordQuery = $this->applyPosyanduScope(MedicalRecord::query());
+        $snapshot = \App\Models\AnalyticsSnapshot::where('posyandu_id', $posyanduId)
+            ->where('key', $key)
+            ->first();
 
-        // Statistik Utama
-        $this->totalBalita = (clone $patientQuery)->where('category', 'balita')->count();
-        $this->totalIbuHamil = (clone $patientQuery)->where('category', 'ibu_hamil')->count();
-        $this->totalRemaja = (clone $patientQuery)->where('category', 'remaja')->count();
-        $this->totalLansia = (clone $patientQuery)->where('category', 'lansia')->count();
-        
-        $this->jadwalAktif = (clone $scheduleQuery)
-            ->whereMonth('start_time', $currentMonth)
-            ->whereYear('start_time', $currentYear)
-            ->count();
+        if ($snapshot) {
+            $data = $snapshot->data['dashboard_stats'];
+            foreach ($data as $prop => $val) {
+                if (property_exists($this, $prop)) {
+                    $this->{$prop} = $val;
+                }
+            }
+        } else {
+            // Fallback: load everything in real-time once
+            $this->computeDashboardStatsRealtime();
+            // Dispatch job for next time
+            \App\Jobs\ComputeAnalyticsSnapshot::dispatch($posyanduId, $year);
+        }
 
-        $this->kunjunganBaru = (clone $medicalRecordQuery)
-            ->whereMonth('visit_date', $currentMonth)
-            ->whereYear('visit_date', $currentYear)
-            ->count();
+        // --- Real-time components (un-snapshotted) ---
+        $scheduleQuery = $this->applyPosyanduScope(\App\Models\Schedule::query());
+        $medicalRecordQuery = $this->applyPosyanduScope(\App\Models\MedicalRecord::query());
 
-        // Balita Stunting (Logic spesifik gizi buruk/stunting)
-        $this->balitaStunting = (clone $patientQuery)
+        // Balita Stunting Alert (Keep real-time for immediate action)
+        $latestRecordSubquery = \App\Models\MedicalRecord::selectRaw('MAX(id) as id')->groupBy('patient_id');
+        $this->balitaStunting = $this->applyPosyanduScope(\App\Models\Patient::query())
             ->where('category', 'balita')
-            ->whereHas('medicalRecords', function ($query) {
-                $query->whereIn('nutrition_status', ['Gizi Buruk', 'Gizi Buruk/Stunting'])
-                    ->whereIn('id', function ($subQuery) {
-                        $subQuery->selectRaw('MAX(id)')
-                            ->from('medical_records')
-                            ->groupBy('patient_id');
-                    });
+            ->whereHas('medicalRecords', function ($query) use ($latestRecordSubquery) {
+                $query->whereIn('nutrition_status', [\App\Models\MedicalRecord::NUTRITION_STUNTING, \App\Models\MedicalRecord::NUTRITION_GIZI_BURUK])
+                      ->whereIn('id', $latestRecordSubquery);
             })
             ->with(['medicalRecords' => fn($q) => $q->latest('visit_date')->limit(1)])
             ->get();
 
-        // Grafik Data
-        $this->nutritionStatusDistribution = $this->getNutritionStatusDistribution($medicalRecordQuery);
-        $this->monthlyWeighingData = $this->getMonthlyWeighingData($medicalRecordQuery);
-
-        // Jadwal Terdekat
-        $this->upcomingSchedule = (clone $scheduleQuery)
-            ->where('start_time', '>=', Carbon::now())
+        $this->upcomingSchedule = $scheduleQuery
+            ->where('start_time', '>=', now())
             ->orderBy('start_time')
             ->first();
 
-        // Aktivitas Terkini
-        $this->recentActivities = (clone $medicalRecordQuery)
+        $this->recentActivities = $medicalRecordQuery
             ->with(['patient', 'patient.posyandu', 'user'])
             ->latest('visit_date')
             ->latest('created_at')
             ->limit(5)
             ->get();
 
-        // Breakdown per Posyandu (khusus SuperAdmin)
-        if (auth()->user()->isSuperAdmin()) {
-            $this->posyanduStats = \App\Models\Posyandu::withCount(['patients' => function($query) {
-                // Bisa ditambahkan filter jika perlu
-            }])->get();
+        if ($user->isSuperAdmin()) {
+            $this->posyanduStats = \App\Models\Posyandu::withCount('patients')->get();
         }
     }
 
-    protected function getNutritionStatusDistribution($medicalRecordQuery)
+    protected function computeDashboardStatsRealtime()
     {
-        $latestRecords = (clone $medicalRecordQuery)
+        $patientQuery = $this->applyPosyanduScope(\App\Models\Patient::query());
+        $medicalRecordQuery = $this->applyPosyanduScope(\App\Models\MedicalRecord::query());
+        $currentMonth = now()->month;
+        $currentYear = now()->year;
+
+        $counts = (clone $patientQuery)
+            ->selectRaw('COUNT(CASE WHEN category = "balita" THEN 1 END) as balita')
+            ->selectRaw('COUNT(CASE WHEN category = "ibu_hamil" THEN 1 END) as ibu_hamil')
+            ->selectRaw('COUNT(CASE WHEN category = "remaja" THEN 1 END) as remaja')
+            ->selectRaw('COUNT(CASE WHEN category = "lansia" THEN 1 END) as lansia')
+            ->first();
+
+        $this->totalBalita = $counts->balita ?? 0;
+        $this->totalIbuHamil = $counts->ibu_hamil ?? 0;
+        $this->totalRemaja = $counts->remaja ?? 0;
+        $this->totalLansia = $counts->lansia ?? 0;
+
+        $this->kunjunganBaru = (clone $medicalRecordQuery)
+            ->whereMonth('visit_date', $currentMonth)
+            ->whereYear('visit_date', $currentYear)
+            ->count();
+
+        $latestRecordSubquery = \App\Models\MedicalRecord::selectRaw('MAX(id) as id')->groupBy('patient_id');
+        $this->nutritionStatusDistribution = $this->getNutritionStatusDistribution($medicalRecordQuery, $latestRecordSubquery);
+        $this->monthlyWeighingData = $this->getMonthlyWeighingData($medicalRecordQuery);
+    }
+
+    protected function getNutritionStatusDistribution($medicalRecordQuery, $latestRecordSubquery)
+    {
+        $distribution = (clone $medicalRecordQuery)
+            ->whereIn('id', $latestRecordSubquery)
             ->whereHas('patient', fn($q) => $q->where('category', 'balita'))
             ->whereNotNull('nutrition_status')
-            ->get()
-            ->groupBy('patient_id')
-            ->map(fn($records) => $records->sortByDesc('visit_date')->first());
-
-        $distribution = $latestRecords->groupBy('nutrition_status')->map(fn($group) => $group->count());
+            ->select('nutrition_status', \Illuminate\Support\Facades\DB::raw('COUNT(*) as total'))
+            ->groupBy('nutrition_status')
+            ->pluck('total', 'nutrition_status');
 
         return [
             'labels' => $distribution->keys()->toArray(),
@@ -114,22 +134,28 @@ class AdminDashboard extends BaseAdminComponent
 
     protected function getMonthlyWeighingData($medicalRecordQuery)
     {
-        $months = [];
-        $counts = [];
+        $startDate = Carbon::now()->subMonths(11)->startOfMonth();
+        
+        $trends = (clone $medicalRecordQuery)
+            ->where('visit_date', '>=', $startDate)
+            ->selectRaw('DATE_FORMAT(visit_date, "%b %Y") as month_label')
+            ->selectRaw('COUNT(*) as count')
+            ->selectRaw('MIN(visit_date) as sort_date')
+            ->groupBy('month_label')
+            ->orderBy('sort_date')
+            ->get()
+            ->pluck('count', 'month_label');
+
+        $labels = [];
+        $data = [];
 
         for ($i = 11; $i >= 0; $i--) {
-            $date = Carbon::now()->subMonths($i);
-            $month = $date->format('M Y');
-            $count = (clone $medicalRecordQuery)
-                ->whereMonth('visit_date', $date->month)
-                ->whereYear('visit_date', $date->year)
-                ->count();
-
-            $months[] = $month;
-            $counts[] = $count;
+            $label = Carbon::now()->subMonths($i)->format('M Y');
+            $labels[] = $label;
+            $data[] = $trends->get($label, 0);
         }
 
-        return ['labels' => $months, 'data' => $counts];
+        return ['labels' => $labels, 'data' => $data];
     }
 
     public function render()

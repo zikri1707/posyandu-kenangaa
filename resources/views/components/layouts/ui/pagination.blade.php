@@ -63,6 +63,7 @@
             </span>
         @else
             <a href="{{ $paginator->previousPageUrl() }}"
+               wire:navigate
                rel="prev"
                aria-label="Halaman sebelumnya"
                class="inline-flex items-center justify-center w-9 h-9 rounded-xl border border-outline-variant
@@ -77,6 +78,7 @@
             {{-- First page + ellipsis --}}
             @if($start > 1)
                 <a href="{{ $paginator->url(1) }}"
+                   wire:navigate
                    aria-label="Halaman 1"
                    class="inline-flex items-center justify-center w-9 h-9 rounded-xl border border-outline-variant
                           bg-surface-container-lowest text-on-surface-variant text-[13px] font-semibold
@@ -103,6 +105,7 @@
                     </span>
                 @else
                     <a href="{{ $paginator->url($page) }}"
+                       wire:navigate
                        aria-label="Halaman {{ $page }}"
                        class="inline-flex items-center justify-center w-9 h-9 rounded-xl border border-outline-variant
                               bg-surface-container-lowest text-on-surface-variant text-[13px] font-semibold
@@ -121,6 +124,7 @@
                     </span>
                 @endif
                 <a href="{{ $paginator->url($last) }}"
+                   wire:navigate
                    aria-label="Halaman {{ $last }}"
                    class="inline-flex items-center justify-center w-9 h-9 rounded-xl border border-outline-variant
                           bg-surface-container-lowest text-on-surface-variant text-[13px] font-semibold
@@ -134,6 +138,7 @@
         {{-- Next --}}
         @if($paginator->hasMorePages())
             <a href="{{ $paginator->nextPageUrl() }}"
+               wire:navigate
                rel="next"
                aria-label="Halaman berikutnya"
                class="inline-flex items-center justify-center w-9 h-9 rounded-xl border border-outline-variant

@@ -3,15 +3,25 @@
     {{-- ── Page Header ── --}}
     <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-            <h1 class="text-2xl font-bold text-slate-900">Analytics & Insights</h1>
-            <p class="text-sm text-slate-500 mt-0.5">
+            <h1 class="text-display text-3xl font-bold">Analytics & Insights</h1>
+            <p class="text-sm text-slate-500 mt-1 flex items-center gap-2">
+                <span class="material-symbols-outlined text-[14px]">info</span>
                 Data agregat periode Januari – Desember {{ $selectedYear }}
                 @if(auth()->user()->posyandu)
                     · {{ auth()->user()->posyandu->name }}
                 @endif
+                @if($lastUpdated)
+                    · Diperbarui {{ $lastUpdated }}
+                @endif
             </p>
         </div>
         <div class="flex items-center gap-3 flex-wrap">
+            {{-- Refresh Button --}}
+            <button wire:click="refreshStats" wire:loading.attr="disabled"
+                    class="h-10 w-10 flex items-center justify-center bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 transition-all shadow-sm active:scale-95">
+                <span class="material-symbols-outlined text-[20px] transition-transform duration-700" wire:loading.class="rotate-180">refresh</span>
+            </button>
+
             {{-- Year Selector --}}
             <div class="flex items-center bg-white border border-slate-200 rounded-xl px-3 py-2 gap-2 shadow-sm">
                 <span class="material-symbols-outlined text-slate-400 text-[18px]">calendar_today</span>
@@ -124,7 +134,13 @@
                 </div>
             </div>
             <div class="relative h-56">
-                <canvas id="nutritionTrendChart"></canvas>
+                <canvas id="nutritionTrendChart" wire:ignore></canvas>
+                <div wire:loading wire:target="selectedYear, refreshStats" class="absolute inset-0 bg-white/60 backdrop-blur-[1px] flex items-center justify-center z-10">
+                    <div class="flex flex-col items-center gap-2">
+                        <span class="material-symbols-outlined text-teal-600 animate-spin">refresh</span>
+                        <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">Loading...</span>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -133,10 +149,13 @@
             <h5 class="text-base font-bold text-slate-900 mb-1">Distribusi Status Gizi</h5>
             <p class="text-sm text-slate-500 mb-5">Balita tahun {{ $selectedYear }}</p>
             <div class="relative flex justify-center mb-5">
-                <canvas id="nutritionDonutChart" width="180" height="180" style="max-width:180px;max-height:180px;"></canvas>
+                <canvas id="nutritionDonutChart" width="180" height="180" style="max-width:180px;max-height:180px;" wire:ignore></canvas>
                 <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                     <span class="text-2xl font-black text-slate-900">{{ $totalBalita }}</span>
                     <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Total</span>
+                </div>
+                <div wire:loading wire:target="selectedYear, refreshStats" class="absolute inset-0 bg-white/60 backdrop-blur-[1px] flex items-center justify-center z-10 rounded-full">
+                    <span class="material-symbols-outlined text-teal-600 animate-spin text-[20px]">refresh</span>
                 </div>
             </div>
             <div class="space-y-2.5">

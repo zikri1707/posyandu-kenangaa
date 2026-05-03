@@ -10,3 +10,13 @@ Artisan::command('inspire', function () {
 use Illuminate\Support\Facades\Schedule;
 
 Schedule::command('posyandu:send-reminders')->dailyAt('08:00');
+
+Schedule::call(function () {
+    // Global Snapshot
+    \App\Jobs\ComputeAnalyticsSnapshot::dispatch(null);
+
+    // Per-Posyandu Snapshots
+    \App\Models\Posyandu::all()->each(function ($posyandu) {
+        \App\Jobs\ComputeAnalyticsSnapshot::dispatch($posyandu->id);
+    });
+})->hourly();

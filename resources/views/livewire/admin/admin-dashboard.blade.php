@@ -30,6 +30,9 @@
     </style>
     @endpush
 
+<div>
+    @section('admin-title') Dashboard @endsection
+
     @php
         $hour = now()->hour;
         $sapa = $hour < 11 ? 'Selamat Pagi' : ($hour < 15 ? 'Selamat Siang' : ($hour < 18 ? 'Selamat Sore' : 'Selamat Malam'));
@@ -37,175 +40,148 @@
         $posyanduName = $user->posyandu?->name ?? 'Posyandu';
     @endphp
 
-    {{-- Hero Banner - More Compact --}}
-    <section class="rounded-[2rem] p-6 md:p-8 text-white relative overflow-hidden shadow-xl shadow-teal-900/10 mb-8 card-mobile"
-             style="background: radial-gradient(circle at top right, #00897b, #004d40);">
-        {{-- Decorative elements --}}
-        <div class="absolute right-0 top-0 w-80 h-80 bg-white/5 rounded-full blur-3xl -mr-24 -mt-24"></div>
-        <div class="absolute left-0 bottom-0 w-48 h-48 bg-teal-400/10 rounded-full blur-3xl -ml-24 -mb-24"></div>
+    {{-- ── Hero Banner (Modernized) ── --}}
+    <section class="premium-card relative overflow-hidden mb-8 group p-0!">
+        <div class="bg-premium-gradient p-8 md:p-10 text-white min-h-[240px] flex flex-col justify-center">
+            {{-- Decorative Animated Elements --}}
+            <div class="absolute right-0 top-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -mr-32 -mt-32 animate-pulse"></div>
+            <div class="absolute left-0 bottom-0 w-64 h-64 bg-teal-400/20 rounded-full blur-3xl -ml-32 -mb-32"></div>
 
-        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div class="space-y-3">
-                <div class="inline-flex items-center px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[10px] font-bold tracking-widest uppercase">
-                    {{ $posyanduName }}
+            <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
+                <div class="space-y-4">
+                    <div class="inline-flex items-center px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-[10px] font-bold tracking-widest uppercase">
+                        <span class="material-symbols-outlined text-[14px] mr-1.5">verified_user</span>
+                        {{ $posyanduName }}
+                    </div>
+                    <div>
+                        <h2 class="text-display text-4xl md:text-5xl text-white mb-2">
+                            {{ $sapa }}, <span class="text-teal-300">{{ explode(' ', $user->name)[0] }}</span>
+                        </h2>
+                        @if($user->posyandu?->pedukuhan)
+                        <p class="text-teal-50/80 font-medium text-lg flex items-center gap-2">
+                            <span class="material-symbols-outlined text-teal-300" style="font-size:20px;">location_on</span>
+                            {{ $user->posyandu->pedukuhan->name }}
+                        </p>
+                        @endif
+                    </div>
                 </div>
-                <h2 class="font-black text-white text-3xl md:text-4xl leading-tight tracking-tighter">
-                    {{ $sapa }}, <span class="text-teal-300">{{ explode(' ', $user->name)[0] }}</span>
-                </h2>
-                @if($user->posyandu?->pedukuhan)
-                <p class="text-teal-50/70 font-medium text-base flex items-center gap-2">
-                    <span class="material-symbols-outlined text-teal-300" style="font-size:20px;">location_on</span>
-                    {{ $user->posyandu->pedukuhan->name }}
-                </p>
-                @endif
-            </div>
-            <div class="flex flex-col sm:flex-row gap-3 flex-shrink-0">
-                @can('create', App\Models\Patient::class)
-                <a href="{{ route('admin.patients.create') }}"
-                   class="bg-white group text-teal-900 font-black px-6 py-4 rounded-2xl hover:bg-teal-50 transition-all shadow-lg shadow-teal-950/10 flex items-center justify-center gap-2 text-xs tracking-widest uppercase btn-mobile">
-                    <span class="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">person_add</span>
-                    Tambah Warga
-                </a>
-                @endcan
-                @can('create', App\Models\Patient::class)
-                <a href="{{ route('admin.medical-records.create') }}"
-                   class="bg-teal-700/30 backdrop-blur-md border border-white/30 text-white font-black px-6 py-4 rounded-2xl hover:bg-white/10 transition-all flex items-center justify-center gap-2 text-xs tracking-widest uppercase btn-mobile">
-                    <span class="material-symbols-outlined text-[20px]">note_add</span>
-                    Input Rekam Medis
-                </a>
-                @endcan
+                
+                <div class="flex flex-col sm:flex-row gap-4 flex-shrink-0">
+                    @can('create', App\Models\Patient::class)
+                    <a href="{{ route('admin.patients.create') }}"
+                       class="btn-premium bg-white text-teal-900 font-bold px-8 py-4 rounded-2xl flex items-center justify-center gap-2 text-sm tracking-wide shadow-2xl">
+                        <span class="material-symbols-outlined text-[20px]">person_add</span>
+                        Tambah Warga
+                    </a>
+                    @endcan
+                    @can('create', App\Models\Patient::class)
+                    <a href="{{ route('admin.medical-records.create') }}"
+                       class="btn-premium bg-teal-800/40 backdrop-blur-xl border border-white/30 text-white font-bold px-8 py-4 rounded-2xl flex items-center justify-center gap-2 text-sm tracking-wide">
+                        <span class="material-symbols-outlined text-[20px]">note_add</span>
+                        Input Rekam Medis
+                    </a>
+                    @endcan
+                </div>
             </div>
         </div>
     </section>
-    
 
-    {{-- KPI Stats Grid - Lebih Besar dan Mudah Dibaca --}}
-    <section class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-5 mb-8 stats-grid-mobile">
+    {{-- ── KPI Stats Grid ── --}}
+    <section class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-10">
         @php
         $stats = [
-            [
-                'label' => 'Balita',
-                'value' => $totalBalita,
-                'icon'  => 'child_care',
-                'icon_bg' => '#dbeafe',
-                'icon_color' => '#2563eb',
-            ],
-            [
-                'label' => 'Ibu Hamil',
-                'value' => $totalIbuHamil,
-                'icon'  => 'pregnant_woman',
-                'icon_bg' => '#fce7f3',
-                'icon_color' => '#db2777',
-            ],
-            [
-                'label' => 'Remaja',
-                'value' => $totalRemaja,
-                'icon'  => 'groups',
-                'icon_bg' => '#e0e7ff',
-                'icon_color' => '#4f46e5',
-            ],
-            [
-                'label' => 'Lansia',
-                'value' => $totalLansia,
-                'icon'  => 'elderly',
-                'icon_bg' => '#ffedd5',
-                'icon_color' => '#ea580c',
-            ],
-            [
-                'label' => 'Kunjungan',
-                'value' => $kunjunganBaru,
-                'icon'  => 'how_to_reg',
-                'icon_bg' => '#d1fae5',
-                'icon_color' => '#059669',
-            ],
-            [
-                'label' => 'Jadwal Aktif',
-                'value' => $jadwalAktif,
-                'icon'  => 'event_available',
-                'icon_bg' => '#f0fdf4',
-                'icon_color' => '#16a34a',
-            ],
+            ['label' => 'Balita',      'value' => $totalBalita,    'icon' => 'child_care',      'color' => 'blue'],
+            ['label' => 'Ibu Hamil',   'value' => $totalIbuHamil,  'icon' => 'pregnant_woman',  'color' => 'pink'],
+            ['label' => 'Remaja',      'value' => $totalRemaja,    'icon' => 'groups',          'color' => 'indigo'],
+            ['label' => 'Lansia',      'value' => $totalLansia,    'icon' => 'elderly',         'color' => 'orange'],
+            ['label' => 'Kunjungan',   'value' => $kunjunganBaru,  'icon' => 'how_to_reg',      'color' => 'emerald'],
+            ['label' => 'Jadwal Aktif','value' => $jadwalAktif,    'icon' => 'event_available', 'color' => 'green'],
         ];
         @endphp
 
         @foreach($stats as $s)
-        <div class="bg-white rounded-2xl border-0 p-5 md:p-6 shadow-lg shadow-slate-200/40 hover:shadow-xl hover:shadow-slate-300/50 transition-all duration-500 group card-mobile relative overflow-hidden">
-            <div class="absolute top-0 right-0 w-20 h-20 -mr-10 -mt-10 rounded-full transition-transform group-hover:scale-150 duration-700" 
-                 style="background: {{ $s['icon_bg'] }}; opacity: 0.15;"></div>
-            
+        <div class="bento-card p-6 relative overflow-hidden group">
             <div class="relative z-10">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="w-12 h-12 rounded-xl flex items-center justify-center shadow-inner"
-                         style="background:{{ $s['icon_bg'] }}; color:{{ $s['icon_color'] }};">
-                        <span class="material-symbols-outlined text-[24px]">{{ $s['icon'] }}</span>
-                    </div>
+                <div @class([
+                    'w-12 h-12 rounded-2xl flex items-center justify-center mb-5 transition-transform group-hover:scale-110 duration-500',
+                    'bg-blue-50 text-blue-600' => $s['color'] === 'blue',
+                    'bg-pink-50 text-pink-600' => $s['color'] === 'pink',
+                    'bg-indigo-50 text-indigo-600' => $s['color'] === 'indigo',
+                    'bg-orange-50 text-orange-600' => $s['color'] === 'orange',
+                    'bg-emerald-50 text-emerald-600' => $s['color'] === 'emerald',
+                    'bg-green-50 text-green-600' => $s['color'] === 'green',
+                ])>
+                    <span class="material-symbols-outlined text-[26px]">{{ $s['icon'] }}</span>
                 </div>
-                <p class="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">{{ $s['label'] }}</p>
-                <h3 class="font-black text-slate-900 text-3xl md:text-4xl tracking-tighter leading-none">{{ $s['value'] }}</h3>
+                <p class="text-label-lg text-slate-400 uppercase tracking-widest mb-1.5">{{ $s['label'] }}</p>
+                <h3 class="text-headline-lg text-4xl!">{{ number_format($s['value']) }}</h3>
             </div>
+            {{-- Subtle bg glow --}}
+            <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-slate-100 rounded-full opacity-0 group-hover:opacity-40 transition-opacity duration-700"></div>
         </div>
         @endforeach
     </section>
 
-    {{-- Main Content: Table + Sidebar --}}
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+    {{-- ── Main Content Area ── --}}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
 
-        {{-- Activity Records Table (2/3) --}}
-        <section class="lg:col-span-2 flex flex-col gap-6">
-            {{-- Status Gizi Alert (Existing) --}}
-            <div class="bg-white rounded-2xl border shadow-sm overflow-hidden flex flex-col card-mobile" style="border-color:#CBD5E1;">
-                <div class="px-4 md:px-6 py-5 border-b flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3" style="border-color:#E2E8F0; background:#F8FAFC;">
+        {{-- Left Side: Lists --}}
+        <div class="lg:col-span-2 space-y-8">
+            {{-- Stunting Alert Card --}}
+            <div class="premium-card overflow-hidden">
+                <div class="px-8 py-6 border-b border-slate-100 bg-red-50/30 flex justify-between items-center">
                     <div>
-                        <h3 class="font-black text-slate-900 flex items-center gap-2 text-xl md:text-2xl" style="letter-spacing:-0.02em;">
-                            <span class="material-symbols-outlined text-amber-500" style="font-size:32px;">warning</span>
+                        <h3 class="text-headline-md flex items-center gap-3 text-red-900">
+                            <span class="material-symbols-outlined text-red-500 text-[28px]" style="font-variation-settings: 'FILL' 1;">warning</span>
                             Status Gizi Perlu Perhatian
                         </h3>
-                        <p class="text-slate-600 text-sm md:text-base font-bold mt-1" style="line-height:1.5;">Daftar balita dengan status Stunting atau Gizi Buruk</p>
+                        <p class="text-sm text-red-700/70 font-medium mt-1">Daftar balita dengan indikasi stunting atau gizi buruk terbaru</p>
                     </div>
                 </div>
 
-                <div class="overflow-x-auto flex-1 table-responsive-mobile">
-                    <table class="min-w-full divide-y divide-gray-100">
-                        <thead class="bg-slate-50 text-xs md:text-sm font-black text-slate-600 uppercase tracking-wide">
-                            <tr>
-                                <th class="px-4 md:px-6 py-4 text-left whitespace-nowrap">Nama Lengkap</th>
-                                <th class="px-4 md:px-6 py-4 text-left whitespace-nowrap">Usia</th>
-                                <th class="px-4 md:px-6 py-4 text-left whitespace-nowrap">Status Gizi</th>
-                                <th class="px-4 md:px-6 py-4 text-right whitespace-nowrap">Aksi</th>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50/50">
+                                <th class="px-8 py-4 text-label-lg text-slate-500 uppercase">Nama Balita</th>
+                                <th class="px-8 py-4 text-label-lg text-slate-500 uppercase">Usia</th>
+                                <th class="px-8 py-4 text-label-lg text-slate-500 uppercase">Status</th>
+                                <th class="px-8 py-4 text-label-lg text-slate-500 uppercase text-right">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100 text-sm md:text-base">
+                        <tbody class="divide-y divide-slate-100">
                             @forelse($balitaStunting as $balita)
-                            <tr class="hover:bg-gray-50 transition">
-                                <td class="px-4 md:px-6 py-4">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 md:w-8 md:h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0"
-                                             style="background:#fee2e2; color:#dc2626;">
+                            <tr class="hover:bg-slate-50 transition-colors group">
+                                <td class="px-8 py-5">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-full bg-red-100 text-red-700 flex items-center justify-center font-bold text-sm">
                                             {{ strtoupper(substr($balita->full_name, 0, 2)) }}
                                         </div>
-                                        <span class="font-bold text-gray-900">{{ $balita->full_name }}</span>
+                                        <span class="text-body-md font-bold text-slate-900">{{ $balita->full_name }}</span>
                                     </div>
                                 </td>
-                                <td class="px-4 md:px-6 py-4 text-gray-700 font-semibold">{{ $balita->age }}</td>
-                                <td class="px-4 md:px-6 py-4">
-                                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold"
-                                          style="background:#fef2f2; color:#991b1b; border:2px solid #f87171;">
-                                        <span class="material-symbols-outlined" style="font-size:18px;">priority_high</span>
+                                <td class="px-8 py-5 text-body-md text-slate-600 font-medium">{{ $balita->age }}</td>
+                                <td class="px-8 py-5">
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700 border border-red-200">
+                                        <span class="material-symbols-outlined text-[14px]">error</span>
                                         Stunting
                                     </span>
                                 </td>
-                                <td class="px-4 md:px-6 py-4 text-right">
+                                <td class="px-8 py-5 text-right">
                                     <a href="{{ route('admin.patients.show', $balita->id) }}"
-                                       class="text-teal-700 hover:text-teal-900 font-bold text-sm md:text-base transition inline-flex items-center gap-1">
-                                       Detail 
-                                       <span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span>
+                                       class="text-sm font-bold text-teal-600 hover:text-teal-800 flex items-center justify-end gap-1 group-hover:translate-x-1 transition-transform">
+                                       Detail
+                                       <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
                                     </a>
                                 </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="4" class="px-4 md:px-6 py-10 text-center">
-                                    <p class="text-sm font-bold text-gray-500">Tidak ada data saat ini.</p>
+                                <td colspan="4" class="px-8 py-12 text-center text-slate-400 font-medium">
+                                    <div class="flex flex-col items-center gap-3">
+                                        <span class="material-symbols-outlined text-slate-200 text-5xl">task_alt</span>
+                                        <p>Semua data gizi terpantau aman.</p>
+                                    </div>
                                 </td>
                             </tr>
                             @endforelse
@@ -214,192 +190,208 @@
                 </div>
             </div>
 
-            {{-- Ringkasan Aktivitas Terkini (NEW) --}}
-            <div class="bg-white rounded-2xl border shadow-sm overflow-hidden flex flex-col card-mobile" style="border-color:#CBD5E1;">
-                <div class="px-4 md:px-6 py-5 border-b flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3" style="border-color:#E2E8F0; background:#F8FAFC;">
-                    <div>
-                        <h3 class="font-black text-slate-900 flex items-center gap-2 text-xl md:text-2xl" style="letter-spacing:-0.02em;">
-                            <span class="material-symbols-outlined text-teal-600" style="font-size:32px;">history</span>
-                            Ringkasan Aktivitas Terkini
-                        </h3>
-                        <p class="text-slate-600 text-sm md:text-base font-bold mt-1" style="line-height:1.5;">Catatan rekam medis terbaru di sistem</p>
-                    </div>
+            {{-- Recent Activity --}}
+            <div class="premium-card">
+                <div class="px-8 py-6 border-b border-slate-100 flex justify-between items-center">
+                    <h3 class="text-headline-md flex items-center gap-3">
+                        <span class="material-symbols-outlined text-teal-600 text-[28px]">history</span>
+                        Aktivitas Terkini
+                    </h3>
                 </div>
-
-                <div class="overflow-x-auto flex-1 table-responsive-mobile">
-                    <table class="min-w-full divide-y divide-gray-100">
-                        <thead class="bg-slate-50 text-xs md:text-sm font-black text-slate-600 uppercase tracking-wide">
-                            <tr>
-                                <th class="px-4 md:px-6 py-4 text-left whitespace-nowrap">Warga</th>
-                                <th class="px-4 md:px-6 py-4 text-left whitespace-nowrap">Tgl Kunjungan</th>
-                                <th class="px-4 md:px-6 py-4 text-left whitespace-nowrap">Posyandu</th>
-                                <th class="px-4 md:px-6 py-4 text-left whitespace-nowrap">Kader</th>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="bg-slate-50/50">
+                                <th class="px-8 py-4 text-label-lg text-slate-500 uppercase">Warga</th>
+                                <th class="px-8 py-4 text-label-lg text-slate-500 uppercase">Tanggal</th>
+                                <th class="px-8 py-4 text-label-lg text-slate-500 uppercase">Unit</th>
+                                <th class="px-8 py-4 text-label-lg text-slate-500 uppercase">Kader</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100 text-sm md:text-base">
+                        <tbody class="divide-y divide-slate-100">
                             @forelse($recentActivities as $activity)
-                            <tr class="hover:bg-gray-50 transition">
-                                <td class="px-4 md:px-6 py-4">
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-8 py-5">
                                     <div class="flex flex-col">
-                                        <span class="font-bold text-gray-900">{{ $activity->patient->full_name }}</span>
-                                        <span class="text-xs text-slate-500 font-medium capitalize">{{ $activity->patient->category }}</span>
+                                        <span class="text-body-md font-bold text-slate-900">{{ $activity->patient->full_name }}</span>
+                                        <span class="text-[10px] text-slate-400 font-black uppercase tracking-tighter">{{ $activity->patient->category }}</span>
                                     </div>
                                 </td>
-                                <td class="px-4 md:px-6 py-4 text-gray-700 font-semibold">{{ $activity->visit_date->format('d/m/Y') }}</td>
-                                <td class="px-4 md:px-6 py-4">
-                                    <span class="px-2 py-1 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold">
+                                <td class="px-8 py-5 text-body-md text-slate-600">{{ $activity->visit_date->format('d M Y') }}</td>
+                                <td class="px-8 py-5">
+                                    <span class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 text-xs font-bold">
                                         {{ $activity->patient->posyandu->name }}
                                     </span>
                                 </td>
-                                <td class="px-4 md:px-6 py-4 text-gray-600 font-medium">{{ $activity->user->name ?? '-' }}</td>
+                                <td class="px-8 py-5 text-body-md text-slate-600">{{ $activity->user->name ?? '-' }}</td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="4" class="px-4 md:px-6 py-14 text-center text-gray-500 font-bold">Belum ada aktivitas terekam.</td>
+                                <td colspan="4" class="px-8 py-12 text-center text-slate-400">Belum ada aktivitas.</td>
                             </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
             </div>
-        </section>
+        </div>
 
-        {{-- Right Sidebar (1/3) - Lebih Besar dan Jelas --}}
-        <aside class="flex flex-col gap-5">
-
-            {{-- Upcoming Schedule Card --}}
-            <div class="bg-white rounded-2xl border shadow-sm p-5 md:p-6 card-mobile" style="border-color:#CBD5E1;">
-                <h3 class="font-black text-slate-900 mb-5 flex items-center gap-2 text-lg md:text-xl">
-                    <span class="material-symbols-outlined text-teal-600 text-[28px]">calendar_month</span>
+        {{-- Right Side: Widgets --}}
+        <div class="space-y-8">
+            {{-- Upcoming Schedule Widget --}}
+            <div class="premium-card p-8 bg-slate-900 text-white">
+                <h3 class="text-headline-md text-white mb-6 flex items-center gap-3">
+                    <span class="material-symbols-outlined text-teal-400 text-[28px]">calendar_today</span>
                     Jadwal Terdekat
                 </h3>
 
                 @if($upcomingSchedule)
-                <div class="bg-gray-50 rounded-xl p-4 md:p-5 border-2 border-gray-200">
-                    <div class="flex items-start gap-4 mb-4">
-                        <div class="rounded-xl p-3 md:p-4 text-center min-w-[60px] md:min-w-[54px] flex-shrink-0 text-white"
-                             style="background: linear-gradient(135deg,#006a61,#00897b);">
-                            <div class="text-xs md:text-sm font-bold uppercase opacity-90 leading-none mb-1">
+                <div class="space-y-6">
+                    <div class="flex items-start gap-5">
+                        <div class="w-16 h-16 rounded-2xl bg-teal-500 flex flex-col items-center justify-center text-white shadow-lg shadow-teal-500/20">
+                            <span class="text-[10px] font-black uppercase opacity-80 leading-none mb-1">
                                 {{ \Carbon\Carbon::parse($upcomingSchedule->start_time)->translatedFormat('M') }}
-                            </div>
-                            <div class="text-3xl md:text-2xl font-black leading-none">
+                            </span>
+                            <span class="text-2xl font-black leading-none">
                                 {{ \Carbon\Carbon::parse($upcomingSchedule->start_time)->format('d') }}
-                            </div>
+                            </span>
                         </div>
                         <div class="flex-1 min-w-0">
-                            <h4 class="font-bold text-gray-900 text-base md:text-sm leading-tight mb-2">{{ $upcomingSchedule->title }}</h4>
-                            <p class="text-sm md:text-xs text-gray-600 flex items-center gap-1.5" style="line-height:1.5;">
-                                <span class="material-symbols-outlined" style="font-size:18px;">schedule</span>
-                                {{ \Carbon\Carbon::parse($upcomingSchedule->start_time)->format('H:i') }}
-                                – {{ \Carbon\Carbon::parse($upcomingSchedule->end_time)->format('H:i') }} WIB
+                            <h4 class="text-body-md font-bold text-white mb-1 line-clamp-2 leading-snug">{{ $upcomingSchedule->title }}</h4>
+                            <p class="text-xs text-teal-100/60 flex items-center gap-1.5 font-medium">
+                                <span class="material-symbols-outlined text-[16px]">schedule</span>
+                                {{ \Carbon\Carbon::parse($upcomingSchedule->start_time)->format('H:i') }} WIB
                             </p>
                         </div>
                     </div>
+                    
                     @if($upcomingSchedule->location)
-                    <p class="text-sm md:text-xs text-gray-600 flex items-start gap-2 mt-3 pt-3 border-t-2 border-gray-200" style="line-height:1.5;">
-                        <span class="material-symbols-outlined text-gray-500 flex-shrink-0" style="font-size:18px; margin-top:1px;">location_on</span>
-                        {{ $upcomingSchedule->location }}
-                    </p>
+                    <div class="flex items-start gap-3 p-4 rounded-xl bg-white/5 border border-white/10">
+                        <span class="material-symbols-outlined text-teal-400 text-[18px] mt-0.5">location_on</span>
+                        <p class="text-xs text-slate-300 font-medium leading-relaxed">{{ $upcomingSchedule->location }}</p>
+                    </div>
                     @endif
-                    <a href="{{ route('admin.schedules.index') }}"
-                       class="mt-4 w-full flex items-center justify-center gap-2 py-3.5 md:py-2.5 rounded-xl border-2 font-bold text-sm md:text-base transition"
-                       style="border-color:#00685f; color:#00685f;"
-                       onmouseenter="this.style.background='#f0fdf4';"
-                       onmouseleave="this.style.background='transparent';">
-                        <span class="material-symbols-outlined" style="font-size:20px;">event</span>
-                        Lihat Semua Jadwal
+
+                    <a href="{{ route('admin.schedules.index') }}" 
+                       class="w-full btn-premium bg-white text-slate-900 py-3.5 rounded-xl font-bold text-sm text-center">
+                        Lihat Jadwal Lengkap
                     </a>
                 </div>
                 @else
-                <div class="text-center py-10 text-gray-400">
-                    <span class="material-symbols-outlined block mb-3" style="font-size:44px;">event_busy</span>
-                    <p class="text-sm md:text-xs font-bold text-gray-500">Belum ada jadwal mendatang</p>
-                    <a href="{{ route('admin.schedules.create') }}"
-                       class="mt-3 inline-block text-teal-700 hover:text-teal-900 text-sm md:text-xs font-bold">+ Buat Jadwal</a>
+                <div class="text-center py-10 opacity-40">
+                    <span class="material-symbols-outlined text-5xl mb-4">event_busy</span>
+                    <p class="text-sm font-bold uppercase tracking-widest">Belum ada jadwal</p>
                 </div>
                 @endif
             </div>
 
-            {{-- Grafik Donat --}}
-            <div class="bg-white rounded-2xl border shadow-sm p-5 md:p-6 flex-1 card-mobile" style="border-color:#CBD5E1;">
-                <h3 class="font-bold text-gray-900 mb-1 text-lg md:text-base">Distribusi Status Gizi</h3>
-                <p class="text-sm md:text-xs text-gray-500 mb-4" style="line-height:1.5;">Rekam medis terkini per balita</p>
-                <div class="relative w-full" style="height:200px;">
+            {{-- Nutrition Distribution Chart --}}
+            <div class="premium-card p-8">
+                <h3 class="text-headline-md mb-2">Status Gizi</h3>
+                <p class="text-xs text-slate-400 font-bold uppercase tracking-widest mb-8">Distribusi Kumulatif</p>
+                <div class="relative h-64 mb-6">
                     <canvas id="nutritionStatusChart"></canvas>
                 </div>
+                {{-- Custom Legend --}}
+                <div class="space-y-3">
+                    @php $colors = ['#10b981', '#f59e0b', '#f97316', '#ef4444', '#94a3b8']; @endphp
+                    @foreach($nutritionStatusDistribution['labels'] as $index => $label)
+                    <div class="flex justify-between items-center text-xs font-bold">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full" style="background-color: {{ $colors[$index] ?? '#94a3b8' }}"></span>
+                            <span class="text-slate-600">{{ $label }}</span>
+                        </div>
+                        <span class="text-slate-900">{{ $nutritionStatusDistribution['data'][$index] }}</span>
+                    </div>
+                    @endforeach
+                </div>
             </div>
-            {{-- Breakdown per Unit (khusus SuperAdmin) --}}
+        </div>
+    </div>
+
+    {{-- ── Analytics Section ── --}}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
+        <div class="lg:col-span-2 premium-card p-8!">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 px-8 pt-8">
+                <div>
+                    <h3 class="text-headline-md">Tren Penimbangan Bulanan</h3>
+                    <p class="text-sm text-slate-500 font-medium mt-1">Volume pemeriksaan rekam medis warga dalam setahun terakhir</p>
+                </div>
+                <div class="flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-xl border border-slate-200">
+                    <span class="w-2.5 h-2.5 bg-teal-600 rounded-full animate-pulse"></span>
+                    <span class="text-xs font-bold text-slate-600 uppercase tracking-widest">Live Updates</span>
+                </div>
+            </div>
+            <div class="h-[350px] px-8 pb-8">
+                <canvas id="monthlyWeighingChart"></canvas>
+            </div>
+        </div>
+
+        {{-- Posyandu Stats (SuperAdmin only) --}}
+        <div class="space-y-8">
             @if(auth()->user()->isSuperAdmin())
-            <div class="bg-white rounded-2xl border shadow-sm p-5 md:p-6 card-mobile" style="border-color:#CBD5E1;">
-                <h3 class="font-black text-slate-900 mb-4 flex items-center gap-2 text-lg md:text-xl">
+            <div class="premium-card p-8">
+                <h3 class="text-headline-md mb-6 flex items-center gap-3">
                     <span class="material-symbols-outlined text-indigo-600 text-[28px]">domain</span>
                     Sasaran per Unit
                 </h3>
-                <div class="space-y-3">
+                <div class="space-y-4">
                     @foreach($posyanduStats as $pStat)
-                    <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200">
+                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 group hover:border-indigo-200 transition-colors">
                         <div>
-                            <p class="font-bold text-slate-800 text-sm md:text-base">{{ $pStat->name }}</p>
-                            <p class="text-xs text-slate-500 font-medium">{{ $pStat->pedukuhan->name ?? 'Wilayah Luar' }}</p>
+                            <p class="text-body-md font-bold text-slate-900">{{ $pStat->name }}</p>
+                            <p class="text-[10px] text-slate-400 font-black uppercase tracking-tighter">{{ $pStat->pedukuhan->name ?? 'Wilayah Luar' }}</p>
                         </div>
                         <div class="text-right">
-                            <span class="text-lg font-black text-slate-900">{{ $pStat->patients_count }}</span>
-                            <p class="text-[10px] uppercase font-black text-slate-400 tracking-tighter">Warga</p>
+                            <span class="text-xl font-black text-slate-900">{{ $pStat->patients_count }}</span>
+                            <p class="text-[9px] uppercase font-black text-slate-400 tracking-widest">Warga</p>
                         </div>
                     </div>
                     @endforeach
                 </div>
             </div>
             @endif
-        </aside>
-    </div>
 
-    {{-- Chart Tren Penimbangan - Lebih Besar --}}
-    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-5 md:p-6 mb-8 overflow-hidden card-mobile">
-        <div class="flex items-center justify-between mb-6">
-            <div>
-                <h3 class="font-black text-slate-900 text-lg md:text-base">Tren Penimbangan Bulanan</h3>
-                <p class="text-sm md:text-xs text-slate-500 font-bold mt-1" style="line-height:1.5;">Jumlah kunjungan rekam medis dalam 12 bulan terakhir</p>
-            </div>
-        </div>
-        <div class="w-full overflow-x-auto">
-            <div class="min-w-[600px] h-[280px] md:h-[260px] relative">
-                <canvas id="monthlyWeighingChart"></canvas>
+            {{-- Quick Access (Mobile/Sidebar fallback) --}}
+            <div class="bento-card p-8 bg-teal-900 text-white flex flex-col justify-center items-center text-center">
+                <div class="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center mb-4">
+                    <span class="material-symbols-outlined text-teal-300 text-3xl">help_outline</span>
+                </div>
+                <h4 class="text-headline-sm text-white mb-2">Butuh Bantuan?</h4>
+                <p class="text-xs text-teal-100/60 mb-6 font-medium">Baca panduan penggunaan sistem Posyandu Admin Dashboard</p>
+                <a href="#" class="w-full py-3 bg-white text-teal-900 rounded-xl font-bold text-sm">Buka Panduan</a>
             </div>
         </div>
     </div>
 
-    {{-- Quick Actions - Tombol Lebih Besar untuk Ibu-Ibu --}}
-    <div class="bg-white rounded-2xl border shadow-sm p-5 md:p-6 card-mobile" style="border-color:#CBD5E1;">
-        <h3 class="font-bold text-gray-900 mb-1 text-lg md:text-base">Akses Cepat</h3>
-        <p class="text-sm md:text-xs text-gray-500 mb-5" style="line-height:1.5;">Pintasan ke halaman utama</p>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-            @php
-            $shortcuts = [
-                ['href' => route('admin.patients.index'),        'icon' => 'groups',         'label' => 'Data Warga',        'sub' => 'Lihat semua sasaran', 'bg'=>'#dbeafe','color'=>'#1d4ed8'],
-                ['href' => route('admin.schedules.index'),       'icon' => 'calendar_month',  'label' => 'Jadwal Kegiatan',   'sub' => 'Lihat jadwal aktif',  'bg'=>'#d1fae5','color'=>'#065f46'],
-                ['href' => route('admin.medical-records.index'), 'icon' => 'clinical_notes',  'label' => 'Rekam Medis',       'sub' => 'Buku KMS & pemeriksaan','bg'=>'#ede9fe','color'=>'#6d28d9'],
-                ['href' => route('admin.articles.index'),        'icon' => 'newspaper',       'label' => 'Artikel & Edukasi', 'sub' => 'Kelola konten info',  'bg'=>'#fce7f3','color'=>'#be185d'],
-            ];
-            @endphp
-            @foreach($shortcuts as $s)
-            <a href="{{ $s['href'] }}"
-               class="flex items-center gap-3 md:gap-4 p-4 md:p-5 rounded-xl border-2 border-transparent transition-all group hover:border-gray-200 hover:shadow-md"
-               onmouseenter="this.style.background='#F8FAFC';"
-               onmouseleave="this.style.background='transparent';">
-                <div class="w-12 h-12 md:w-10 md:h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                     style="background:{{ $s['bg'] }}; color:{{ $s['color'] }};">
-                    <span class="material-symbols-outlined" style="font-size:24px;">{{ $s['icon'] }}</span>
-                </div>
-                <div class="min-w-0">
-                    <p class="font-bold text-gray-900 text-base md:text-sm truncate">{{ $s['label'] }}</p>
-                    <p class="text-gray-500 text-sm md:text-xs truncate mt-1" style="line-height:1.4;">{{ $s['sub'] }}</p>
-                </div>
-            </a>
-            @endforeach
-        </div>
-    </div>
-
+    {{-- ── Final Footer Quick Access ── --}}
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        @php
+        $shortcuts = [
+            ['href' => route('admin.patients.index'),        'icon' => 'groups',         'label' => 'Data Warga',   'color' => 'blue'],
+            ['href' => route('admin.schedules.index'),       'icon' => 'calendar_month',  'label' => 'Jadwal Aktif', 'color' => 'emerald'],
+            ['href' => route('admin.medical-records.index'), 'icon' => 'clinical_notes',  'label' => 'Rekam Medis',  'color' => 'indigo'],
+            ['href' => route('admin.articles.index'),        'icon' => 'newspaper',       'label' => 'Edukasi KIA',  'color' => 'pink'],
+        ];
+        @endphp
+        @foreach($shortcuts as $s)
+        <a href="{{ $s['href'] }}" class="bento-card p-6 flex items-center gap-5 hover-lift">
+            <div @class([
+                'w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0',
+                'bg-blue-100 text-blue-600' => $s['color'] === 'blue',
+                'bg-emerald-100 text-emerald-600' => $s['color'] === 'emerald',
+                'bg-indigo-100 text-indigo-600' => $s['color'] === 'indigo',
+                'bg-pink-100 text-pink-600' => $s['color'] === 'pink',
+            ])>
+                <span class="material-symbols-outlined text-[24px]">{{ $s['icon'] }}</span>
+            </div>
+            <div class="min-w-0">
+                <h4 class="text-body-md font-bold text-slate-900">{{ $s['label'] }}</h4>
+                <p class="text-[10px] text-slate-400 font-black uppercase tracking-tighter mt-0.5">Buka Halaman</p>
+            </div>
+        </a>
+        @endforeach
+    </section>
     @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script>
@@ -409,24 +401,40 @@
         if (nutritionCtx) {
             const nd = @json($nutritionStatusDistribution);
             const cMap = {
-                'Normal':'#10b981','Gizi Kurang':'#f59e0b',
-                'Gizi Lebih':'#f97316','Gizi Buruk/Stunting':'#ef4444',
+                'Normal':'#10b981',
+                'Gizi Kurang':'#f59e0b',
+                'Gizi Lebih':'#f97316',
+                'Gizi Buruk/Stunting':'#ef4444',
                 'Tidak Dapat Dihitung':'#94a3b8'
             };
             new Chart(nutritionCtx, {
                 type: 'doughnut',
                 data: {
                     labels: nd.labels,
-                    datasets: [{ data: nd.data, backgroundColor: nd.labels.map(l=>cMap[l]||'#94a3b8'), borderWidth: 2, borderColor:'#fff' }]
+                    datasets: [{ 
+                        data: nd.data, 
+                        backgroundColor: nd.labels.map(l => cMap[l] || '#94a3b8'), 
+                        borderWidth: 2, 
+                        borderColor: '#fff' 
+                    }]
                 },
                 options: {
-                    responsive:true, maintainAspectRatio:false, cutout:'72%',
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    cutout: '72%',
                     plugins: {
-                        legend: { position:'bottom', labels:{ padding:12, usePointStyle:true, pointStyle:'circle', font:{size:10} } },
-                        tooltip: { callbacks: { label: c => {
-                            const t = c.dataset.data.reduce((a,b)=>a+b,0);
-                            return `${c.label}: ${c.parsed} (${t>0?((c.parsed/t)*100).toFixed(1):0}%)`;
-                        }}}
+                        legend: { display: false },
+                        tooltip: { 
+                            backgroundColor: '#1e293b',
+                            padding: 12,
+                            cornerRadius: 8,
+                            callbacks: { 
+                                label: c => {
+                                    const t = c.dataset.data.reduce((a, b) => a + b, 0);
+                                    return `${c.label}: ${c.parsed} (${t > 0 ? ((c.parsed / t) * 100).toFixed(1) : 0}%)`;
+                                }
+                            }
+                        }
                     }
                 }
             });
@@ -436,33 +444,56 @@
         const weighCtx = document.getElementById('monthlyWeighingChart');
         if (weighCtx) {
             const wd = @json($monthlyWeighingData);
-            const g = weighCtx.getContext('2d').createLinearGradient(0,0,0,220);
-            g.addColorStop(0,'rgba(0,106,97,0.2)');
-            g.addColorStop(1,'rgba(0,106,97,0)');
+            const g = weighCtx.getContext('2d').createLinearGradient(0, 0, 0, 300);
+            g.addColorStop(0, 'rgba(13, 148, 136, 0.15)');
+            g.addColorStop(1, 'rgba(13, 148, 136, 0)');
+            
             new Chart(weighCtx, {
-                type:'line',
+                type: 'line',
                 data: {
                     labels: wd.labels,
                     datasets: [{
-                        label:'Penimbangan',
+                        label: 'Penimbangan',
                         data: wd.data,
-                        borderColor:'#00685f', backgroundColor:g,
-                        borderWidth:3, fill:true, tension:0.4,
-                        pointRadius:4, pointHoverRadius:6,
-                        pointBackgroundColor:'#fff', pointBorderColor:'#00685f', pointBorderWidth:2
+                        borderColor: '#0d9488', 
+                        backgroundColor: g,
+                        borderWidth: 3, 
+                        fill: true, 
+                        tension: 0.4,
+                        pointRadius: 4, 
+                        pointHoverRadius: 6,
+                        pointBackgroundColor: '#fff', 
+                        pointBorderColor: '#0d9488', 
+                        pointBorderWidth: 2
                     }]
                 },
                 options: {
-                    responsive:true, maintainAspectRatio:false,
+                    responsive: true, 
+                    maintainAspectRatio: false,
                     plugins: {
-                        legend:{display:false},
-                        tooltip:{ mode:'index', intersect:false, backgroundColor:'#1e293b', padding:10, cornerRadius:8, displayColors:false }
+                        legend: { display: false },
+                        tooltip: { 
+                            mode: 'index', 
+                            intersect: false, 
+                            backgroundColor: '#1e293b', 
+                            padding: 12, 
+                            cornerRadius: 8 
+                        }
                     },
                     scales: {
-                        y:{ beginAtZero:true, grid:{color:'#f1f5f9'}, border:{display:false} },
-                        x:{ grid:{display:false}, border:{display:false} }
+                        y: { 
+                            beginAtZero: true, 
+                            grid: { color: '#f1f5f9' }, 
+                            border: { display: false },
+                            ticks: { font: { size: 11 }, color: '#94a3b8' }
+                        },
+                        x: { 
+                            grid: { display: false }, 
+                            border: { display: false },
+                            ticks: { font: { size: 11, weight: '600' }, color: '#64748b' }
+                        }
                     },
-                    interaction:{ mode:'nearest', axis:'x', intersect:false }
+                    interaction: { mode: 'nearest', axis: 'x', intersect: false }
                 }
             });
         }

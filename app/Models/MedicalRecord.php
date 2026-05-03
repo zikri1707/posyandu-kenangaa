@@ -11,6 +11,20 @@ class MedicalRecord extends Model
 {
     use HasFactory, HasPosyanduAccess, LogsActivity;
 
+    // Nutrition Status (BB/U)
+    const NUTRITION_NORMAL      = 'Normal';
+    const NUTRITION_GIZI_BAIK   = 'Gizi Baik';
+    const NUTRITION_GIZI_KURANG = 'Gizi Kurang';
+    const NUTRITION_GIZI_LEBIH  = 'Gizi Lebih';
+    const NUTRITION_GIZI_BURUK  = 'Gizi Buruk';
+    const NUTRITION_STUNTING    = 'Gizi Buruk/Stunting';
+
+    // Stunting Status (TB/U)
+    const STUNTING_NORMAL       = 'Normal';
+    const STUNTING_PENDEK       = 'Pendek';
+    const STUNTING_SANGAT_PENDEK = 'Sangat Pendek';
+    const STUNTING_TINGGI       = 'Tinggi';
+
     protected $fillable = [
         'patient_id', 'user_id', 'visit_date', 'weight', 'height',
         'measurement_method', 'head_circumference', 'immunization', 

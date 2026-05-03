@@ -10,11 +10,13 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Livewire\Shared\BaseAdminComponent;
+use App\Jobs\ComputeAnalyticsSnapshot;
 
 class Analytics extends BaseAdminComponent
 {
     public int $selectedYear;
     public array $years = [];
+    public ?string $lastUpdated = null;
 
     // Overview stats
     public int   $totalBalita      = 0;
@@ -54,38 +56,85 @@ class Analytics extends BaseAdminComponent
         $this->loadData();
     }
 
+    /**
+     * Refresh data manually (clears cache)
+     */
+    public function refreshStats(): void
+    {
+        $user = Auth::user();
+        ComputeAnalyticsSnapshot::dispatch($user->isSuperAdmin() ? null : $user->posyandu_id, $this->selectedYear);
+        $this->notify('Proses pembaruan data dimulai di latar belakang');
+    }
+
     protected function loadData(): void
     {
         $user = Auth::user();
+        $posyanduId = $user->isSuperAdmin() ? null : $user->posyandu_id;
+        $key = "year_{$this->selectedYear}";
 
-        // Menggunakan scope dari Trait di BaseAdminComponent
+        $snapshot = \App\Models\AnalyticsSnapshot::where('posyandu_id', $posyanduId)
+            ->where('key', $key)
+            ->first();
+
+        if ($snapshot) {
+            $data = $snapshot->data['analytics_data'];
+            $this->lastUpdated = $snapshot->last_computed_at->format('d M Y H:i');
+        } else {
+            // Fallback to legacy computation if no snapshot exists
+            $data = $this->fetchAnalyticsData();
+            $this->lastUpdated = 'Live (Memproses Snapshot...)';
+            
+            // Dispatch job to create snapshot for next time
+            ComputeAnalyticsSnapshot::dispatch($posyanduId, $this->selectedYear);
+        }
+
+        foreach ($data as $key => $value) {
+            if (property_exists($this, $key)) {
+                $this->{$key} = $value;
+            }
+        }
+
+        // Recent records (not snapshotted as they are real-time)
+        $medicalRecordQuery = $this->applyPosyanduScope(MedicalRecord::query());
+        $this->recentRecords = $medicalRecordQuery
+            ->with(['patient.posyandu'])
+            ->whereHas('patient', fn($q) => $q->where('category', 'balita'))
+            ->latest('visit_date')
+            ->limit(5)
+            ->get();
+    }
+
+    protected function fetchAnalyticsData(): array
+    {
+        $user = Auth::user();
         $patientQuery = $this->applyPosyanduScope(Patient::query());
         $medicalRecordQuery = $this->applyPosyanduScope(MedicalRecord::query());
 
         // ── Overview Stats ──────────────────────────────────────────
-        $this->totalBalita = (clone $patientQuery)->where('category', 'balita')->count();
+        $totalBalita = (clone $patientQuery)->where('category', 'balita')->count();
 
-        // Stunting rate: balita dengan rekam medis terbaru = Gizi Buruk / Stunting
-        $totalWithRecord = (clone $patientQuery)
-            ->where('category', 'balita')
-            ->whereHas('medicalRecords')
-            ->count();
+        // Stunting rate: latest record per patient
+        $latestRecordSubquery = MedicalRecord::selectRaw('MAX(id) as id')
+            ->groupBy('patient_id');
 
-        $stuntingCount = (clone $patientQuery)
+        $baseBalitaWithRecords = (clone $patientQuery)
             ->where('category', 'balita')
+            ->whereHas('medicalRecords');
+
+        $totalWithRecord = (clone $baseBalitaWithRecords)->count();
+
+        $stuntingCount = (clone $baseBalitaWithRecords)
             ->whereHas('medicalRecords', fn($q) =>
-                $q->whereIn('nutrition_status', ['Gizi Buruk', 'Gizi Buruk/Stunting'])
-                  ->whereIn('id', fn($sub) =>
-                      $sub->selectRaw('MAX(id)')->from('medical_records')->groupBy('patient_id')
-                  )
+                $q->whereIn('nutrition_status', [
+                    MedicalRecord::NUTRITION_STUNTING,
+                    MedicalRecord::NUTRITION_GIZI_BURUK
+                ])->whereIn('id', $latestRecordSubquery)
             )
             ->count();
 
-        $this->stuntingRate = $totalWithRecord > 0
-            ? round(($stuntingCount / $totalWithRecord) * 100, 1)
-            : 0;
+        $stuntingRate = $totalWithRecord > 0 ? round(($stuntingCount / $totalWithRecord) * 100, 1) : 0;
 
-        // Cakupan imunisasi
+        // Cakupan Imunisasi
         $balitaWithImunisasi = (clone $medicalRecordQuery)
             ->whereHas('patient', fn($q) => $q->where('category', 'balita'))
             ->whereNotNull('immunization')
@@ -94,33 +143,42 @@ class Analytics extends BaseAdminComponent
             ->distinct('patient_id')
             ->count('patient_id');
 
-        $this->cakupanImunisasi = $this->totalBalita > 0
-            ? round(($balitaWithImunisasi / $this->totalBalita) * 100, 1)
-            : 0;
+        $cakupanImunisasi = $totalBalita > 0 ? round(($balitaWithImunisasi / $totalBalita) * 100, 1) : 0;
 
-        // Kader aktif
-        $this->kaderAktif = User::where('is_active', true)
+        // Kader Aktif
+        $kaderAktif = User::where('is_active', true)
             ->whereIn('role', ['staff', 'medical', 'admin'])
             ->when(!$user->isSuperAdmin() && $user->posyandu_id, fn($q) =>
                 $q->where('posyandu_id', $user->posyandu_id)
             )
             ->count();
 
-        // ── Trend 12 Bulan ──────────────────────────────────────────
-        $this->trendLabels   = [];
-        $this->trendNormal   = [];
-        $this->trendStunting = [];
+        // ── Trend 12 Bulan (Optimized to single query) ───────────────
+        $trends = (clone $medicalRecordQuery)
+            ->whereHas('patient', fn($q) => $q->where('category', 'balita'))
+            ->whereYear('visit_date', $this->selectedYear)
+            ->selectRaw('MONTH(visit_date) as month')
+            ->selectRaw('COUNT(CASE WHEN nutrition_status IN (?, ?) THEN 1 END) as normal_count', [
+                MedicalRecord::NUTRITION_NORMAL,
+                MedicalRecord::NUTRITION_GIZI_BAIK
+            ])
+            ->selectRaw('COUNT(CASE WHEN nutrition_status IN (?, ?) THEN 1 END) as stunting_count', [
+                MedicalRecord::NUTRITION_STUNTING,
+                MedicalRecord::NUTRITION_GIZI_BURUK
+            ])
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get()
+            ->keyBy('month');
+
+        $trendLabels  = [];
+        $trendNormal  = [];
+        $trendStunting = [];
 
         for ($m = 1; $m <= 12; $m++) {
-            $this->trendLabels[] = Carbon::create($this->selectedYear, $m)->translatedFormat('M');
-
-            $base = (clone $medicalRecordQuery)
-                ->whereHas('patient', fn($q) => $q->where('category', 'balita'))
-                ->whereYear('visit_date', $this->selectedYear)
-                ->whereMonth('visit_date', $m);
-
-            $this->trendNormal[]   = (clone $base)->whereIn('nutrition_status', ['Normal', 'Gizi Baik'])->count();
-            $this->trendStunting[] = (clone $base)->whereIn('nutrition_status', ['Gizi Buruk', 'Gizi Buruk/Stunting'])->count();
+            $trendLabels[] = Carbon::create($this->selectedYear, $m)->translatedFormat('M');
+            $trendNormal[] = $trends->get($m)->normal_count ?? 0;
+            $trendStunting[] = $trends->get($m)->stunting_count ?? 0;
         }
 
         // ── Distribusi Status Gizi ───────────────────────────────────
@@ -133,32 +191,35 @@ class Analytics extends BaseAdminComponent
             ->pluck('total', 'nutrition_status')
             ->toArray();
 
-        $this->nutritionLabels = array_keys($dist);
-        $this->nutritionData   = array_values($dist);
-
-        // ── Stunting per Posyandu ────────────────────────────────────
+        // ── Stunting per Posyandu (Optimized) ─────────────────────────
         $posyandus = $this->getAllowedPosyandus();
+        $posyanduIds = $posyandus->pluck('id');
 
-        $this->stuntingByPosyandu = [];
+        // Fetch aggregates in one query per metric
+        $totalsPerPosyandu = Patient::whereIn('posyandu_id', $posyanduIds)
+            ->where('category', 'balita')
+            ->whereHas('medicalRecords')
+            ->select('posyandu_id', DB::raw('COUNT(*) as count'))
+            ->groupBy('posyandu_id')
+            ->pluck('count', 'posyandu_id');
+
+        $stuntingPerPosyandu = Patient::whereIn('posyandu_id', $posyanduIds)
+            ->where('category', 'balita')
+            ->whereHas('medicalRecords', fn($q) =>
+                $q->whereIn('nutrition_status', [MedicalRecord::NUTRITION_STUNTING, MedicalRecord::NUTRITION_GIZI_BURUK])
+                  ->whereIn('id', $latestRecordSubquery)
+            )
+            ->select('posyandu_id', DB::raw('COUNT(*) as count'))
+            ->groupBy('posyandu_id')
+            ->pluck('count', 'posyandu_id');
+
+        $stuntingByPosyandu = [];
         foreach ($posyandus as $pos) {
-            $total = Patient::where('posyandu_id', $pos->id)
-                ->where('category', 'balita')
-                ->whereHas('medicalRecords')
-                ->count();
-
-            $stunting = Patient::where('posyandu_id', $pos->id)
-                ->where('category', 'balita')
-                ->whereHas('medicalRecords', fn($q) =>
-                    $q->whereIn('nutrition_status', ['Gizi Buruk', 'Gizi Buruk/Stunting'])
-                      ->whereIn('id', fn($sub) =>
-                          $sub->selectRaw('MAX(id)')->from('medical_records')->groupBy('patient_id')
-                      )
-                )
-                ->count();
-
+            $total = $totalsPerPosyandu->get($pos->id, 0);
+            $stunting = $stuntingPerPosyandu->get($pos->id, 0);
             $rate = $total > 0 ? round(($stunting / $total) * 100, 1) : 0;
 
-            $this->stuntingByPosyandu[] = [
+            $stuntingByPosyandu[] = [
                 'name'     => $pos->name,
                 'rate'     => $rate,
                 'stunting' => $stunting,
@@ -170,28 +231,28 @@ class Analytics extends BaseAdminComponent
         }
 
         // ── Demographics ─────────────────────────────────────────────
-        $this->usia0_12 = (clone $patientQuery)
+        $demographics = (clone $patientQuery)
             ->where('category', 'balita')
-            ->whereRaw('TIMESTAMPDIFF(MONTH, birth_date, CURDATE()) BETWEEN 0 AND 11')
-            ->count();
+            ->selectRaw('COUNT(CASE WHEN TIMESTAMPDIFF(MONTH, birth_date, CURDATE()) BETWEEN 0 AND 11 THEN 1 END) as bayis')
+            ->selectRaw('COUNT(CASE WHEN TIMESTAMPDIFF(MONTH, birth_date, CURDATE()) BETWEEN 12 AND 23 THEN 1 END) as badutas')
+            ->selectRaw('COUNT(CASE WHEN TIMESTAMPDIFF(MONTH, birth_date, CURDATE()) >= 24 THEN 1 END) as balitas')
+            ->first();
 
-        $this->usia12_24 = (clone $patientQuery)
-            ->where('category', 'balita')
-            ->whereRaw('TIMESTAMPDIFF(MONTH, birth_date, CURDATE()) BETWEEN 12 AND 23')
-            ->count();
-
-        $this->usia24plus = (clone $patientQuery)
-            ->where('category', 'balita')
-            ->whereRaw('TIMESTAMPDIFF(MONTH, birth_date, CURDATE()) >= 24')
-            ->count();
-
-        // ── Recent Records ───────────────────────────────────────────
-        $this->recentRecords = (clone $medicalRecordQuery)
-            ->with(['patient.posyandu'])
-            ->whereHas('patient', fn($q) => $q->where('category', 'balita'))
-            ->latest('visit_date')
-            ->limit(5)
-            ->get();
+        return [
+            'totalBalita'      => $totalBalita,
+            'stuntingRate'     => $stuntingRate,
+            'cakupanImunisasi' => $cakupanImunisasi,
+            'kaderAktif'       => $kaderAktif,
+            'trendLabels'      => $trendLabels,
+            'trendNormal'      => $trendNormal,
+            'trendStunting'    => $trendStunting,
+            'nutritionLabels'  => array_keys($dist),
+            'nutritionData'    => array_values($dist),
+            'stuntingByPosyandu' => $stuntingByPosyandu,
+            'usia0_12'         => $demographics->bayis ?? 0,
+            'usia12_24'        => $demographics->badutas ?? 0,
+            'usia24plus'       => $demographics->balitas ?? 0,
+        ];
     }
 
     public function render()

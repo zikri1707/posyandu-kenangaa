@@ -49,7 +49,7 @@
                 @auth
                     <a href="{{ route('dashboard') }}" class="btn-premium px-7 py-2.5 bg-on-surface text-white text-[11px] font-black rounded-full shadow-lg hover:shadow-primary/20 hover:scale-105 transition-all uppercase tracking-widest">Dashboard</a>
                 @else
-                    <a href="{{ route('login') }}" class="btn-premium px-7 py-2.5 bg-primary text-white text-[11px] font-black rounded-full shadow-lg hover:shadow-primary/20 hover:scale-105 transition-all uppercase tracking-widest">Akses Kader</a>
+                    <a href="{{ route('login') }}" class="btn-premium px-7 py-2.5 bg-primary text-white text-[11px] font-black rounded-full shadow-lg hover:shadow-primary/20 hover:scale-105 transition-all uppercase tracking-widest">Login</a>
                 @endauth
             </div>
         </div>

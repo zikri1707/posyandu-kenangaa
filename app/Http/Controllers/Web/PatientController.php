@@ -69,7 +69,7 @@ class PatientController extends Controller
     /**
      * Display the specified patient with medical records history.
      */
-    public function show(Patient $patient)
+    public function show(Patient $patient, Request $request)
     {
         $this->authorize('view', $patient);
 
@@ -77,8 +77,16 @@ class PatientController extends Controller
 
         $medicalRecords = $patient->medicalRecords()
             ->with('user')
+            ->when($request->history_search, function($q) use ($request) {
+                $q->where(function($sq) use ($request) {
+                    $sq->where('diagnosis', 'like', '%'.$request->history_search.'%')
+                       ->orWhere('immunization', 'like', '%'.$request->history_search.'%')
+                       ->orWhere('visit_date', 'like', '%'.$request->history_search.'%');
+                });
+            })
             ->latest('visit_date')
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
 
         return view('livewire.admin.patient-management.details', compact('patient', 'medicalRecords'));
     }

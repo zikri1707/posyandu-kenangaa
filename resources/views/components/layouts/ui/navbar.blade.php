@@ -316,16 +316,17 @@
         });
     }
 
-    // Navbar shadow on scroll
-    const navbar = document.getElementById('topNavbar');
-    if (navbar) {
-        window.addEventListener('scroll', function () {
-            if (window.scrollY > 4) {
-                navbar.style.boxShadow = '0 4px 16px 0 rgba(0,0,0,.07)';
-            } else {
-                navbar.style.boxShadow = '0 1px 3px 0 rgba(0,0,0,.04)';
+    // Global Search Redirect
+    const globalSearch = document.getElementById('globalSearch');
+    if (globalSearch) {
+        globalSearch.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                const query = this.value.trim();
+                if (query) {
+                    window.location.href = `{{ route('admin.patients.index') }}?search=${encodeURIComponent(query)}`;
+                }
             }
-        }, { passive: true });
+        });
     }
 })();
 </script>
