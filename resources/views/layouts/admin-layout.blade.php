@@ -17,7 +17,11 @@
     
     <!-- Admin Content -->
     <div class="bg-white rounded-lg shadow-md overflow-hidden">
-        @yield('admin-content')
+        @if(isset($slot))
+            {{ $slot }}
+        @else
+            @yield('admin-content')
+        @endif
     </div>
 </div>
 @endsection

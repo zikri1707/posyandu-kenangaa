@@ -1,9 +1,6 @@
 {{-- resources/views/admin/gallery-management/index.blade.php --}}
-@extends('layouts.app')
 
-@section('title', 'Manajemen Galeri')
 
-@section('content')
 <div class="space-y-6">
     
     <!-- Header -->
@@ -101,4 +98,3 @@
         @endif
     </div>
 </div>
-@endsection

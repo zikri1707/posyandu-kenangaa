@@ -27,6 +27,35 @@
     <!-- WAJIB: Livewire Styles -->
     @livewireStyles
     
+    <style>
+        :root { --sidebar-width: 260px; }
+        
+        #mainContent {
+            width: 100% !important;
+            transition: all 0.3s ease-in-out;
+        }
+
+        @media (min-width: 1024px) {
+            #mainContent { 
+                margin-left: var(--sidebar-width) !important; 
+                width: calc(100% - var(--sidebar-width)) !important; 
+            }
+            #sidebar { 
+                width: var(--sidebar-width) !important; 
+                background: #FFFFFF !important;
+            }
+        }
+
+        /* Prevent table overlap in cards */
+        .premium-card, .bento-card {
+            max-width: 100%;
+        }
+        
+        .overflow-x-auto {
+            -webkit-overflow-scrolling: touch;
+        }
+    </style>
+
     @stack('styles')
 </head>
 <body class="font-sans antialiased bg-slate-50 text-slate-900">
@@ -36,7 +65,7 @@
         @include('components.layouts.app.sidebar')
         
         <!-- Main Content Wrapper -->
-        <div id="mainContent" class="flex-1 flex flex-col min-h-screen transition-all duration-300 ease-in-out relative overflow-y-auto lg:ml-[260px]" style="width: calc(100% - 260px);">
+        <div id="mainContent" class="flex-1 flex flex-col min-h-screen transition-all duration-300 ease-in-out relative overflow-y-auto">
             
             <!-- Navbar (Now part of the right-side flow) -->
             @php

@@ -117,6 +117,49 @@ class ReportService
             ->get()
             ->toArray();
         
+        // 8. Pokja IV Data
+        $pokjaIvData = [
+            'age_groups' => [
+                'male' => ['0-5' => 0, '6-11' => 0, '12-23' => 0, '24-59' => 0],
+                'female' => ['0-5' => 0, '6-11' => 0, '12-23' => 0, '24-59' => 0],
+            ],
+            'kader' => [
+                'total' => \App\Models\User::where('posyandu_id', $posyanduId)->where('role', 'kader')->count(),
+                'trained' => 0, // Placeholder
+                'active' => 0,  // Placeholder
+            ],
+            'immunization' => [], // Detailed breakdown not yet in DB
+        ];
+
+        // Fill age groups from medical records
+        $records = MedicalRecord::query()
+            ->join('patients', 'medical_records.patient_id', '=', 'patients.id')
+            ->where('patients.posyandu_id', $posyanduId)
+            ->where('patients.category', 'balita')
+            ->whereBetween('medical_records.visit_date', [$startDate, $endDate])
+            ->select('medical_records.visit_date', 'patients.birth_date', 'patients.gender')
+            ->get();
+
+        foreach ($records as $record) {
+            if (!$record->birth_date) continue;
+            
+            $birthDate = \Carbon\Carbon::parse($record->birth_date);
+            $visitDate = \Carbon\Carbon::parse($record->visit_date);
+            
+            $ageInMonths = (int) $birthDate->diffInMonths($visitDate);
+            $gender = $record->gender === 'laki-laki' || $record->gender === 'male' ? 'male' : 'female';
+            
+            if ($ageInMonths <= 5) {
+                $pokjaIvData['age_groups'][$gender]['0-5']++;
+            } elseif ($ageInMonths <= 11) {
+                $pokjaIvData['age_groups'][$gender]['6-11']++;
+            } elseif ($ageInMonths <= 23) {
+                $pokjaIvData['age_groups'][$gender]['12-23']++;
+            } elseif ($ageInMonths <= 59) {
+                $pokjaIvData['age_groups'][$gender]['24-59']++;
+            }
+        }
+        
         return [
             'posyandu' => [
                 'id' => $posyandu->id,
@@ -138,6 +181,7 @@ class ReportService
             'schedules' => $schedules,
             'total_visits' => array_sum($visitsByCategory),
             'raw_medical_records' => $rawRecords,
+            'pokja_iv' => $pokjaIvData,
         ];
     }
 

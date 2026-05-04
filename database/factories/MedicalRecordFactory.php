@@ -19,15 +19,16 @@ class MedicalRecordFactory extends Factory
             'visit_date' => fake()->dateTimeBetween('-1 year', 'now'),
             'weight' => fake()->randomFloat(2, 3.0, 100.0),
             'height' => fake()->randomFloat(2, 50.0, 180.0),
+            'measurement_method' => fake()->randomElement(['recumbent', 'standing']),
             'head_circumference' => fake()->randomFloat(2, 30.0, 60.0),
-            'immunization' => fake()->optional()->randomElement(['BCG', 'DPT', 'Polio', 'Campak', 'Hepatitis B']),
+            'immunization' => fake()->randomElement(['BCG', 'DPT', 'Polio', 'Campak', 'Hepatitis B', '']),
             'vitamin_a' => fake()->boolean(),
             'pill_fe' => fake()->boolean(),
-            'complaint' => fake()->optional()->sentence(),
-            'diagnosis' => fake()->optional()->sentence(),
-            'nutrition_status' => null,
-            'z_score' => null,
-            'nutrition_trend' => null,
+            'complaint' => fake()->sentence(),
+            'diagnosis' => fake()->sentence(),
+            'nutrition_status' => fake()->randomElement(['Gizi Baik', 'Gizi Kurang', 'Gizi Lebih', 'Gizi Buruk']),
+            'z_score' => fake()->randomFloat(2, -4.0, 3.0),
+            'nutrition_trend' => fake()->randomElement(['naik', 'turun', 'tetap']),
         ];
     }
 

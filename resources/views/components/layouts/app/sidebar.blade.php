@@ -6,9 +6,9 @@
     {{-- ── Logo & Toggle ── --}}
     <div class="h-16 flex items-center justify-between px-5 flex-shrink-0" style="border-bottom:1px solid #F1F5F9;">
         <a href="{{ route('dashboard') }}" class="flex items-center gap-3 group sidebar-logo min-w-0">
-            <div class="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm"
-                 style="background:linear-gradient(135deg,#1e293b 0%,#334155 100%);">
-                <i class="fas fa-heartbeat text-white" style="font-size:13px;"></i>
+            <div class="w-10 h-10 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-sm"
+                 style="background:linear-gradient(135deg,#0d9488 0%,#0f766e 100%);">
+                <i class="fas fa-heartbeat text-white" style="font-size:16px;"></i>
             </div>
             <div class="sidebar-text overflow-hidden">
                 <span class="block font-black text-slate-900 tracking-tight leading-none" style="font-size:17px;">Posyandu</span>
@@ -41,7 +41,7 @@
 
         <a href="{{ route('dashboard') }}"
            class="{{ $navLink }} {{ request()->routeIs('dashboard') ? $active : $idle }} mb-1">
-            <i class="fas fa-grid-2 w-5 text-center flex-shrink-0 text-[15px]"></i>
+            <i class="fas fa-house w-5 text-center flex-shrink-0 text-[15px]"></i>
             <span class="sidebar-text text-[14.5px] font-bold whitespace-nowrap">Halaman Utama</span>
         </a>
 
@@ -76,7 +76,8 @@
             
             // Rekam Medis - accessible by all authenticated users
             if (auth()->user()->isSuperAdmin() || auth()->user()->isAdmin() || auth()->user()->isKader()) {
-                $items[] = ['route' => 'admin.medical-records.index', 'pattern' => 'admin.medical-records.*', 'icon' => 'fa-notes-medical', 'label' => 'Rekam Medis'];
+                $items[] = ['route' => 'admin.medical-records.index', 'pattern' => 'admin.medical-records.index', 'icon' => 'fa-notes-medical', 'label' => 'Rekam Medis'];
+                $items[] = ['route' => 'admin.medical-records.bulk', 'pattern' => 'admin.medical-records.bulk', 'icon' => 'fa-file-medical', 'label' => 'Bulan Penimbangan'];
             }
         @endphp
 
@@ -201,29 +202,35 @@
     let collapsed = localStorage.getItem(KEY) === 'true';
 
     function apply(animate) {
-        if (!animate) sidebar.style.transition = 'none';
+        const isDesktop = window.innerWidth >= 1024;
+        const width = isDesktop ? (collapsed ? COL : EXP) : (collapsed ? '0px' : EXP);
+        
+        // Update CSS Variable
+        document.documentElement.style.setProperty('--sidebar-width', width);
 
-        sidebar.style.width = collapsed ? COL : EXP;
+        if (!animate) {
+            sidebar.style.transition = 'none';
+            if (main) main.style.transition = 'none';
+        }
+
         if (icon) icon.style.transform = collapsed ? 'rotate(180deg)' : 'rotate(0deg)';
 
         const els = document.querySelectorAll('.sidebar-text, .sidebar-section-label');
         els.forEach(el => {
             el.style.opacity  = collapsed ? '0' : '1';
-            el.style.overflow = 'hidden';
             el.style.maxWidth = collapsed ? '0' : '200px';
         });
 
-        if (main && window.innerWidth >= 1024) {
-            main.style.marginLeft = collapsed ? COL : EXP;
-            main.style.width = collapsed ? 'calc(100% - ' + COL + ')' : 'calc(100% - ' + EXP + ')';
-        } else if (main) {
-            main.style.marginLeft = '0';
-            main.style.width = '100%';
+        if (overlay) {
+            overlay.classList.toggle('hidden', isDesktop || collapsed);
         }
 
-        if (overlay) overlay.classList.toggle('hidden', collapsed || window.innerWidth >= 1024);
-
-        if (!animate) requestAnimationFrame(() => sidebar.style.transition = '');
+        if (!animate) {
+            requestAnimationFrame(() => {
+                sidebar.style.transition = '';
+                if (main) main.style.transition = '';
+            });
+        }
     }
 
     function toggle() {

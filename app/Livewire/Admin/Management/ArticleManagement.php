@@ -5,23 +5,27 @@ namespace App\Livewire\Admin\Management;
 use App\Models\Article;
 use App\Services\ArticleService;
 use App\Livewire\Shared\BaseAdminComponent;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Url;
 use Illuminate\View\View;
 
 /**
  * Komponen Manajemen Artikel (OOP & Clean Code).
  * Mengelola daftar artikel, pencarian, dan penghapusan.
  */
+#[Layout('layouts.admin-layout')]
 class ArticleManagement extends BaseAdminComponent
 {
+    #[Url(except: '')]
     public string $search = '';
+
+    #[Url(except: '')]
     public string $status = '';
+
+    #[Url(except: 'latest')]
     public string $sort = 'latest';
 
-    protected $queryString = [
-        'search' => ['except' => ''],
-        'status' => ['except' => ''],
-        'sort' => ['except' => 'latest'],
-    ];
+    protected $queryString = [];
 
     /**
      * Render halaman manajemen artikel.

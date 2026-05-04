@@ -1,17 +1,24 @@
-@extends('layouts.admin-layout')
-
-@section('admin-title') Jadwal & Kegiatan @endsection
-
-@section('admin-actions')
-    @can('create', App\Models\Schedule::class)
-    <x-button href="{{ route('admin.schedules.create') }}" variant="secondary" icon="calendar_add_on">
-        Tambah Jadwal
-    </x-button>
-    @endcan
-@endsection
-
-@section('admin-content')
 <div class="space-y-8 p-6 md:p-8">
+    {{-- Header Section --}}
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+            <nav class="flex text-xs text-slate-400 mb-1.5 gap-1.5 items-center">
+                <a href="{{ route('dashboard') }}" class="hover:text-teal-600 transition-colors">Beranda</a>
+                <span class="material-symbols-outlined text-[12px]">chevron_right</span>
+                <span class="text-teal-600 font-semibold">Jadwal & Kegiatan</span>
+            </nav>
+            <h1 class="text-2xl font-bold text-slate-900">Manajemen Jadwal</h1>
+            <p class="text-sm text-slate-500 mt-0.5">Atur jadwal kegiatan posyandu dan imunisasi.</p>
+        </div>
+        
+        <div class="flex flex-wrap gap-3 items-center">
+            @can('create', App\Models\Schedule::class)
+            <x-button href="{{ route('admin.schedules.create') }}" variant="secondary" icon="calendar_add_on">
+                Tambah Jadwal
+            </x-button>
+            @endcan
+        </div>
+    </div>
     
     {{-- ── Header & Summary Bento ── --}}
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -217,4 +224,3 @@
     </div>
 
 </div>
-@endsection

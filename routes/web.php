@@ -118,6 +118,7 @@ Route::middleware(['auth'])->group(function () {
 
     // 6. MEDICAL RECORDS
     Route::get('admin/medical-records', MedicalRecordManagement::class)->name('admin.medical-records.index');
+    Route::get('admin/medical-records/bulk', \App\Livewire\Admin\MedicalRecord\BulkMeasurementEntry::class)->name('admin.medical-records.bulk');
     Route::get('admin/medical-records/create', [MedicalRecordController::class, 'create'])->name('admin.medical-records.create');
     Route::post('admin/medical-records', [MedicalRecordController::class, 'store'])->name('admin.medical-records.store');
     Route::get('admin/medical-records/{medicalRecord}', [MedicalRecordController::class, 'show'])->name('admin.medical-records.show');
@@ -148,7 +149,7 @@ Route::middleware(['auth'])->group(function () {
     // ---------------------------------------------------------
     // 9. REPORTS (MONTHLY REPORTS - Livewire)
     // ---------------------------------------------------------
-    Route::middleware(['role:superadmin,admin,kader'])->group(function () {
+    Route::middleware(['role:superadmin,admin,coordinator,kader'])->group(function () {
         Route::get('admin/reports', [\App\Http\Controllers\Web\ReportController::class, 'index'])->name('admin.reports.index');
         Route::post('admin/reports/export-excel', [\App\Http\Controllers\Web\ReportController::class, 'exportExcel'])->name('admin.reports.export-excel');
         Route::post('admin/reports/export-pdf', [\App\Http\Controllers\Web\ReportController::class, 'exportPdf'])->name('admin.reports.export-pdf');

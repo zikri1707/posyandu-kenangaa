@@ -39,8 +39,8 @@ it('displays growth chart for balita patient with medical records', function () 
         'head_circumference' => 46.0,
         'immunization' => 'BCG',
         'complaint' => 'Sehat',
-        'diagnosis' => 'Normal',
-        'nutrition_status' => 'Normal',
+        'diagnosis' => 'Gizi Baik',
+        'nutrition_status' => 'Gizi Baik',
         'z_score' => 0.5,
     ]);
 
@@ -53,14 +53,14 @@ it('displays growth chart for balita patient with medical records', function () 
         'head_circumference' => 46.5,
         'immunization' => 'DPT',
         'complaint' => 'Sehat',
-        'diagnosis' => 'Normal',
-        'nutrition_status' => 'Normal',
+        'diagnosis' => 'Gizi Baik',
+        'nutrition_status' => 'Gizi Baik',
         'z_score' => 0.6,
     ]);
 
     // Test Livewire component
     Livewire::actingAs($this->admin)
-        ->test(GrowthChart::class, ['patientId' => $patient->id])
+        ->test(GrowthChart::class, ['patient' => $patient])
         ->assertSee('Grafik Pertumbuhan Balita')
         ->assertSee('BB (kg)')
         ->assertSee('TB (cm)')
@@ -83,7 +83,7 @@ it('shows empty state when patient has no medical records', function () {
 
     // Test Livewire component
     Livewire::actingAs($this->admin)
-        ->test(GrowthChart::class, ['patientId' => $patient->id])
+        ->test(GrowthChart::class, ['patient' => $patient])
         ->assertSee('Belum ada data pengukuran untuk ditampilkan di grafik');
 });
 
@@ -135,7 +135,7 @@ it('color codes data points based on nutrition status', function () {
         'immunization' => 'BCG',
         'complaint' => 'Berat badan kurang',
         'diagnosis' => 'Gizi buruk',
-        'nutrition_status' => 'Gizi Buruk/Stunting',
+        'nutrition_status' => 'Gizi Buruk',
         'z_score' => -3.5,
     ]);
 
@@ -160,18 +160,18 @@ it('color codes data points based on nutrition status', function () {
         'height' => 85.0,
         'immunization' => 'Polio',
         'complaint' => 'Sehat',
-        'diagnosis' => 'Normal',
-        'nutrition_status' => 'Normal',
+        'diagnosis' => 'Gizi Baik',
+        'nutrition_status' => 'Gizi Baik',
         'z_score' => 0.5,
     ]);
 
     // Test Livewire component
     Livewire::actingAs($this->admin)
-        ->test(GrowthChart::class, ['patientId' => $patient->id])
+        ->test(GrowthChart::class, ['patient' => $patient])
         ->assertSet('chartData.nutrition_status', function ($statuses) {
             return count($statuses) === 3 
-                && $statuses[0] === 'Gizi Buruk/Stunting'
+                && $statuses[0] === 'Gizi Buruk'
                 && $statuses[1] === 'Gizi Kurang'
-                && $statuses[2] === 'Normal';
+                && $statuses[2] === 'Gizi Baik';
         });
 });

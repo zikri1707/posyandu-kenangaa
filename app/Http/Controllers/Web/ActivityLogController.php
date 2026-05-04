@@ -59,6 +59,14 @@ class ActivityLogController extends Controller
 
         $activityLogs = $query->paginate(20)->withQueryString();
 
+        // Calculate total stats for the whole database (ignoring current filters for general overview)
+        $totalStats = [
+            'total'  => ActivityLog::count(),
+            'create' => ActivityLog::where('action_type', 'create')->count(),
+            'update' => ActivityLog::where('action_type', 'update')->count(),
+            'delete' => ActivityLog::where('action_type', 'delete')->count(),
+        ];
+
         // Get unique users for filter dropdown
         $users = DB::table('activity_logs')
             ->select('user_id', 'user_name', 'role')
@@ -81,7 +89,7 @@ class ActivityLogController extends Controller
             ->get()
             ->pluck('entity_type');
 
-        return view('admin.activity-logs.index', compact('activityLogs', 'users', 'actionTypes', 'entityTypes'));
+        return view('admin.activity-logs.index', compact('activityLogs', 'users', 'actionTypes', 'entityTypes', 'totalStats'));
     }
 
     /**

@@ -24,6 +24,8 @@ class PatientRequest extends FormRequest
             'birth_date' => 'required|date|before_or_equal:today',
             'address' => 'required|string|max:500',
             'phone_number' => 'required|string|max:15',
+            'posyandu_id' => 'nullable|exists:posyandus,id',
+            'profile_photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ];
     }
 

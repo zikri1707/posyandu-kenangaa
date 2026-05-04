@@ -154,22 +154,19 @@ class Analytics extends BaseAdminComponent
             ->count();
 
         // ── Trend 12 Bulan (Optimized to single query) ───────────────
-        $trends = (clone $medicalRecordQuery)
+        $records = (clone $medicalRecordQuery)
             ->whereHas('patient', fn($q) => $q->where('category', 'balita'))
             ->whereYear('visit_date', $this->selectedYear)
-            ->selectRaw('MONTH(visit_date) as month')
-            ->selectRaw('COUNT(CASE WHEN nutrition_status IN (?, ?) THEN 1 END) as normal_count', [
-                MedicalRecord::NUTRITION_NORMAL,
-                MedicalRecord::NUTRITION_GIZI_BAIK
-            ])
-            ->selectRaw('COUNT(CASE WHEN nutrition_status IN (?, ?) THEN 1 END) as stunting_count', [
-                MedicalRecord::NUTRITION_STUNTING,
-                MedicalRecord::NUTRITION_GIZI_BURUK
-            ])
-            ->groupBy('month')
-            ->orderBy('month')
-            ->get()
-            ->keyBy('month');
+            ->select('id', 'visit_date', 'nutrition_status')
+            ->get();
+            
+        $trends = $records->groupBy(function($record) {
+            return Carbon::parse($record->visit_date)->month;
+        })->map(function($group) {
+            $normal = $group->whereIn('nutrition_status', [MedicalRecord::NUTRITION_NORMAL, MedicalRecord::NUTRITION_GIZI_BAIK])->count();
+            $stunting = $group->whereIn('nutrition_status', [MedicalRecord::NUTRITION_STUNTING, MedicalRecord::NUTRITION_GIZI_BURUK])->count();
+            return clone (object) ['normal_count' => $normal, 'stunting_count' => $stunting];
+        });
 
         $trendLabels  = [];
         $trendNormal  = [];
@@ -231,12 +228,18 @@ class Analytics extends BaseAdminComponent
         }
 
         // ── Demographics ─────────────────────────────────────────────
-        $demographics = (clone $patientQuery)
+        $balitas = (clone $patientQuery)
             ->where('category', 'balita')
-            ->selectRaw('COUNT(CASE WHEN TIMESTAMPDIFF(MONTH, birth_date, CURDATE()) BETWEEN 0 AND 11 THEN 1 END) as bayis')
-            ->selectRaw('COUNT(CASE WHEN TIMESTAMPDIFF(MONTH, birth_date, CURDATE()) BETWEEN 12 AND 23 THEN 1 END) as badutas')
-            ->selectRaw('COUNT(CASE WHEN TIMESTAMPDIFF(MONTH, birth_date, CURDATE()) >= 24 THEN 1 END) as balitas')
-            ->first();
+            ->select('id', 'birth_date')
+            ->get();
+            
+        $bayis = 0; $badutas = 0; $balitasCount = 0;
+        foreach ($balitas as $b) {
+            $months = Carbon::parse($b->birth_date)->diffInMonths(now());
+            if ($months <= 11) $bayis++;
+            elseif ($months <= 23) $badutas++;
+            else $balitasCount++;
+        }
 
         return [
             'totalBalita'      => $totalBalita,
@@ -249,9 +252,9 @@ class Analytics extends BaseAdminComponent
             'nutritionLabels'  => array_keys($dist),
             'nutritionData'    => array_values($dist),
             'stuntingByPosyandu' => $stuntingByPosyandu,
-            'usia0_12'         => $demographics->bayis ?? 0,
-            'usia12_24'        => $demographics->badutas ?? 0,
-            'usia24plus'       => $demographics->balitas ?? 0,
+            'usia0_12'         => $bayis,
+            'usia12_24'        => $badutas,
+            'usia24plus'       => $balitasCount,
         ];
     }
 

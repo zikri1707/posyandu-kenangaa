@@ -104,10 +104,12 @@ class NutritionCalculatorService
         $median = (float) $reference->median;
  
         // Pilih SD berdasarkan posisi relatif terhadap median
+        // Karena sd_plus2 dan sd_minus2 adalah jarak 2 standar deviasi, 
+        // kita bagi 2 untuk mendapatkan nilai 1 SD.
         if ($weight >= $median) {
-            $sd = (float) $reference->sd_plus2 - $median;
+            $sd = ((float) $reference->sd_plus2 - $median) / 2;
         } else {
-            $sd = $median - (float) $reference->sd_minus2;
+            $sd = ($median - (float) $reference->sd_minus2) / 2;
         }
  
         if ($sd == 0) return null;
@@ -199,11 +201,11 @@ class NutritionCalculatorService
     public function classifyWastingStatus(?float $zScore): string
     {
         if ($zScore === null) return 'Tidak Dapat Dihitung';
-        if ($zScore < -3)    return 'Sangat Kurus (Severely Wasted)';
-        if ($zScore < -2)    return 'Kurus (Wasted)';
+        if ($zScore < -3)    return 'Sangat Kurus';
+        if ($zScore < -2)    return 'Kurus';
         if ($zScore <= 2)    return 'Normal';
-        if ($zScore <= 3)    return 'Risiko Gemuk (At-Risk Overweight)';
-        return 'Gemuk (Overweight)';
+        if ($zScore <= 3)    return 'Risiko Gemuk';
+        return 'Gemuk';
     }
 
     // ─────────────────────────────────────────────

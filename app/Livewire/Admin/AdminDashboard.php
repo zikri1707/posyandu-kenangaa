@@ -138,13 +138,14 @@ class AdminDashboard extends BaseAdminComponent
         
         $trends = (clone $medicalRecordQuery)
             ->where('visit_date', '>=', $startDate)
-            ->selectRaw('DATE_FORMAT(visit_date, "%b %Y") as month_label')
-            ->selectRaw('COUNT(*) as count')
-            ->selectRaw('MIN(visit_date) as sort_date')
-            ->groupBy('month_label')
-            ->orderBy('sort_date')
+            ->select('id', 'visit_date')
             ->get()
-            ->pluck('count', 'month_label');
+            ->groupBy(function ($record) {
+                return Carbon::parse($record->visit_date)->format('M Y');
+            })
+            ->map(function ($group) {
+                return $group->count();
+            });
 
         $labels = [];
         $data = [];

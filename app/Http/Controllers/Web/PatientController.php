@@ -134,11 +134,11 @@ class PatientController extends Controller
         $this->authorize('create', Patient::class);
 
         $request->validate([
-            'file'        => 'required|file|mimes:csv,xlsx|max:5120',
+            'file'        => 'required|file|mimes:csv,xlsx,xls|max:5120',
             'posyandu_id' => 'required|exists:posyandus,id',
         ], [
             'file.required'        => 'File wajib diunggah.',
-            'file.mimes'           => 'Format file harus CSV atau XLSX. File .xls (Excel lama) tidak didukung — simpan ulang sebagai .xlsx atau .csv terlebih dahulu.',
+            'file.mimes'           => 'Format file harus CSV, XLSX, atau XLS (Excel lama).',
             'file.max'             => 'Ukuran file maksimal 5 MB.',
             'posyandu_id.required' => 'Posyandu wajib dipilih.',
         ]);

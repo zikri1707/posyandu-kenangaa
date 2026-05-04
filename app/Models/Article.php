@@ -14,6 +14,10 @@ class Article extends Model
         'user_id', 'category_id', 'title', 'content', 'thumbnail', 'slug', 'status', 'published_at'
     ];
 
+    protected $casts = [
+        'published_at' => 'datetime',
+    ];
+
     // Relationship with User
     public function user()
     {

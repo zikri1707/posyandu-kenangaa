@@ -15,15 +15,17 @@ class PosyanduManagement extends BaseAdminComponent
 
     public function render()
     {
-        $query = Posyandu::with('pedukuhan')
+        $posyandus = Posyandu::with('pedukuhan')
             ->when($this->search, function($q) {
                 $q->where('name', 'like', '%' . $this->search . '%')
-                  ->orWhere('unique_code', 'like', '%' . $this->search . '%');
+                  ->orWhere('unique_code', 'like', '%' . $this->search . '%')
+                  ->orWhere('address', 'like', '%' . $this->search . '%');
             })
-            ->latest();
+            ->latest()
+            ->paginate(10);
 
         return view('livewire.admin.posyandu-management.index', [
-            'posyandus' => $query->paginate(10),
+            'posyandus' => $posyandus,
         ]);
     }
 }

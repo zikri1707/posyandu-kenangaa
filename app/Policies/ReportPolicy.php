@@ -12,7 +12,7 @@ class ReportPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isSuperAdmin() || $user->isAdmin() || $user->isKader();
+        return $user->isSuperAdmin() || $user->isAdmin() || $user->isCoordinator() || $user->isKader();
     }
 
     /**
@@ -21,6 +21,6 @@ class ReportPolicy
      */
     public function export(User $user): bool
     {
-        return $user->isSuperAdmin() || $user->isAdmin() || $user->isKader();
+        return $user->isSuperAdmin() || $user->isAdmin() || $user->isCoordinator() || $user->isKader();
     }
 }

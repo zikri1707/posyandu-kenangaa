@@ -36,7 +36,10 @@ class GrowthChartService
                 $this->createReferenceDataset('+3 SD', $references->pluck('sd_plus3'), '#ef4444', 1, 'dash'), // Merah
                 $this->createReferenceDataset('-3 SD', $references->pluck('sd_minus3'), '#ef4444', 1, 'dash'), // Merah
                 $this->createChildDataset('Berat Badan Anak', $this->mapRecordsToAge($patient, $records, 'weight'), '#3b82f6'), // Biru
-            ]
+            ],
+            'weight' => $records->pluck('weight')->toArray(),
+            'height' => $records->pluck('height')->toArray(),
+            'nutrition_status' => $records->pluck('nutrition_status')->toArray(),
         ];
     }
 
@@ -53,13 +56,23 @@ class GrowthChartService
             ->orderBy('age_months')
             ->get();
 
-        // Use pre-calculated SD columns for better performance and consistency
+        // Map reference data to correct age index (0-60)
+        $median = array_fill(0, 61, null);
+        $sd2 = array_fill(0, 61, null);
+        $sd3 = array_fill(0, 61, null);
+
+        foreach ($references as $ref) {
+            $median[$ref->age_months] = $ref->m_value;
+            $sd2[$ref->age_months] = $ref->sd_minus2;
+            $sd3[$ref->age_months] = $ref->sd_minus3;
+        }
+        
         return [
-            'labels' => $references->pluck('age_months')->toArray(),
+            'labels' => range(0, 60),
             'datasets' => [
-                $this->createReferenceDataset('Median', $references->pluck('m_value'), '#22c55e', 3),
-                $this->createReferenceDataset('-2 SD', $references->pluck('sd_minus2'), '#eab308', 1, 'dash'),
-                $this->createReferenceDataset('-3 SD', $references->pluck('sd_minus3'), '#ef4444', 1, 'dash'),
+                $this->createReferenceDataset('Median', $median, '#22c55e', 3),
+                $this->createReferenceDataset('-2 SD', $sd2, '#eab308', 1, 'dash'),
+                $this->createReferenceDataset('-3 SD', $sd3, '#ef4444', 1, 'dash'),
                 $this->createChildDataset('Tinggi Badan Anak', $this->mapRecordsToAge($patient, $records, 'height'), '#3b82f6'),
             ]
         ];

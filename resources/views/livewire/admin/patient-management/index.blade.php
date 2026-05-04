@@ -137,9 +137,13 @@
                 <tr class="group hover:bg-slate-50/50 transition-colors" wire:key="patient-{{ $patient->id }}">
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-3">
-                            <div class="h-10 w-10 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center font-black text-xs border border-teal-100">
-                                {{ $initials }}
-                            </div>
+                            @if($patient->profile_photo)
+                                <img src="{{ asset('storage/' . $patient->profile_photo) }}" class="h-10 w-10 rounded-2xl object-cover border border-teal-100 flex-shrink-0">
+                            @else
+                                <div class="h-10 w-10 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center font-black text-xs border border-teal-100 flex-shrink-0">
+                                    {{ $initials }}
+                                </div>
+                            @endif
                             <div>
                                 <div class="font-black text-slate-900 text-[15px] leading-tight">{{ $patient->full_name }}</div>
                                 <div class="text-[12px] text-slate-500 font-bold mt-1 tracking-tight">NIK: {{ $patient->id_number }}</div>
@@ -156,24 +160,37 @@
                         <div class="text-[10px] text-slate-400 uppercase tracking-tighter">{{ $patient->age }}</div>
                     </td>
                     <td class="px-6 py-4 text-right">
-                        <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <x-button href="{{ route('admin.patients.show', $patient->id) }}" variant="ghost" size="sm">
+                        <div class="flex items-center justify-end gap-2.5">
+                            {{-- View Detail --}}
+                            <a href="{{ route('admin.patients.show', $patient->id) }}" 
+                               class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-50 text-slate-500 hover:bg-teal-500 hover:text-white hover:shadow-lg hover:shadow-teal-500/30 transition-all duration-300"
+                               title="Lihat Detail">
                                 <span class="material-symbols-outlined text-[18px]">visibility</span>
-                            </x-button>
+                            </a>
                             
+                            {{-- Growth Chart (Balita Only) --}}
                             @if($patient->category === 'balita')
-                            <x-button href="{{ route('admin.patients.growth-chart', $patient->id) }}" variant="ghost" size="sm">
-                                <span class="material-symbols-outlined text-[18px] text-blue-600">show_chart</span>
-                            </x-button>
+                            <a href="{{ route('admin.patients.growth-chart', $patient->id) }}" 
+                               class="w-9 h-9 flex items-center justify-center rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-600/30 transition-all duration-300"
+                               title="Grafik Pertumbuhan">
+                                <span class="material-symbols-outlined text-[18px]">show_chart</span>
+                            </a>
                             @endif
 
+                            {{-- Edit Record --}}
                             @can('update', $patient)
-                            <x-button href="{{ route('admin.patients.edit', $patient->id) }}" variant="ghost" size="sm">
+                            <a href="{{ route('admin.patients.edit', $patient->id) }}" 
+                               class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-50 text-slate-500 hover:bg-amber-500 hover:text-white hover:shadow-lg hover:shadow-amber-500/30 transition-all duration-300"
+                               title="Edit Data">
                                 <span class="material-symbols-outlined text-[18px]">edit</span>
-                            </x-button>
+                            </a>
                             @endcan
+
+                            {{-- Delete --}}
                             @can('delete', $patient)
-                            <button wire:click="confirmDelete({{ $patient->id }})" class="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all">
+                            <button wire:click="confirmDelete({{ $patient->id }})" 
+                                    class="w-9 h-9 flex items-center justify-center rounded-xl bg-red-50 text-red-400 hover:bg-red-500 hover:text-white hover:shadow-lg hover:shadow-red-500/30 transition-all duration-300"
+                                    title="Hapus Data">
                                 <span class="material-symbols-outlined text-[18px]">delete</span>
                             </button>
                             @endcan

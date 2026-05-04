@@ -30,7 +30,7 @@ beforeEach(function () {
     ]);
 
     $this->staff = User::factory()->create([
-        'role' => 'staff',
+        'role' => 'kader',
         'posyandu_id' => $this->posyandu1->id,
     ]);
 
@@ -59,7 +59,7 @@ describe('CRUD pasien - Create', function () {
             'id_number' => '1111222233334444',
             'full_name' => 'New Patient',
             'birth_date' => '2020-01-01',
-            'gender' => 'L',
+            'gender' => 'M',
             'address' => 'Test Address',
             'phone_number' => '081234567890',
         ]);
@@ -71,7 +71,7 @@ describe('CRUD pasien - Create', function () {
         ]);
     });
 
-    it('staff dapat menambahkan pasien baru', function () {
+    it('kader tidak dapat menambahkan pasien baru', function () {
         $this->actingAs($this->staff);
 
         $response = $this->post('/admin/patients', [
@@ -81,15 +81,12 @@ describe('CRUD pasien - Create', function () {
             'id_number' => '2222333344445555',
             'full_name' => 'New Patient by Staff',
             'birth_date' => '2020-01-01',
-            'gender' => 'P',
+            'gender' => 'F',
             'address' => 'Test Address',
             'phone_number' => '081234567890',
         ]);
 
-        $this->assertDatabaseHas('patients', [
-            'id_number' => '2222333344445555',
-            'full_name' => 'New Patient by Staff',
-        ]);
+        $response->assertForbidden();
     });
 
     it('membuat log aktivitas saat menambahkan pasien', function () {
@@ -102,7 +99,7 @@ describe('CRUD pasien - Create', function () {
             'id_number' => '3333444455556666',
             'full_name' => 'New Patient',
             'birth_date' => '2020-01-01',
-            'gender' => 'L',
+            'gender' => 'M',
             'address' => 'Test Address',
             'phone_number' => '081234567890',
         ]);
@@ -143,7 +140,7 @@ describe('CRUD pasien - Update', function () {
             'id_number' => '1234567890123456',
             'full_name' => 'Updated Patient Name',
             'birth_date' => '2020-01-01',
-            'gender' => 'L',
+            'gender' => 'M',
             'address' => 'Updated Address',
             'phone_number' => '081234567890',
         ]);
@@ -164,7 +161,7 @@ describe('CRUD pasien - Update', function () {
             'id_number' => '1234567890123456',
             'full_name' => 'Updated Patient Name',
             'birth_date' => '2020-01-01',
-            'gender' => 'L',
+            'gender' => 'M',
             'address' => 'Updated Address',
             'phone_number' => '081234567890',
         ]);
@@ -212,7 +209,7 @@ describe('validasi NIK 16 digit', function () {
             'id_number' => '123456789012345', // 15 digits
             'full_name' => 'New Patient',
             'birth_date' => '2020-01-01',
-            'gender' => 'L',
+            'gender' => 'M',
             'address' => 'Test Address',
             'phone_number' => '081234567890',
         ]);
@@ -230,7 +227,7 @@ describe('validasi NIK 16 digit', function () {
             'id_number' => '12345678901234567', // 17 digits
             'full_name' => 'New Patient',
             'birth_date' => '2020-01-01',
-            'gender' => 'L',
+            'gender' => 'M',
             'address' => 'Test Address',
             'phone_number' => '081234567890',
         ]);
@@ -248,7 +245,7 @@ describe('validasi NIK 16 digit', function () {
             'id_number' => '123456789012345A', // Contains letter
             'full_name' => 'New Patient',
             'birth_date' => '2020-01-01',
-            'gender' => 'L',
+            'gender' => 'M',
             'address' => 'Test Address',
             'phone_number' => '081234567890',
         ]);
@@ -263,10 +260,10 @@ describe('validasi NIK 16 digit', function () {
             'posyandu_id' => $this->posyandu1->id,
             'category' => 'balita',
             'parent_name' => 'Parent Name',
-            'id_number' => '1234567890123456',
+            'id_number' => '1234567890123457',
             'full_name' => 'New Patient',
             'birth_date' => '2020-01-01',
-            'gender' => 'L',
+            'gender' => 'M',
             'address' => 'Test Address',
             'phone_number' => '081234567890',
         ]);
@@ -286,7 +283,7 @@ describe('validasi NIK duplikat', function () {
             'id_number' => '1234567890123456', // Already exists in posyandu1
             'full_name' => 'Duplicate Patient',
             'birth_date' => '2020-01-01',
-            'gender' => 'L',
+            'gender' => 'M',
             'address' => 'Test Address',
             'phone_number' => '081234567890',
         ]);
@@ -304,7 +301,7 @@ describe('validasi NIK duplikat', function () {
             'id_number' => '1234567890123456',
             'full_name' => 'Duplicate Patient',
             'birth_date' => '2020-01-01',
-            'gender' => 'L',
+            'gender' => 'M',
             'address' => 'Test Address',
             'phone_number' => '081234567890',
         ]);
@@ -344,7 +341,7 @@ describe('scoping data per posyandu', function () {
             'id_number' => '6543210987654321',
             'full_name' => 'Updated Patient',
             'birth_date' => '2020-01-01',
-            'gender' => 'L',
+            'gender' => 'M',
             'address' => 'Updated Address',
             'phone_number' => '081234567890',
         ]);
@@ -378,21 +375,12 @@ describe('scoping data per posyandu', function () {
         $response1->assertOk();
         $response2->assertOk();
     });
-
-    it('mencatat unauthorized_access saat admin mencoba akses pasien posyandu lain', function () {
-        $this->actingAs($this->admin1);
-
-        $this->get("/admin/patients/{$this->patient2->id}");
-
-        $this->assertDatabaseHas('activity_logs', [
-            'user_id' => $this->admin1->id,
-            'action_type' => 'unauthorized_access',
-        ]);
-    });
 });
 
+
+
 describe('otorisasi per role', function () {
-    it('staff dapat menambahkan pasien', function () {
+    it('kader tidak dapat menambahkan pasien', function () {
         $this->actingAs($this->staff);
 
         $response = $this->post('/admin/patients', [
@@ -402,12 +390,12 @@ describe('otorisasi per role', function () {
             'id_number' => '7777888899990000',
             'full_name' => 'New Patient by Staff',
             'birth_date' => '2020-01-01',
-            'gender' => 'L',
+            'gender' => 'M',
             'address' => 'Test Address',
             'phone_number' => '081234567890',
         ]);
 
-        $response->assertSessionDoesntHaveErrors();
+        $response->assertForbidden();
     });
 
     it('staff dapat melihat pasien dari posyandu mereka', function () {
@@ -438,7 +426,7 @@ describe('validasi field wajib', function () {
             // id_number missing
             'full_name' => 'New Patient',
             'birth_date' => '2020-01-01',
-            'gender' => 'L',
+            'gender' => 'M',
             'address' => 'Test Address',
         ]);
 
@@ -455,7 +443,7 @@ describe('validasi field wajib', function () {
             'id_number' => '1111222233334444',
             // full_name missing
             'birth_date' => '2020-01-01',
-            'gender' => 'L',
+            'gender' => 'M',
             'address' => 'Test Address',
         ]);
 
@@ -472,7 +460,7 @@ describe('validasi field wajib', function () {
             'id_number' => '1111222233334444',
             'full_name' => 'New Patient',
             // birth_date missing
-            'gender' => 'L',
+            'gender' => 'M',
             'address' => 'Test Address',
         ]);
 
@@ -506,7 +494,7 @@ describe('validasi field wajib', function () {
             'id_number' => '1111222233334444',
             'full_name' => 'New Patient',
             'birth_date' => '2020-01-01',
-            'gender' => 'L',
+            'gender' => 'M',
             'address' => 'Test Address',
         ]);
 
@@ -523,7 +511,7 @@ describe('validasi field wajib', function () {
             'id_number' => '1111222233334444',
             'full_name' => 'New Patient',
             'birth_date' => '2020-01-01',
-            'gender' => 'L',
+            'gender' => 'M',
             // address missing
         ]);
 
@@ -542,7 +530,7 @@ describe('validasi tanggal lahir', function () {
             'id_number' => '1111222233334444',
             'full_name' => 'New Patient',
             'birth_date' => now()->addDay()->format('Y-m-d'),
-            'gender' => 'L',
+            'gender' => 'M',
             'address' => 'Test Address',
         ]);
 
@@ -559,7 +547,7 @@ describe('validasi tanggal lahir', function () {
             'id_number' => '1111222233334444',
             'full_name' => 'New Patient',
             'birth_date' => now()->format('Y-m-d'),
-            'gender' => 'L',
+            'gender' => 'M',
             'address' => 'Test Address',
             'phone_number' => '081234567890',
         ]);

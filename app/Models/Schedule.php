@@ -14,6 +14,11 @@ class Schedule extends Model
         'posyandu_id', 'user_id', 'title', 'description', 'start_time', 'end_time', 'location', 'status'
     ];
 
+    protected $casts = [
+        'start_time' => 'datetime',
+        'end_time'   => 'datetime',
+    ];
+
     // Relationship with Posyandu
     public function posyandu()
     {

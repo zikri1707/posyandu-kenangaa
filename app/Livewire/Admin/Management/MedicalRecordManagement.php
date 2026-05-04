@@ -4,7 +4,9 @@ namespace App\Livewire\Admin\Management;
 
 use App\Models\MedicalRecord;
 use App\Livewire\Shared\BaseAdminComponent;
+use Livewire\Attributes\Layout;
 
+#[Layout('layouts.admin-layout')]
 class MedicalRecordManagement extends BaseAdminComponent
 {
     public string $search = '';

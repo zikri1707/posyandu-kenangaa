@@ -5,7 +5,9 @@ namespace App\Livewire\Admin\Management;
 use App\Models\User;
 use App\Models\Posyandu;
 use App\Livewire\Shared\BaseAdminComponent;
+use Livewire\Attributes\Layout;
 
+#[Layout('layouts.admin-layout')]
 class UserManagement extends BaseAdminComponent
 {
     public string $search = '';

@@ -220,7 +220,6 @@ class MedicalRecordService
         $data['user_id'] = $user->id;
         $data['immunization'] = $data['immunization'] ?? 'Tidak ada';
         $data['complaint'] = $data['complaint'] ?? '—';
-        $data['nutrition_status'] = $data['nutrition_status'] ?? 'Normal';
 
         return $data;
     }

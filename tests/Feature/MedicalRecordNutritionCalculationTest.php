@@ -43,6 +43,17 @@ beforeEach(function () {
         'address' => 'Test Address',
         'phone_number' => '08123456789',
     ]);
+
+    // Seed WHO reference data for testing
+    \App\Models\WhoWeightForAge::create([
+        'gender' => 'M',
+        'age_months' => 12,
+        'sd_minus3' => 7.7,
+        'sd_minus2' => 8.6,
+        'median' => 10.2,
+        'sd_plus2' => 12.0,
+        'sd_plus3' => 13.3,
+    ]);
 });
 
 test('medical record automatically calculates nutrition status for balita on store', function () {
@@ -57,6 +68,7 @@ test('medical record automatically calculates nutrition status for balita on sto
         'head_circumference' => 46.0,
         'immunization' => 'BCG',
         'diagnosis' => 'Sehat',
+        'measurement_method' => 'standing',
         'complaint' => 'Tidak ada keluhan',
     ];
     
@@ -69,9 +81,10 @@ test('medical record automatically calculates nutrition status for balita on sto
     
     expect($medicalRecord)->not->toBeNull()
         ->and($medicalRecord->z_score)->not->toBeNull()
+        ->and($medicalRecord->z_score)->toBeNumeric()
         ->and($medicalRecord->nutrition_status)->not->toBeNull()
         ->and($medicalRecord->nutrition_status)->toBeIn([
-            'Normal', 'Gizi Kurang', 'Gizi Lebih', 'Gizi Buruk/Stunting', 'Tidak Dapat Dihitung'
+            'Gizi Baik', 'Gizi Kurang', 'Gizi Lebih', 'Gizi Buruk', 'Tidak Dapat Dihitung'
         ]);
 });
 
@@ -105,6 +118,7 @@ test('medical record recalculates nutrition status when weight changes on update
         'head_circumference' => 46.0,
         'immunization' => 'BCG',
         'diagnosis' => 'Sehat',
+        'measurement_method' => 'standing',
         'complaint' => 'Tidak ada keluhan',
     ];
     
@@ -134,7 +148,7 @@ test('medical record calculates nutrition trend by comparing with previous recor
         'immunization' => 'BCG',
         'diagnosis' => 'Sehat',
         'complaint' => 'Tidak ada keluhan',
-        'nutrition_status' => 'Normal',
+        'nutrition_status' => 'Gizi Baik',
         'z_score' => 0.0,
     ]);
     
@@ -148,16 +162,18 @@ test('medical record calculates nutrition trend by comparing with previous recor
         'head_circumference' => 46.0,
         'immunization' => 'DPT',
         'diagnosis' => 'Sehat',
+        'measurement_method' => 'standing',
         'complaint' => 'Tidak ada keluhan',
     ];
     
     $response = $this->post(route('admin.medical-records.store'), $secondRecordData);
     
+    $response->assertSessionDoesntHaveErrors();
     $response->assertRedirect(route('admin.medical-records.index'));
     
     // Verify nutrition trend was calculated
     $secondRecord = MedicalRecord::where('patient_id', $this->patient->id)
-        ->where('visit_date', now()->format('Y-m-d'))
+        ->latest('id')
         ->first();
     
     expect($secondRecord)->not->toBeNull()
@@ -189,6 +205,7 @@ test('medical record does not calculate nutrition status for non-balita categori
         'height' => 170.0,
         'immunization' => 'Influenza',
         'diagnosis' => 'Sehat',
+        'measurement_method' => 'standing',
         'complaint' => 'Tidak ada keluhan',
     ];
     
@@ -204,29 +221,29 @@ test('medical record does not calculate nutrition status for non-balita categori
         ->and($medicalRecord->nutrition_status)->toBeNull();
 });
 
-test('calculateNutritionTrend returns correct trend values', function () {
-    $controller = new \App\Http\Controllers\Web\MedicalRecordController();
-    $reflection = new ReflectionClass($controller);
-    $method = $reflection->getMethod('calculateNutritionTrend');
+test('compareNutritionStatus returns correct trend values', function () {
+    $service = app(\App\Services\MedicalRecordService::class);
+    $reflection = new ReflectionClass($service);
+    $method = $reflection->getMethod('compareNutritionStatus');
     $method->setAccessible(true);
     
-    // Test improvement: Gizi Kurang -> Normal
-    $trend = $method->invoke($controller, 'Gizi Kurang', 'Normal');
+    // Test improvement: Gizi Kurang -> Gizi Baik
+    $trend = $method->invoke($service, 'Gizi Kurang', 'Gizi Baik');
     expect($trend)->toBe('naik');
     
-    // Test worsening: Normal -> Gizi Kurang
-    $trend = $method->invoke($controller, 'Normal', 'Gizi Kurang');
+    // Test worsening: Gizi Baik -> Gizi Kurang
+    $trend = $method->invoke($service, 'Gizi Baik', 'Gizi Kurang');
     expect($trend)->toBe('turun');
     
-    // Test same: Normal -> Normal
-    $trend = $method->invoke($controller, 'Normal', 'Normal');
+    // Test same: Gizi Baik -> Gizi Baik
+    $trend = $method->invoke($service, 'Gizi Baik', 'Gizi Baik');
     expect($trend)->toBe('tetap');
     
-    // Test severe worsening: Normal -> Gizi Buruk/Stunting
-    $trend = $method->invoke($controller, 'Normal', 'Gizi Buruk/Stunting');
+    // Test severe worsening: Gizi Baik -> Gizi Buruk
+    $trend = $method->invoke($service, 'Gizi Baik', 'Gizi Buruk');
     expect($trend)->toBe('turun');
     
-    // Test improvement from severe: Gizi Buruk/Stunting -> Gizi Kurang
-    $trend = $method->invoke($controller, 'Gizi Buruk/Stunting', 'Gizi Kurang');
+    // Test improvement from severe: Gizi Buruk -> Gizi Kurang
+    $trend = $method->invoke($service, 'Gizi Buruk', 'Gizi Kurang');
     expect($trend)->toBe('naik');
 });

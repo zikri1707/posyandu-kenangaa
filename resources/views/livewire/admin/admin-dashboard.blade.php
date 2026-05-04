@@ -1,37 +1,20 @@
-<div>
-    @section('admin-title') Dashboard @endsection
-
-    {{-- Material Symbols CDN (for icons used in this design) --}}
+<div class="space-y-8">
+    {{-- Material Symbols & Fonts --}}
     @push('styles')
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
+        .hero-gradient {
+            background: linear-gradient(135deg, #00685f 0%, #004d46 100%);
         }
-        .material-symbols-outlined { 
-            font-variation-settings: 'FILL' 1, 'wght' 500;
-            font-size: 24px;
+        .glass-btn {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
-        /* Responsive utilities untuk ibu-ibu dan usia 50+ */
-        .text-xxl { font-size: 1.375rem; line-height: 1.4; }
-        .text-xl-base { font-size: 1.25rem; line-height: 1.5; }
-        .text-lg-base { font-size: 1.125rem; line-height: 1.6; }
-        
-        @media (max-width: 768px) {
-            .text-xxl { font-size: 1.25rem; }
-            .text-xl-base { font-size: 1.125rem; }
-            .text-lg-base { font-size: 1rem; }
-            .btn-mobile { width: 100%; justify-content: center; }
-            .card-mobile { padding: 1.25rem !important; }
-            .stats-grid-mobile { grid-template-columns: 1fr 1fr !important; }
-            .table-responsive-mobile { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .glass-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
         }
     </style>
     @endpush
-
-<div>
-    @section('admin-title') Dashboard @endsection
 
     @php
         $hour = now()->hour;
@@ -40,44 +23,40 @@
         $posyanduName = $user->posyandu?->name ?? 'Posyandu';
     @endphp
 
-    {{-- ── Hero Banner (Modernized) ── --}}
-    <section class="premium-card relative overflow-hidden mb-8 group p-0!">
-        <div class="bg-premium-gradient p-8 md:p-10 text-white min-h-[240px] flex flex-col justify-center">
-            {{-- Decorative Animated Elements --}}
-            <div class="absolute right-0 top-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -mr-32 -mt-32 animate-pulse"></div>
-            <div class="absolute left-0 bottom-0 w-64 h-64 bg-teal-400/20 rounded-full blur-3xl -ml-32 -mb-32"></div>
+    {{-- ── Hero Section ── --}}
+    <section class="premium-card relative overflow-hidden group p-0!">
+        <div class="hero-gradient p-10 md:p-14 text-white relative min-h-[300px] flex flex-col justify-center">
+            {{-- Abstract Shapes --}}
+            <div class="absolute right-0 top-0 w-[500px] h-[500px] bg-emerald-400/10 rounded-full blur-[120px] -mr-48 -mt-48 animate-pulse"></div>
+            <div class="absolute left-1/4 bottom-0 w-[300px] h-[300px] bg-teal-500/20 rounded-full blur-[80px] -ml-24 -mb-24"></div>
 
-            <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
-                <div class="space-y-4">
-                    <div class="inline-flex items-center px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-[10px] font-bold tracking-widest uppercase">
-                        <span class="material-symbols-outlined text-[14px] mr-1.5">verified_user</span>
-                        {{ $posyanduName }}
+            <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-12">
+                <div class="max-w-2xl">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 text-[11px] font-black tracking-[0.2em] uppercase mb-6">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                        {{ $posyanduName }} • Pusat Informasi
                     </div>
-                    <div>
-                        <h2 class="text-display text-4xl md:text-5xl text-white mb-2">
-                            {{ $sapa }}, <span class="text-teal-300">{{ explode(' ', $user->name)[0] }}</span>
-                        </h2>
-                        @if($user->posyandu?->pedukuhan)
-                        <p class="text-teal-50/80 font-medium text-lg flex items-center gap-2">
-                            <span class="material-symbols-outlined text-teal-300" style="font-size:20px;">location_on</span>
-                            {{ $user->posyandu->pedukuhan->name }}
-                        </p>
-                        @endif
-                    </div>
+                    <h1 class="text-display text-5xl md:text-6xl text-white mb-4 leading-[1.1]">
+                        {{ $sapa }}, <br/>
+                        <span class="text-emerald-300">{{ explode(' ', $user->name)[0] }}!</span>
+                    </h1>
+                    <p class="text-teal-50/70 text-lg font-medium max-w-lg">
+                        Selamat datang kembali di dashboard kendali Posyandu. Pantau kesehatan warga dan kelola jadwal dengan efisiensi tinggi.
+                    </p>
                 </div>
                 
-                <div class="flex flex-col sm:flex-row gap-4 flex-shrink-0">
+                <div class="flex flex-wrap gap-4">
                     @can('create', App\Models\Patient::class)
                     <a href="{{ route('admin.patients.create') }}"
-                       class="btn-premium bg-white text-teal-900 font-bold px-8 py-4 rounded-2xl flex items-center justify-center gap-2 text-sm tracking-wide shadow-2xl">
-                        <span class="material-symbols-outlined text-[20px]">person_add</span>
+                       class="h-16 px-8 rounded-2xl bg-white text-teal-950 font-black text-sm uppercase tracking-widest flex items-center gap-3 shadow-2xl shadow-teal-950/20 hover:-translate-y-1 transition-all active:scale-95">
+                        <span class="material-symbols-outlined text-[22px]">person_add</span>
                         Tambah Warga
                     </a>
                     @endcan
-                    @can('create', App\Models\Patient::class)
+                    @can('create', App\Models\MedicalRecord::class)
                     <a href="{{ route('admin.medical-records.create') }}"
-                       class="btn-premium bg-teal-800/40 backdrop-blur-xl border border-white/30 text-white font-bold px-8 py-4 rounded-2xl flex items-center justify-center gap-2 text-sm tracking-wide">
-                        <span class="material-symbols-outlined text-[20px]">note_add</span>
+                       class="h-16 px-8 rounded-2xl glass-btn text-white font-black text-sm uppercase tracking-widest flex items-center gap-3 hover:-translate-y-1 transition-all active:scale-95">
+                        <span class="material-symbols-outlined text-[22px]">edit_note</span>
                         Input Rekam Medis
                     </a>
                     @endcan
@@ -86,101 +65,103 @@
         </div>
     </section>
 
-    {{-- ── KPI Stats Grid ── --}}
-    <section class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-10">
+    {{-- ── KPI Cards ── --}}
+    <section class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
         @php
         $stats = [
             ['label' => 'Balita',      'value' => $totalBalita,    'icon' => 'child_care',      'color' => 'blue'],
             ['label' => 'Ibu Hamil',   'value' => $totalIbuHamil,  'icon' => 'pregnant_woman',  'color' => 'pink'],
             ['label' => 'Remaja',      'value' => $totalRemaja,    'icon' => 'groups',          'color' => 'indigo'],
             ['label' => 'Lansia',      'value' => $totalLansia,    'icon' => 'elderly',         'color' => 'orange'],
-            ['label' => 'Kunjungan',   'value' => $kunjunganBaru,  'icon' => 'how_to_reg',      'color' => 'emerald'],
-            ['label' => 'Jadwal Aktif','value' => $jadwalAktif,    'icon' => 'event_available', 'color' => 'green'],
+            ['label' => 'Kunjungan',   'value' => $kunjunganBaru,  'icon' => 'analytics',       'color' => 'emerald'],
+            ['label' => 'Jadwal Aktif','value' => $jadwalAktif,    'icon' => 'calendar_today',  'color' => 'teal'],
         ];
         @endphp
 
         @foreach($stats as $s)
-        <div class="bento-card p-6 relative overflow-hidden group">
-            <div class="relative z-10">
-                <div @class([
-                    'w-12 h-12 rounded-2xl flex items-center justify-center mb-5 transition-transform group-hover:scale-110 duration-500',
-                    'bg-blue-50 text-blue-600' => $s['color'] === 'blue',
-                    'bg-pink-50 text-pink-600' => $s['color'] === 'pink',
-                    'bg-indigo-50 text-indigo-600' => $s['color'] === 'indigo',
-                    'bg-orange-50 text-orange-600' => $s['color'] === 'orange',
-                    'bg-emerald-50 text-emerald-600' => $s['color'] === 'emerald',
-                    'bg-green-50 text-green-600' => $s['color'] === 'green',
-                ])>
-                    <span class="material-symbols-outlined text-[26px]">{{ $s['icon'] }}</span>
-                </div>
-                <p class="text-label-lg text-slate-400 uppercase tracking-widest mb-1.5">{{ $s['label'] }}</p>
-                <h3 class="text-headline-lg text-4xl!">{{ number_format($s['value']) }}</h3>
+        <div class="bento-card p-7 group hover-lift border-slate-100!">
+            <div @class([
+                'w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-all duration-500 group-hover:rotate-6 shadow-sm',
+                'bg-blue-50 text-blue-600' => $s['color'] === 'blue',
+                'bg-pink-50 text-pink-600' => $s['color'] === 'pink',
+                'bg-indigo-50 text-indigo-600' => $s['color'] === 'indigo',
+                'bg-orange-50 text-orange-600' => $s['color'] === 'orange',
+                'bg-emerald-50 text-emerald-600' => $s['color'] === 'emerald',
+                'bg-teal-50 text-teal-600' => $s['color'] === 'teal',
+            ])>
+                <span class="material-symbols-outlined text-[28px]">{{ $s['icon'] }}</span>
             </div>
-            {{-- Subtle bg glow --}}
-            <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-slate-100 rounded-full opacity-0 group-hover:opacity-40 transition-opacity duration-700"></div>
+            <p class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">{{ $s['label'] }}</p>
+            <div class="flex items-end gap-2">
+                <h3 class="text-4xl font-black text-slate-900 leading-none tracking-tighter">{{ number_format($s['value']) }}</h3>
+                <span class="text-[10px] font-bold text-slate-400 uppercase mb-1">Jiwa</span>
+            </div>
         </div>
         @endforeach
     </section>
 
-    {{-- ── Main Content Area ── --}}
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
-
-        {{-- Left Side: Lists --}}
-        <div class="lg:col-span-2 space-y-8">
-            {{-- Stunting Alert Card --}}
-            <div class="premium-card overflow-hidden">
-                <div class="px-8 py-6 border-b border-slate-100 bg-red-50/30 flex justify-between items-center">
+    {{-- ── Main Grid ── --}}
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        {{-- Left Content: 8 Columns --}}
+        <div class="lg:col-span-8 space-y-8">
+            {{-- Stunting Alert Table --}}
+            <div class="premium-card overflow-hidden border-red-100!">
+                <div class="px-8 py-6 bg-red-50/40 border-b border-red-50 flex justify-between items-center">
                     <div>
-                        <h3 class="text-headline-md flex items-center gap-3 text-red-900">
-                            <span class="material-symbols-outlined text-red-500 text-[28px]" style="font-variation-settings: 'FILL' 1;">warning</span>
-                            Status Gizi Perlu Perhatian
+                        <h3 class="text-xl font-black text-red-950 flex items-center gap-3">
+                            <span class="material-symbols-outlined text-red-500 text-[24px]">priority_high</span>
+                            Perhatian Gizi Balita
                         </h3>
-                        <p class="text-sm text-red-700/70 font-medium mt-1">Daftar balita dengan indikasi stunting atau gizi buruk terbaru</p>
+                        <p class="text-xs text-red-700/60 font-bold uppercase tracking-widest mt-1">Indikasi Stunting & Gizi Buruk</p>
                     </div>
+                    <span class="px-4 py-1.5 rounded-xl bg-red-100 text-red-700 text-[10px] font-black uppercase tracking-widest">
+                        {{ count($balitaStunting) }} Kasus
+                    </span>
                 </div>
-
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
+                    <table class="w-full text-left">
                         <thead>
                             <tr class="bg-slate-50/50">
-                                <th class="px-8 py-4 text-label-lg text-slate-500 uppercase">Nama Balita</th>
-                                <th class="px-8 py-4 text-label-lg text-slate-500 uppercase">Usia</th>
-                                <th class="px-8 py-4 text-label-lg text-slate-500 uppercase">Status</th>
-                                <th class="px-8 py-4 text-label-lg text-slate-500 uppercase text-right">Aksi</th>
+                                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Identitas Balita</th>
+                                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Usia</th>
+                                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status Terakhir</th>
+                                <th class="px-8 py-5 text-right text-[10px] font-black text-slate-400 uppercase tracking-widest">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
                             @forelse($balitaStunting as $balita)
-                            <tr class="hover:bg-slate-50 transition-colors group">
+                            <tr class="hover:bg-red-50/20 transition-colors group">
                                 <td class="px-8 py-5">
                                     <div class="flex items-center gap-4">
-                                        <div class="w-10 h-10 rounded-full bg-red-100 text-red-700 flex items-center justify-center font-bold text-sm">
+                                        <div class="w-11 h-11 rounded-2xl bg-white border border-red-100 text-red-600 flex items-center justify-center font-black text-sm shadow-sm group-hover:bg-red-500 group-hover:text-white transition-all">
                                             {{ strtoupper(substr($balita->full_name, 0, 2)) }}
                                         </div>
-                                        <span class="text-body-md font-bold text-slate-900">{{ $balita->full_name }}</span>
+                                        <div>
+                                            <span class="block text-sm font-black text-slate-900">{{ $balita->full_name }}</span>
+                                            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">ID: #{{ $balita->id }}</span>
+                                        </div>
                                     </div>
                                 </td>
-                                <td class="px-8 py-5 text-body-md text-slate-600 font-medium">{{ $balita->age }}</td>
+                                <td class="px-8 py-5 text-sm font-black text-slate-600">{{ $balita->age }}</td>
                                 <td class="px-8 py-5">
-                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700 border border-red-200">
-                                        <span class="material-symbols-outlined text-[14px]">error</span>
+                                    <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest bg-red-50 text-red-600 border border-red-100">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse"></span>
                                         Stunting
                                     </span>
                                 </td>
                                 <td class="px-8 py-5 text-right">
-                                    <a href="{{ route('admin.patients.show', $balita->id) }}"
-                                       class="text-sm font-bold text-teal-600 hover:text-teal-800 flex items-center justify-end gap-1 group-hover:translate-x-1 transition-transform">
-                                       Detail
-                                       <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                                    <a href="{{ route('admin.patients.show', $balita->id) }}" class="inline-flex h-10 px-5 items-center justify-center rounded-xl bg-white border border-slate-100 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-teal-600 hover:border-teal-100 hover:shadow-lg transition-all">
+                                        Detail
                                     </a>
                                 </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="4" class="px-8 py-12 text-center text-slate-400 font-medium">
-                                    <div class="flex flex-col items-center gap-3">
-                                        <span class="material-symbols-outlined text-slate-200 text-5xl">task_alt</span>
-                                        <p>Semua data gizi terpantau aman.</p>
+                                <td colspan="4" class="px-8 py-20 text-center">
+                                    <div class="flex flex-col items-center gap-4 text-slate-300">
+                                        <span class="material-symbols-outlined text-[56px]">check_circle</span>
+                                        <p class="text-[11px] font-black uppercase tracking-[0.2em]">Semua data gizi dalam kondisi baik</p>
                                     </div>
                                 </td>
                             </tr>
@@ -191,263 +172,197 @@
             </div>
 
             {{-- Recent Activity --}}
-            <div class="premium-card">
+            <div class="premium-card overflow-hidden">
                 <div class="px-8 py-6 border-b border-slate-100 flex justify-between items-center">
-                    <h3 class="text-headline-md flex items-center gap-3">
-                        <span class="material-symbols-outlined text-teal-600 text-[28px]">history</span>
-                        Aktivitas Terkini
+                    <h3 class="text-xl font-black text-slate-900 flex items-center gap-3">
+                        <span class="material-symbols-outlined text-teal-600 text-[24px]">history</span>
+                        Aktivitas Pemeriksaan
                     </h3>
+                    <a href="{{ route('admin.medical-records.index') }}" class="text-[10px] font-black text-teal-600 uppercase tracking-widest hover:underline">Lihat Semua</a>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left">
                         <thead>
                             <tr class="bg-slate-50/50">
-                                <th class="px-8 py-4 text-label-lg text-slate-500 uppercase">Warga</th>
-                                <th class="px-8 py-4 text-label-lg text-slate-500 uppercase">Tanggal</th>
-                                <th class="px-8 py-4 text-label-lg text-slate-500 uppercase">Unit</th>
-                                <th class="px-8 py-4 text-label-lg text-slate-500 uppercase">Kader</th>
+                                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Pasien</th>
+                                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Waktu Visit</th>
+                                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Unit Posyandu</th>
+                                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Petugas</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
-                            @forelse($recentActivities as $activity)
-                            <tr class="hover:bg-slate-50 transition-colors">
+                            @foreach($recentActivities as $activity)
+                            <tr class="hover:bg-slate-50/50 transition-colors group">
                                 <td class="px-8 py-5">
                                     <div class="flex flex-col">
-                                        <span class="text-body-md font-bold text-slate-900">{{ $activity->patient->full_name }}</span>
-                                        <span class="text-[10px] text-slate-400 font-black uppercase tracking-tighter">{{ $activity->patient->category }}</span>
+                                        <span class="text-sm font-black text-slate-900 group-hover:text-teal-600 transition-colors">{{ $activity->patient->full_name }}</span>
+                                        <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{{ $activity->patient->category }}</span>
                                     </div>
                                 </td>
-                                <td class="px-8 py-5 text-body-md text-slate-600">{{ $activity->visit_date->format('d M Y') }}</td>
+                                <td class="px-8 py-5 text-sm font-black text-slate-600">{{ $activity->visit_date->translatedFormat('d M Y') }}</td>
                                 <td class="px-8 py-5">
-                                    <span class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 text-xs font-bold">
+                                    <span class="px-3 py-1 rounded-xl bg-slate-100 text-slate-500 text-[10px] font-black uppercase tracking-widest">
                                         {{ $activity->patient->posyandu->name }}
                                     </span>
                                 </td>
-                                <td class="px-8 py-5 text-body-md text-slate-600">{{ $activity->user->name ?? '-' }}</td>
+                                <td class="px-8 py-5 text-sm font-bold text-slate-700">{{ $activity->user->name ?? '-' }}</td>
                             </tr>
-                            @empty
-                            <tr>
-                                <td colspan="4" class="px-8 py-12 text-center text-slate-400">Belum ada aktivitas.</td>
-                            </tr>
-                            @endforelse
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        {{-- Right Side: Widgets --}}
-        <div class="space-y-8">
-            {{-- Upcoming Schedule Widget --}}
-            <div class="premium-card p-8 bg-slate-900 text-white">
-                <h3 class="text-headline-md text-white mb-6 flex items-center gap-3">
-                    <span class="material-symbols-outlined text-teal-400 text-[28px]">calendar_today</span>
-                    Jadwal Terdekat
-                </h3>
-
-                @if($upcomingSchedule)
-                <div class="space-y-6">
-                    <div class="flex items-start gap-5">
-                        <div class="w-16 h-16 rounded-2xl bg-teal-500 flex flex-col items-center justify-center text-white shadow-lg shadow-teal-500/20">
-                            <span class="text-[10px] font-black uppercase opacity-80 leading-none mb-1">
-                                {{ \Carbon\Carbon::parse($upcomingSchedule->start_time)->translatedFormat('M') }}
-                            </span>
-                            <span class="text-2xl font-black leading-none">
-                                {{ \Carbon\Carbon::parse($upcomingSchedule->start_time)->format('d') }}
-                            </span>
+        {{-- Right Side: 4 Columns Widgets --}}
+        {{-- Right Side: Side Widgets with better separation ── --}}
+        <div class="lg:col-span-4 flex flex-col gap-10">
+            
+            {{-- Upcoming Schedule Widget (Refined Compact) --}}
+            <div class="relative group rounded-[2.5rem] p-6 bg-white border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_30px_60px_rgba(20,184,166,0.1)] transition-all duration-500 overflow-hidden">
+                <div class="absolute -right-10 -top-10 w-40 h-40 bg-teal-500/[0.03] rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
+                
+                <div class="relative z-10">
+                    <div class="flex items-center justify-between mb-8">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-teal-500 text-white flex items-center justify-center shadow-lg shadow-teal-500/20">
+                                <i class="fas fa-calendar-alt text-[16px]"></i>
+                            </div>
+                            <span class="text-lg font-black text-slate-900 tracking-tight">Jadwal</span>
                         </div>
-                        <div class="flex-1 min-w-0">
-                            <h4 class="text-body-md font-bold text-white mb-1 line-clamp-2 leading-snug">{{ $upcomingSchedule->title }}</h4>
-                            <p class="text-xs text-teal-100/60 flex items-center gap-1.5 font-medium">
-                                <span class="material-symbols-outlined text-[16px]">schedule</span>
-                                {{ \Carbon\Carbon::parse($upcomingSchedule->start_time)->format('H:i') }} WIB
-                            </p>
-                        </div>
+                        <span class="px-3 py-1 bg-teal-50 text-teal-600 text-[8px] font-black rounded-full uppercase tracking-widest border border-teal-100">Aktif</span>
                     </div>
-                    
-                    @if($upcomingSchedule->location)
-                    <div class="flex items-start gap-3 p-4 rounded-xl bg-white/5 border border-white/10">
-                        <span class="material-symbols-outlined text-teal-400 text-[18px] mt-0.5">location_on</span>
-                        <p class="text-xs text-slate-300 font-medium leading-relaxed">{{ $upcomingSchedule->location }}</p>
+
+                    @if($upcomingSchedule)
+                    <div class="space-y-6">
+                        <div class="flex items-center gap-5">
+                            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-600 flex flex-col items-center justify-center text-white shadow-xl shadow-teal-500/20">
+                                <span class="text-[9px] font-black uppercase opacity-80 mb-0.5">{{ \Carbon\Carbon::parse($upcomingSchedule->start_time)->translatedFormat('M') }}</span>
+                                <span class="text-2xl font-black">{{ \Carbon\Carbon::parse($upcomingSchedule->start_time)->format('d') }}</span>
+                            </div>
+                            <div class="min-w-0">
+                                <h4 class="text-lg font-black text-slate-900 mb-1 leading-tight truncate">{{ $upcomingSchedule->title }}</h4>
+                                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider flex items-center gap-2">
+                                    <i class="far fa-clock text-teal-500"></i>
+                                    {{ \Carbon\Carbon::parse($upcomingSchedule->start_time)->format('H:i') }} WIB
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center text-teal-500 flex-shrink-0">
+                                <i class="fas fa-location-dot text-[14px]"></i>
+                            </div>
+                            <span class="text-[13px] text-slate-700 font-black truncate">{{ $upcomingSchedule->location ?: 'Posyandu Anggrek' }}</span>
+                        </div>
+
+                        <a href="{{ route('admin.schedules.index') }}" 
+                           class="w-full h-12 bg-slate-900 text-white rounded-xl font-black text-[10px] uppercase tracking-[0.2em] flex items-center justify-center hover:bg-teal-600 transition-all">
+                            Detail Jadwal
+                        </a>
                     </div>
                     @endif
-
-                    <a href="{{ route('admin.schedules.index') }}" 
-                       class="w-full btn-premium bg-white text-slate-900 py-3.5 rounded-xl font-bold text-sm text-center">
-                        Lihat Jadwal Lengkap
-                    </a>
                 </div>
-                @else
-                <div class="text-center py-10 opacity-40">
-                    <span class="material-symbols-outlined text-5xl mb-4">event_busy</span>
-                    <p class="text-sm font-bold uppercase tracking-widest">Belum ada jadwal</p>
-                </div>
-                @endif
             </div>
 
-            {{-- Nutrition Distribution Chart --}}
-            <div class="premium-card p-8">
-                <h3 class="text-headline-md mb-2">Status Gizi</h3>
-                <p class="text-xs text-slate-400 font-bold uppercase tracking-widest mb-8">Distribusi Kumulatif</p>
-                <div class="relative h-64 mb-6">
-                    <canvas id="nutritionStatusChart"></canvas>
-                </div>
-                {{-- Custom Legend --}}
-                <div class="space-y-3">
-                    @php $colors = ['#10b981', '#f59e0b', '#f97316', '#ef4444', '#94a3b8']; @endphp
-                    @foreach($nutritionStatusDistribution['labels'] as $index => $label)
-                    <div class="flex justify-between items-center text-xs font-bold">
-                        <div class="flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full" style="background-color: {{ $colors[$index] ?? '#94a3b8' }}"></span>
-                            <span class="text-slate-600">{{ $label }}</span>
+            {{-- Nutrition Status Widget (Distinct Background) --}}
+            <div class="relative group rounded-[2.5rem] p-7 bg-slate-50 border border-slate-100 shadow-sm hover:shadow-xl hover:bg-white transition-all duration-500 overflow-hidden">
+                <div class="relative z-10">
+                    <h3 class="text-lg font-black text-slate-900 mb-1 tracking-tight">Status Gizi</h3>
+                    <p class="text-[9px] text-slate-400 font-black uppercase tracking-[0.2em] mb-8">Proporsi Kumulatif Balita</p>
+                    
+                    <div class="relative h-56 mb-8">
+                        <canvas id="nutritionStatusChart"></canvas>
+                        <div class="absolute inset-0 flex items-center justify-center flex-col pointer-events-none">
+                            <span class="text-3xl font-black text-slate-900">{{ $totalBalita }}</span>
+                            <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Jiwa</span>
                         </div>
-                        <span class="text-slate-900">{{ $nutritionStatusDistribution['data'][$index] }}</span>
                     </div>
-                    @endforeach
+
+                    <div class="grid grid-cols-2 gap-3 pt-6 border-t border-slate-200/50">
+                        <div class="p-3 rounded-xl bg-white border border-slate-100">
+                            <p class="text-[8px] font-black text-slate-400 uppercase mb-1">Gizi Baik</p>
+                            <p class="text-sm font-black text-emerald-600">{{ $nutritionStats['Normal'] ?? 0 }}</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-white border border-slate-100">
+                            <p class="text-[8px] font-black text-slate-400 uppercase mb-1">Perlu Atensi</p>
+                            <p class="text-sm font-black text-red-500">{{ ($nutritionStats['Severely Stunted'] ?? 0) + ($nutritionStats['Stunted'] ?? 0) }}</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-3 pt-6 border-t border-slate-200/50">
+                        @php 
+                            $ndLabels = $nutritionStatusDistribution['labels'];
+                            $ndData = $nutritionStatusDistribution['data'];
+                            $ndColors = ['#0d9488', '#fbbf24', '#f97316', '#ef4444', '#cbd5e1']; 
+                        @endphp
+                        @foreach($ndLabels as $index => $label)
+                        <div class="flex justify-between items-center p-3 rounded-xl bg-white border border-slate-100 hover:shadow-sm transition-all">
+                            <div class="flex items-center gap-3">
+                                <span class="w-2.5 h-2.5 rounded-full" style="background-color: {{ $ndColors[$index] ?? '#94a3b8' }}"></span>
+                                <span class="text-[10px] font-bold text-slate-600 truncate max-w-[120px]">{{ $label }}</span>
+                            </div>
+                            <span class="text-xs font-black text-slate-900">{{ $ndData[$index] ?? 0 }}</span>
+                        </div>
+                        @endforeach
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    {{-- ── Analytics Section ── --}}
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
-        <div class="lg:col-span-2 premium-card p-8!">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 px-8 pt-8">
-                <div>
-                    <h3 class="text-headline-md">Tren Penimbangan Bulanan</h3>
-                    <p class="text-sm text-slate-500 font-medium mt-1">Volume pemeriksaan rekam medis warga dalam setahun terakhir</p>
-                </div>
-                <div class="flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-xl border border-slate-200">
-                    <span class="w-2.5 h-2.5 bg-teal-600 rounded-full animate-pulse"></span>
-                    <span class="text-xs font-bold text-slate-600 uppercase tracking-widest">Live Updates</span>
-                </div>
+    {{-- ── Trend Analysis Section ── --}}
+    <section class="premium-card p-0! overflow-hidden">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-8 p-8 md:p-12 pb-0!">
+            <div>
+                <h3 class="text-2xl font-black text-slate-900 tracking-tight">Tren Penimbangan & Pemeriksaan</h3>
+                <p class="text-sm text-slate-500 font-medium mt-1">Aktivitas rekam medis kumulatif warga dalam periode 12 bulan terakhir</p>
             </div>
-            <div class="h-[350px] px-8 pb-8">
-                <canvas id="monthlyWeighingChart"></canvas>
+            <div class="flex items-center gap-3 px-5 py-2.5 bg-emerald-50 rounded-2xl border border-emerald-100">
+                <span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span>
+                <span class="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Real-time Data Analytics</span>
             </div>
         </div>
-
-        {{-- Posyandu Stats (SuperAdmin only) --}}
-        <div class="space-y-8">
-            @if(auth()->user()->isSuperAdmin())
-            <div class="premium-card p-8">
-                <h3 class="text-headline-md mb-6 flex items-center gap-3">
-                    <span class="material-symbols-outlined text-indigo-600 text-[28px]">domain</span>
-                    Sasaran per Unit
-                </h3>
-                <div class="space-y-4">
-                    @foreach($posyanduStats as $pStat)
-                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 group hover:border-indigo-200 transition-colors">
-                        <div>
-                            <p class="text-body-md font-bold text-slate-900">{{ $pStat->name }}</p>
-                            <p class="text-[10px] text-slate-400 font-black uppercase tracking-tighter">{{ $pStat->pedukuhan->name ?? 'Wilayah Luar' }}</p>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-xl font-black text-slate-900">{{ $pStat->patients_count }}</span>
-                            <p class="text-[9px] uppercase font-black text-slate-400 tracking-widest">Warga</p>
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
-            </div>
-            @endif
-
-            {{-- Quick Access (Mobile/Sidebar fallback) --}}
-            <div class="bento-card p-8 bg-teal-900 text-white flex flex-col justify-center items-center text-center">
-                <div class="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center mb-4">
-                    <span class="material-symbols-outlined text-teal-300 text-3xl">help_outline</span>
-                </div>
-                <h4 class="text-headline-sm text-white mb-2">Butuh Bantuan?</h4>
-                <p class="text-xs text-teal-100/60 mb-6 font-medium">Baca panduan penggunaan sistem Posyandu Admin Dashboard</p>
-                <a href="#" class="w-full py-3 bg-white text-teal-900 rounded-xl font-bold text-sm">Buka Panduan</a>
-            </div>
+        <div class="h-[400px]">
+            <canvas id="monthlyWeighingChart"></canvas>
         </div>
-    </div>
-
-    {{-- ── Final Footer Quick Access ── --}}
-    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        @php
-        $shortcuts = [
-            ['href' => route('admin.patients.index'),        'icon' => 'groups',         'label' => 'Data Warga',   'color' => 'blue'],
-            ['href' => route('admin.schedules.index'),       'icon' => 'calendar_month',  'label' => 'Jadwal Aktif', 'color' => 'emerald'],
-            ['href' => route('admin.medical-records.index'), 'icon' => 'clinical_notes',  'label' => 'Rekam Medis',  'color' => 'indigo'],
-            ['href' => route('admin.articles.index'),        'icon' => 'newspaper',       'label' => 'Edukasi KIA',  'color' => 'pink'],
-        ];
-        @endphp
-        @foreach($shortcuts as $s)
-        <a href="{{ $s['href'] }}" class="bento-card p-6 flex items-center gap-5 hover-lift">
-            <div @class([
-                'w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0',
-                'bg-blue-100 text-blue-600' => $s['color'] === 'blue',
-                'bg-emerald-100 text-emerald-600' => $s['color'] === 'emerald',
-                'bg-indigo-100 text-indigo-600' => $s['color'] === 'indigo',
-                'bg-pink-100 text-pink-600' => $s['color'] === 'pink',
-            ])>
-                <span class="material-symbols-outlined text-[24px]">{{ $s['icon'] }}</span>
-            </div>
-            <div class="min-w-0">
-                <h4 class="text-body-md font-bold text-slate-900">{{ $s['label'] }}</h4>
-                <p class="text-[10px] text-slate-400 font-black uppercase tracking-tighter mt-0.5">Buka Halaman</p>
-            </div>
-        </a>
-        @endforeach
     </section>
+
+    {{-- Scripts --}}
     @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Donut Chart - Status Gizi
+        const nd = @json($nutritionStatusDistribution);
+        const wd = @json($monthlyWeighingData);
+        
+        // 1. Nutrition Status (Doughnut)
         const nutritionCtx = document.getElementById('nutritionStatusChart');
         if (nutritionCtx) {
-            const nd = @json($nutritionStatusDistribution);
-            const cMap = {
-                'Normal':'#10b981',
-                'Gizi Kurang':'#f59e0b',
-                'Gizi Lebih':'#f97316',
-                'Gizi Buruk/Stunting':'#ef4444',
-                'Tidak Dapat Dihitung':'#94a3b8'
-            };
             new Chart(nutritionCtx, {
                 type: 'doughnut',
                 data: {
                     labels: nd.labels,
                     datasets: [{ 
                         data: nd.data, 
-                        backgroundColor: nd.labels.map(l => cMap[l] || '#94a3b8'), 
-                        borderWidth: 2, 
-                        borderColor: '#fff' 
+                        backgroundColor: ['#0d9488', '#fbbf24', '#f97316', '#ef4444', '#cbd5e1'], 
+                        borderWidth: 0,
+                        hoverOffset: 15
                     }]
                 },
                 options: {
-                    responsive: true, 
-                    maintainAspectRatio: false, 
-                    cutout: '72%',
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: { 
-                            backgroundColor: '#1e293b',
-                            padding: 12,
-                            cornerRadius: 8,
-                            callbacks: { 
-                                label: c => {
-                                    const t = c.dataset.data.reduce((a, b) => a + b, 0);
-                                    return `${c.label}: ${c.parsed} (${t > 0 ? ((c.parsed / t) * 100).toFixed(1) : 0}%)`;
-                                }
-                            }
-                        }
-                    }
+                    responsive: true, maintainAspectRatio: false, cutout: '82%',
+                    plugins: { legend: { display: false }, tooltip: { cornerRadius: 12, padding: 12 } }
                 }
             });
         }
 
-        // Line Chart - Tren Penimbangan
+        // 2. Monthly Trend (Line Area)
         const weighCtx = document.getElementById('monthlyWeighingChart');
         if (weighCtx) {
-            const wd = @json($monthlyWeighingData);
-            const g = weighCtx.getContext('2d').createLinearGradient(0, 0, 0, 300);
-            g.addColorStop(0, 'rgba(13, 148, 136, 0.15)');
-            g.addColorStop(1, 'rgba(13, 148, 136, 0)');
-            
+            const gradient = weighCtx.getContext('2d').createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, 'rgba(13, 148, 136, 0.2)');
+            gradient.addColorStop(1, 'rgba(13, 148, 136, 0)');
+
             new Chart(weighCtx, {
                 type: 'line',
                 data: {
@@ -455,45 +370,25 @@
                     datasets: [{
                         label: 'Penimbangan',
                         data: wd.data,
-                        borderColor: '#0d9488', 
-                        backgroundColor: g,
-                        borderWidth: 3, 
-                        fill: true, 
-                        tension: 0.4,
-                        pointRadius: 4, 
-                        pointHoverRadius: 6,
-                        pointBackgroundColor: '#fff', 
-                        pointBorderColor: '#0d9488', 
-                        pointBorderWidth: 2
+                        borderColor: '#0d9488',
+                        borderWidth: 4,
+                        fill: true,
+                        backgroundColor: gradient,
+                        tension: 0.45,
+                        pointRadius: 0,
+                        pointHoverRadius: 8,
+                        pointHoverBackgroundColor: '#0d9488',
+                        pointHoverBorderColor: '#fff',
+                        pointHoverBorderWidth: 4
                     }]
                 },
                 options: {
-                    responsive: true, 
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: { 
-                            mode: 'index', 
-                            intersect: false, 
-                            backgroundColor: '#1e293b', 
-                            padding: 12, 
-                            cornerRadius: 8 
-                        }
-                    },
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, tooltip: { cornerRadius: 12, padding: 12, mode: 'index', intersect: false } },
                     scales: {
-                        y: { 
-                            beginAtZero: true, 
-                            grid: { color: '#f1f5f9' }, 
-                            border: { display: false },
-                            ticks: { font: { size: 11 }, color: '#94a3b8' }
-                        },
-                        x: { 
-                            grid: { display: false }, 
-                            border: { display: false },
-                            ticks: { font: { size: 11, weight: '600' }, color: '#64748b' }
-                        }
-                    },
-                    interaction: { mode: 'nearest', axis: 'x', intersect: false }
+                        y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.03)' }, border: { display: false }, ticks: { font: { weight: 'bold' }, color: '#94a3b8' } },
+                        x: { grid: { display: false }, border: { display: false }, ticks: { font: { weight: 'black' }, color: '#64748b' } }
+                    }
                 }
             });
         }

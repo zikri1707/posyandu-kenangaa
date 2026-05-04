@@ -1,8 +1,5 @@
-@extends('layouts.app')
 
-@section('title', 'Data Posyandu')
 
-@section('content')
 <div class="max-w-[1280px] mx-auto space-y-6">
 
     {{-- ── Page Header ── --}}
@@ -265,4 +262,3 @@
     </div>
 
 </div>
-@endsection

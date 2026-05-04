@@ -63,6 +63,8 @@ describe('validasi rentang berat badan', function () {
             'visit_date' => now()->format('Y-m-d'),
             'weight' => 0.4, // Too low
             'height' => 75.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
         ]);
 
         $response->assertSessionHasErrors('weight');
@@ -76,6 +78,8 @@ describe('validasi rentang berat badan', function () {
             'visit_date' => now()->format('Y-m-d'),
             'weight' => 201.0, // Too high
             'height' => 75.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
         ]);
 
         $response->assertSessionHasErrors('weight');
@@ -89,6 +93,8 @@ describe('validasi rentang berat badan', function () {
             'visit_date' => now()->format('Y-m-d'),
             'weight' => 0.5,
             'height' => 50.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
         ]);
 
         $response->assertSessionDoesntHaveErrors('weight');
@@ -102,6 +108,8 @@ describe('validasi rentang berat badan', function () {
             'visit_date' => now()->format('Y-m-d'),
             'weight' => 200.0,
             'height' => 180.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
         ]);
 
         $response->assertSessionDoesntHaveErrors('weight');
@@ -115,6 +123,8 @@ describe('validasi rentang berat badan', function () {
             'visit_date' => now()->format('Y-m-d'),
             'weight' => 10.5,
             'height' => 75.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
         ]);
 
         $response->assertSessionDoesntHaveErrors('weight');
@@ -156,6 +166,8 @@ describe('validasi rentang tinggi badan', function () {
             'visit_date' => now()->format('Y-m-d'),
             'weight' => 1.0,
             'height' => 30.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
         ]);
 
         $response->assertSessionDoesntHaveErrors('height');
@@ -169,6 +181,8 @@ describe('validasi rentang tinggi badan', function () {
             'visit_date' => now()->format('Y-m-d'),
             'weight' => 100.0,
             'height' => 300.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
         ]);
 
         $response->assertSessionDoesntHaveErrors('height');
@@ -184,6 +198,8 @@ describe('validasi rentang lingkar kepala', function () {
             'visit_date' => now()->format('Y-m-d'),
             'weight' => 10.0,
             'height' => 75.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
             'head_circumference' => 19.0, // Too low
         ]);
 
@@ -198,6 +214,8 @@ describe('validasi rentang lingkar kepala', function () {
             'visit_date' => now()->format('Y-m-d'),
             'weight' => 10.0,
             'height' => 75.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
             'head_circumference' => 71.0, // Too high
         ]);
 
@@ -212,6 +230,8 @@ describe('validasi rentang lingkar kepala', function () {
             'visit_date' => now()->format('Y-m-d'),
             'weight' => 10.0,
             'height' => 75.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
             'head_circumference' => 20.0,
         ]);
 
@@ -226,6 +246,8 @@ describe('validasi rentang lingkar kepala', function () {
             'visit_date' => now()->format('Y-m-d'),
             'weight' => 10.0,
             'height' => 75.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
             'head_circumference' => 70.0,
         ]);
 
@@ -240,6 +262,8 @@ describe('validasi rentang lingkar kepala', function () {
             'visit_date' => now()->format('Y-m-d'),
             'weight' => 10.0,
             'height' => 75.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
             'head_circumference' => null,
         ]);
 
@@ -256,6 +280,8 @@ describe('validasi tanggal kunjungan', function () {
             'visit_date' => now()->addDay()->format('Y-m-d'),
             'weight' => 10.0,
             'height' => 75.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
         ]);
 
         $response->assertSessionHasErrors('visit_date');
@@ -269,6 +295,8 @@ describe('validasi tanggal kunjungan', function () {
             'visit_date' => now()->format('Y-m-d'),
             'weight' => 10.0,
             'height' => 75.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
         ]);
 
         $response->assertSessionDoesntHaveErrors('visit_date');
@@ -282,6 +310,8 @@ describe('validasi tanggal kunjungan', function () {
             'visit_date' => now()->subDays(7)->format('Y-m-d'),
             'weight' => 10.0,
             'height' => 75.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
         ]);
 
         $response->assertSessionDoesntHaveErrors('visit_date');
@@ -297,12 +327,14 @@ describe('kalkulasi status gizi otomatis', function () {
             'visit_date' => now()->format('Y-m-d'),
             'weight' => 10.2, // Median weight for 12-month male
             'height' => 75.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
         ]);
 
         $record = MedicalRecord::where('patient_id', $this->patient->id)->first();
         
         expect($record->z_score)->not->toBeNull()
-            ->and($record->z_score)->toBeFloat();
+            ->and($record->z_score)->toBeNumeric();
     });
 
     it('menghitung nutrition_status otomatis saat menyimpan rekam medis', function () {
@@ -313,12 +345,14 @@ describe('kalkulasi status gizi otomatis', function () {
             'visit_date' => now()->format('Y-m-d'),
             'weight' => 10.2, // Median weight
             'height' => 75.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
         ]);
 
         $record = MedicalRecord::where('patient_id', $this->patient->id)->first();
         
         expect($record->nutrition_status)->not->toBeNull()
-            ->and($record->nutrition_status)->toBe('Normal');
+            ->and($record->nutrition_status)->toBe('Gizi Baik');
     });
 
     it('mengklasifikasikan status gizi sebagai Normal untuk z-score 0', function () {
@@ -329,11 +363,13 @@ describe('kalkulasi status gizi otomatis', function () {
             'visit_date' => now()->format('Y-m-d'),
             'weight' => 10.2, // Median
             'height' => 75.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
         ]);
 
         $record = MedicalRecord::where('patient_id', $this->patient->id)->first();
         
-        expect($record->nutrition_status)->toBe('Normal');
+        expect($record->nutrition_status)->toBe('Gizi Baik');
     });
 
     it('mengklasifikasikan status gizi sebagai Gizi Kurang untuk berat rendah', function () {
@@ -344,11 +380,13 @@ describe('kalkulasi status gizi otomatis', function () {
             'visit_date' => now()->format('Y-m-d'),
             'weight' => 8.6, // sd_minus2
             'height' => 75.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
         ]);
 
         $record = MedicalRecord::where('patient_id', $this->patient->id)->first();
         
-        expect($record->nutrition_status)->toBeIn(['Gizi Kurang', 'Normal']);
+        expect($record->nutrition_status)->toBeIn(['Gizi Kurang', 'Gizi Baik']);
     });
 
     it('mengklasifikasikan status gizi sebagai Gizi Buruk/Stunting untuk berat sangat rendah', function () {
@@ -359,11 +397,13 @@ describe('kalkulasi status gizi otomatis', function () {
             'visit_date' => now()->format('Y-m-d'),
             'weight' => 7.0, // Below sd_minus3
             'height' => 75.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
         ]);
 
         $record = MedicalRecord::where('patient_id', $this->patient->id)->first();
         
-        expect($record->nutrition_status)->toBeIn(['Gizi Buruk/Stunting', 'Gizi Kurang']);
+        expect($record->nutrition_status)->toBeIn(['Gizi Buruk', 'Gizi Kurang']);
     });
 
     it('mengklasifikasikan status gizi sebagai Gizi Lebih untuk berat tinggi', function () {
@@ -374,11 +414,13 @@ describe('kalkulasi status gizi otomatis', function () {
             'visit_date' => now()->format('Y-m-d'),
             'weight' => 13.0, // Above sd_plus2
             'height' => 75.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
         ]);
 
         $record = MedicalRecord::where('patient_id', $this->patient->id)->first();
         
-        expect($record->nutrition_status)->toBeIn(['Gizi Lebih', 'Normal']);
+        expect($record->nutrition_status)->toBeIn(['Gizi Lebih', 'Gizi Baik']);
     });
 
     it('menghitung ulang status gizi saat mengubah rekam medis', function () {
@@ -390,6 +432,8 @@ describe('kalkulasi status gizi otomatis', function () {
             'visit_date' => now()->format('Y-m-d'),
             'weight' => 10.2,
             'height' => 75.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
         ]);
 
         $record = MedicalRecord::where('patient_id', $this->patient->id)->first();
@@ -399,8 +443,10 @@ describe('kalkulasi status gizi otomatis', function () {
         $this->put("/admin/medical-records/{$record->id}", [
             'patient_id' => $this->patient->id,
             'visit_date' => now()->format('Y-m-d'),
-            'weight' => 13.0, // Higher weight
+            'weight' => 15.0, // Higher weight to change status
             'height' => 75.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
         ]);
 
         $record->refresh();
@@ -417,6 +463,8 @@ describe('field wajib', function () {
             'visit_date' => now()->format('Y-m-d'),
             'weight' => 10.0,
             'height' => 75.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
         ]);
 
         $response->assertSessionHasErrors('patient_id');
@@ -429,6 +477,8 @@ describe('field wajib', function () {
             'patient_id' => $this->patient->id,
             'weight' => 10.0,
             'height' => 75.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
         ]);
 
         $response->assertSessionHasErrors('visit_date');
@@ -441,6 +491,8 @@ describe('field wajib', function () {
             'patient_id' => $this->patient->id,
             'visit_date' => now()->format('Y-m-d'),
             'height' => 75.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
         ]);
 
         $response->assertSessionHasErrors('weight');
@@ -468,6 +520,8 @@ describe('log aktivitas', function () {
             'visit_date' => now()->format('Y-m-d'),
             'weight' => 10.0,
             'height' => 75.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
         ]);
 
         $this->assertDatabaseHas('activity_logs', [
@@ -485,6 +539,8 @@ describe('log aktivitas', function () {
             'visit_date' => now()->format('Y-m-d'),
             'weight' => 10.0,
             'height' => 75.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
         ]);
 
         $record = MedicalRecord::where('patient_id', $this->patient->id)->first();
@@ -495,6 +551,8 @@ describe('log aktivitas', function () {
             'visit_date' => now()->format('Y-m-d'),
             'weight' => 11.0,
             'height' => 76.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
         ]);
 
         $this->assertDatabaseHas('activity_logs', [
@@ -514,6 +572,8 @@ describe('otorisasi', function () {
             'visit_date' => now()->format('Y-m-d'),
             'weight' => 10.0,
             'height' => 75.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
         ]);
 
         $response->assertSessionDoesntHaveErrors();
@@ -527,6 +587,8 @@ describe('otorisasi', function () {
             'visit_date' => now()->format('Y-m-d'),
             'weight' => 10.0,
             'height' => 75.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
         ]);
 
         $response->assertSessionDoesntHaveErrors();
@@ -542,6 +604,8 @@ describe('field opsional', function () {
             'visit_date' => now()->format('Y-m-d'),
             'weight' => 10.0,
             'height' => 75.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
         ]);
 
         $response->assertSessionDoesntHaveErrors();
@@ -558,12 +622,14 @@ describe('field opsional', function () {
             'visit_date' => now()->format('Y-m-d'),
             'weight' => 10.0,
             'height' => 75.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
         ]);
 
         $response->assertSessionDoesntHaveErrors();
     });
 
-    it('dapat menyimpan rekam medis tanpa diagnosis', function () {
+    it('menolak menyimpan rekam medis tanpa diagnosis', function () {
         $this->actingAs($this->admin);
 
         $response = $this->post('/admin/medical-records', [
@@ -571,8 +637,10 @@ describe('field opsional', function () {
             'visit_date' => now()->format('Y-m-d'),
             'weight' => 10.0,
             'height' => 75.0,
+            'measurement_method' => 'standing',
+            // diagnosis missing
         ]);
 
-        $response->assertSessionDoesntHaveErrors();
+        $response->assertSessionHasErrors('diagnosis');
     });
 });

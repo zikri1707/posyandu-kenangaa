@@ -7,18 +7,26 @@ use App\Livewire\Shared\BaseAdminComponent;
 use App\Services\ScheduleService;
 use Illuminate\View\View;
 use Livewire\WithPagination;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Url;
 
 /**
  * Komponen Manajemen Jadwal (OOP & Clean Code).
  * Menangani tampilan daftar, filtering, dan penghapusan jadwal.
  */
+#[Layout('layouts.admin-layout')]
 class ScheduleManagement extends BaseAdminComponent
 {
     use WithPagination;
 
+    #[Url(except: '')]
     public string $search = '';
+
+    #[Url(except: '')]
     public string $status = '';
-    public string $posyandu_id = '';
+
+    #[Url(except: '')]
+    public $posyandu_id = '';
 
     // Form properties for Create
     public string $title = '';
