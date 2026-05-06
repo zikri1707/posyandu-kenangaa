@@ -64,7 +64,10 @@ class ReportService
             ->join('patients', 'medical_records.patient_id', '=', 'patients.id')
             ->where('patients.posyandu_id', $posyanduId)
             ->whereBetween('medical_records.visit_date', [$startDate, $endDate])
-            ->where('medical_records.vitamin_a', true)
+            ->where(function ($q) {
+                $q->where('medical_records.vitamin_a', true)
+                  ->orWhere('medical_records.vitamin_a_color', '!=', 'none');
+            })
             ->count();
 
         // 4. Pemberian Pill FE
@@ -124,7 +127,7 @@ class ReportService
                 'K' => $this->initAgeGroupArray(),
                 'N' => $this->initAgeGroupArray(),
                 'T' => $this->initAgeGroupArray(),
-                'U' => $this->initAgeGroupArray(),
+                'D' => $this->initAgeGroupArray(),
                 'B' => $this->initAgeGroupArray(),
                 'O' => $this->initAgeGroupArray(),
                 'GB' => $this->initAgeGroupArray(),
@@ -180,8 +183,8 @@ class ReportService
             $gender = $record->gender;
             $g = (strtoupper(substr($gender, 0, 1)) === 'L' || strtoupper(substr($gender, 0, 1)) === 'M') ? 'L' : 'P';
 
-            // Row U (Used as 'D' / Datang in this context based on user image flow)
-            $this->incrementAgeGroup($pokjaIvData['rows']['U'], $gender, $age);
+            // Row D (Datang)
+            $this->incrementAgeGroup($pokjaIvData['rows']['D'], $gender, $age);
 
             // Row N (Naik)
             if ($record->nutrition_trend === 'naik') {
@@ -194,7 +197,7 @@ class ReportService
             }
 
             // Row O (Vitamin A)
-            if ($record->vitamin_a) {
+            if ($record->vitamin_a || $record->vitamin_a_color !== 'none') {
                 $this->incrementAgeGroup($pokjaIvData['rows']['O'], $gender, $age);
             }
 

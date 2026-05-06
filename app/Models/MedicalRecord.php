@@ -47,6 +47,7 @@ class MedicalRecord extends Model
         'blood_pressure', 'measurement_method', 'head_circumference', 'immunization',
         'vitamin_a', 'pill_fe', 'is_exclusive_breastfeeding',
         'complaint', 'diagnosis', 'disease_history', 'health_note',
+        'vaccine_name', 'vaccine_dose', 'vitamin_a_color', 'deworming_medicine',
         // Gizi BB/U
         'nutrition_status', 'z_score', 'nutrition_trend',
         // Gizi TB/U (stunting)
@@ -62,6 +63,7 @@ class MedicalRecord extends Model
         'vitamin_a' => 'boolean',
         'pill_fe' => 'boolean',
         'is_exclusive_breastfeeding' => 'boolean',
+        'deworming_medicine' => 'boolean',
         'weight' => 'decimal:2',
         'height' => 'decimal:2',
         'head_circumference' => 'decimal:2',

@@ -29,6 +29,10 @@ class MedicalRecordRequest extends FormRequest
             'disease_history' => 'nullable|string',
             'health_note' => 'nullable|string',
             'immunization' => 'nullable|string',
+            'vaccine_name' => 'nullable|string|max:50',
+            'vaccine_dose' => 'nullable|integer|min:1|max:10',
+            'vitamin_a_color' => 'nullable|in:biru,merah,none',
+            'deworming_medicine' => 'nullable|boolean',
             'nutrition_status' => 'nullable|string',
         ];
     }
@@ -55,6 +59,9 @@ class MedicalRecordRequest extends FormRequest
             'head_circumference.min' => 'Lingkar kepala minimal 20 cm.',
             'head_circumference.max' => 'Lingkar kepala maksimal 70 cm.',
             'diagnosis.required' => 'Diagnosis/Hasil akhir wajib diisi.',
+            'vaccine_dose.integer' => 'Dosis vaksin harus berupa angka.',
+            'vaccine_dose.min' => 'Dosis vaksin minimal 1.',
+            'vitamin_a_color.in' => 'Warna Vitamin A harus Biru, Merah, atau Tidak Ada.',
         ];
     }
 }

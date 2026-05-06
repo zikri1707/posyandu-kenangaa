@@ -123,24 +123,82 @@
                     <h3 class="text-xs font-black text-slate-800 uppercase tracking-widest">Tambahan</h3>
                 </div>
 
-                <div class="space-y-4">
-                    <label class="flex items-center gap-3 p-4 rounded-2xl border border-slate-100 hover:bg-slate-50 transition-all cursor-pointer">
-                        <input type="checkbox" name="vitamin_a" value="1" {{ $record->vitamin_a ? 'checked' : '' }}
-                               class="w-5 h-5 rounded-lg border-slate-300 text-teal-600 focus:ring-teal-500/20">
-                        <div class="text-sm font-bold text-slate-800">Vitamin A</div>
-                    </label>
+                <div class="space-y-6">
+                    {{-- Vaccine Selection --}}
+                    <div class="space-y-2">
+                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Imunisasi (Vaksin)</label>
+                        <select name="vaccine_name"
+                                class="w-full h-12 px-4 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/5 transition-all appearance-none cursor-pointer bg-white">
+                            <option value="">-- Tidak Ada --</option>
+                            <optgroup label="Dasar (0-9 Bulan)">
+                                <option value="Hepatitis B" {{ old('vaccine_name', $record->vaccine_name) == 'Hepatitis B' ? 'selected' : '' }}>Hepatitis B (HB-0)</option>
+                                <option value="BCG" {{ old('vaccine_name', $record->vaccine_name) == 'BCG' ? 'selected' : '' }}>BCG</option>
+                                <option value="Polio 1" {{ old('vaccine_name', $record->vaccine_name) == 'Polio 1' ? 'selected' : '' }}>Polio 1</option>
+                                <option value="Polio 2" {{ old('vaccine_name', $record->vaccine_name) == 'Polio 2' ? 'selected' : '' }}>Polio 2</option>
+                                <option value="Polio 3" {{ old('vaccine_name', $record->vaccine_name) == 'Polio 3' ? 'selected' : '' }}>Polio 3</option>
+                                <option value="Polio 4" {{ old('vaccine_name', $record->vaccine_name) == 'Polio 4' ? 'selected' : '' }}>Polio 4</option>
+                                <option value="DPT-HB-Hib 1" {{ old('vaccine_name', $record->vaccine_name) == 'DPT-HB-Hib 1' ? 'selected' : '' }}>DPT-HB-Hib 1</option>
+                                <option value="DPT-HB-Hib 2" {{ old('vaccine_name', $record->vaccine_name) == 'DPT-HB-Hib 2' ? 'selected' : '' }}>DPT-HB-Hib 2</option>
+                                <option value="DPT-HB-Hib 3" {{ old('vaccine_name', $record->vaccine_name) == 'DPT-HB-Hib 3' ? 'selected' : '' }}>DPT-HB-Hib 3</option>
+                                <option value="PCV 1" {{ old('vaccine_name', $record->vaccine_name) == 'PCV 1' ? 'selected' : '' }}>PCV 1</option>
+                                <option value="PCV 2" {{ old('vaccine_name', $record->vaccine_name) == 'PCV 2' ? 'selected' : '' }}>PCV 2</option>
+                                <option value="IPV" {{ old('vaccine_name', $record->vaccine_name) == 'IPV' ? 'selected' : '' }}>IPV</option>
+                                <option value="Campak/MR" {{ old('vaccine_name', $record->vaccine_name) == 'Campak/MR' ? 'selected' : '' }}>Campak/MR</option>
+                            </optgroup>
+                            <optgroup label="Lanjutan (>18 Bulan)">
+                                <option value="DPT-HB-Hib Lanjutan" {{ old('vaccine_name', $record->vaccine_name) == 'DPT-HB-Hib Lanjutan' ? 'selected' : '' }}>DPT-HB-Hib Lanjutan</option>
+                                <option value="Campak/MR Lanjutan" {{ old('vaccine_name', $record->vaccine_name) == 'Campak/MR Lanjutan' ? 'selected' : '' }}>Campak/MR Lanjutan</option>
+                            </optgroup>
+                        </select>
+                    </div>
 
-                    <label class="flex items-center gap-3 p-4 rounded-2xl border border-slate-100 hover:bg-slate-50 transition-all cursor-pointer">
-                        <input type="checkbox" name="pill_fe" value="1" {{ $record->pill_fe ? 'checked' : '' }}
-                               class="w-5 h-5 rounded-lg border-slate-300 text-teal-600 focus:ring-teal-500/20">
-                        <div class="text-sm font-bold text-slate-800">Tablet FE</div>
-                    </label>
+                    {{-- Vitamin A Color --}}
+                    <div class="space-y-3">
+                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Pemberian Vitamin A</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <label class="relative flex flex-col items-center gap-2 p-3 rounded-2xl border border-slate-100 hover:bg-slate-50 transition-all cursor-pointer group">
+                                <input type="radio" name="vitamin_a_color" value="none" class="sr-only peer" {{ old('vitamin_a_color', $record->vitamin_a_color) == 'none' ? 'checked' : '' }}>
+                                <div class="w-full h-full absolute inset-0 rounded-2xl border-2 border-transparent peer-checked:border-teal-500 peer-checked:bg-teal-50/30 transition-all"></div>
+                                <span class="material-symbols-outlined text-slate-300 peer-checked:text-teal-600 z-10">block</span>
+                                <span class="text-[10px] font-black uppercase text-slate-400 peer-checked:text-teal-700 z-10">Tidak</span>
+                            </label>
+                            <label class="relative flex flex-col items-center gap-2 p-3 rounded-2xl border border-slate-100 hover:bg-slate-50 transition-all cursor-pointer group">
+                                <input type="radio" name="vitamin_a_color" value="biru" class="sr-only peer" {{ old('vitamin_a_color', $record->vitamin_a_color) == 'biru' ? 'checked' : '' }}>
+                                <div class="w-full h-full absolute inset-0 rounded-2xl border-2 border-transparent peer-checked:border-blue-500 peer-checked:bg-blue-50/30 transition-all"></div>
+                                <div class="w-4 h-4 rounded-full bg-blue-500 shadow-sm z-10"></div>
+                                <span class="text-[10px] font-black uppercase text-slate-400 peer-checked:text-blue-700 z-10">Biru</span>
+                            </label>
+                            <label class="relative flex flex-col items-center gap-2 p-3 rounded-2xl border border-slate-100 hover:bg-slate-50 transition-all cursor-pointer group">
+                                <input type="radio" name="vitamin_a_color" value="merah" class="sr-only peer" {{ old('vitamin_a_color', $record->vitamin_a_color) == 'merah' ? 'checked' : '' }}>
+                                <div class="w-full h-full absolute inset-0 rounded-2xl border-2 border-transparent peer-checked:border-red-500 peer-checked:bg-red-50/30 transition-all"></div>
+                                <div class="w-4 h-4 rounded-full bg-red-500 shadow-sm z-10"></div>
+                                <span class="text-[10px] font-black uppercase text-slate-400 peer-checked:text-red-700 z-10">Merah</span>
+                            </label>
+                        </div>
+                    </div>
 
-                    <label class="flex items-center gap-3 p-4 rounded-2xl border border-slate-100 hover:bg-slate-50 transition-all cursor-pointer">
-                        <input type="checkbox" name="is_exclusive_breastfeeding" value="1" {{ $record->is_exclusive_breastfeeding ? 'checked' : '' }}
-                               class="w-5 h-5 rounded-lg border-slate-300 text-teal-600 focus:ring-teal-500/20">
-                        <div class="text-sm font-bold text-slate-800">ASI Eksklusif</div>
-                    </label>
+                    <div class="space-y-4 pt-2 border-t border-slate-100">
+                        <label class="flex items-center gap-3 p-4 rounded-2xl border border-slate-100 hover:bg-slate-50 transition-all cursor-pointer">
+                            <input type="checkbox" name="deworming_medicine" value="1" {{ old('deworming_medicine', $record->deworming_medicine) ? 'checked' : '' }}
+                                   class="w-5 h-5 rounded-lg border-slate-300 text-teal-600 focus:ring-teal-500/20">
+                            <div class="flex flex-col">
+                                <span class="text-sm font-bold text-slate-800">Obat Cacing</span>
+                                <span class="text-[10px] text-slate-400">Diberikan setiap 6 bulan</span>
+                            </div>
+                        </label>
+
+                        <label class="flex items-center gap-3 p-4 rounded-2xl border border-slate-100 hover:bg-slate-50 transition-all cursor-pointer">
+                            <input type="checkbox" name="pill_fe" value="1" {{ old('pill_fe', $record->pill_fe) ? 'checked' : '' }}
+                                   class="w-5 h-5 rounded-lg border-slate-300 text-teal-600 focus:ring-teal-500/20">
+                            <div class="text-sm font-bold text-slate-800">Tablet Tambah Darah (FE)</div>
+                        </label>
+
+                        <label class="flex items-center gap-3 p-4 rounded-2xl border border-slate-100 hover:bg-slate-50 transition-all cursor-pointer">
+                            <input type="checkbox" name="is_exclusive_breastfeeding" value="1" {{ old('is_exclusive_breastfeeding', $record->is_exclusive_breastfeeding) ? 'checked' : '' }}
+                                   class="w-5 h-5 rounded-lg border-slate-300 text-teal-600 focus:ring-teal-500/20">
+                            <div class="text-sm font-bold text-slate-800">ASI Eksklusif</div>
+                        </label>
+                    </div>
                 </div>
             </div>
 

@@ -104,9 +104,26 @@
                         <div class="text-sm font-bold text-slate-900">{{ $medicalRecord->user->name ?? '-' }}</div>
                     </div>
                     <div class="flex items-center justify-between pt-6 border-t border-slate-50">
-                        <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Pemberian Vitamin</div>
-                        <div class="text-sm font-bold {{ $medicalRecord->vitamin_a ? 'text-green-600' : 'text-slate-300' }}">
-                            {{ $medicalRecord->vitamin_a ? 'Sudah Diberikan' : 'Tidak' }}
+                        <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Imunisasi</div>
+                        <div class="text-sm font-bold {{ $medicalRecord->vaccine_name ? 'text-teal-600' : 'text-slate-300' }}">
+                            {{ $medicalRecord->vaccine_name ?: 'Tidak Ada' }}
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between pt-6 border-t border-slate-50">
+                        <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Vitamin A</div>
+                        <div @class([
+                            'text-sm font-bold',
+                            'text-blue-600' => $medicalRecord->vitamin_a_color === 'biru',
+                            'text-red-600' => $medicalRecord->vitamin_a_color === 'merah',
+                            'text-slate-300' => $medicalRecord->vitamin_a_color === 'none',
+                        ])>
+                            {{ $medicalRecord->vitamin_a_color === 'none' ? 'Tidak Ada' : 'Kapsul ' . ucfirst($medicalRecord->vitamin_a_color) }}
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between pt-6 border-t border-slate-50">
+                        <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Obat Cacing</div>
+                        <div class="text-sm font-bold {{ $medicalRecord->deworming_medicine ? 'text-orange-600' : 'text-slate-300' }}">
+                            {{ $medicalRecord->deworming_medicine ? 'Sudah Diberikan' : 'Tidak' }}
                         </div>
                     </div>
                 </div>

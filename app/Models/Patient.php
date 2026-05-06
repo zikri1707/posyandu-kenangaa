@@ -82,6 +82,50 @@ class Patient extends Model
     }
 
     /**
+     * Get missing/overdue vaccines based on Indonesian standard schedule.
+     */
+    public function getMissingVaccines(): array
+    {
+        if ($this->category !== 'balita') {
+            return [];
+        }
+
+        $ageMonths = $this->age_in_months;
+        $receivedVaccines = $this->medicalRecords()
+            ->whereNotNull('vaccine_name')
+            ->pluck('vaccine_name')
+            ->toArray();
+
+        // Standard Schedule: [Vaccine Name => Minimum Age in Months]
+        $schedule = [
+            'Hepatitis B' => 0,
+            'BCG' => 1,
+            'Polio 1' => 1,
+            'DPT-HB-Hib 1' => 2,
+            'Polio 2' => 2,
+            'PCV 1' => 2,
+            'DPT-HB-Hib 2' => 3,
+            'Polio 3' => 3,
+            'PCV 2' => 3,
+            'DPT-HB-Hib 3' => 4,
+            'Polio 4' => 4,
+            'IPV' => 4,
+            'Campak/MR' => 9,
+            'DPT-HB-Hib Lanjutan' => 18,
+            'Campak/MR Lanjutan' => 18,
+        ];
+
+        $missing = [];
+        foreach ($schedule as $vaccine => $minAge) {
+            if ($ageMonths >= $minAge && ! in_array($vaccine, $receivedVaccines)) {
+                $missing[] = $vaccine;
+            }
+        }
+
+        return $missing;
+    }
+
+    /**
      * Scope to filter patients by posyandu
      */
     public function scopeByPosyandu(Builder $query, int $posyanduId): Builder

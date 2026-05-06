@@ -306,6 +306,50 @@
                     @endif
                 </div>
             </div>
+            {{-- Missing Immunizations Widget --}}
+            <div class="relative group rounded-[3rem] p-8 bg-white border border-slate-100 premium-shadow hover:border-orange-200 transition-all duration-500 overflow-hidden">
+                <div class="absolute -right-10 -top-10 w-40 h-40 bg-orange-50 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
+                
+                <div class="relative z-10">
+                    <div class="flex items-center justify-between mb-8">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-2xl bg-orange-600 text-white flex items-center justify-center shadow-lg shadow-orange-500/20">
+                                <span class="material-symbols-outlined text-[20px]">vaccines</span>
+                            </div>
+                            <span class="text-lg font-black text-slate-900 tracking-tight">Atensi Imunisasi</span>
+                        </div>
+                        @if(count($missingImmunizations) > 0)
+                        <span class="px-3 py-1 bg-orange-50 text-orange-600 text-[8px] font-black rounded-full uppercase tracking-widest border border-orange-100">{{ count($missingImmunizations) }} Anak</span>
+                        @endif
+                    </div>
+
+                    @forelse($missingImmunizations as $item)
+                    <div class="space-y-4 mb-4 last:mb-0">
+                        <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100 group/item hover:bg-white hover:shadow-md transition-all">
+                            <div class="flex items-center gap-3 overflow-hidden">
+                                <div class="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex-shrink-0 flex items-center justify-center font-black text-[10px]">
+                                    {{ strtoupper(substr($item['patient']->full_name, 0, 2)) }}
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="text-xs font-black text-slate-900 truncate">{{ $item['patient']->full_name }}</p>
+                                    <p class="text-[9px] text-slate-400 font-bold uppercase truncate">Target: {{ $item['next_vaccine'] }}</p>
+                                </div>
+                            </div>
+                            <a href="{{ route('admin.patients.show', $item['patient']->id) }}" class="w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-xl bg-white text-slate-300 hover:bg-orange-500 hover:text-white transition-all">
+                                <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                            </a>
+                        </div>
+                    </div>
+                    @empty
+                    <div class="flex flex-col items-center py-6 text-center">
+                        <div class="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-200 mb-3">
+                            <span class="material-symbols-outlined text-[24px]">verified</span>
+                        </div>
+                        <p class="text-[9px] font-black text-slate-300 uppercase tracking-widest">Semua Imunisasi Terpenuhi</p>
+                    </div>
+                    @endforelse
+                </div>
+            </div>
 
             {{-- Nutrition Status Widget (Neo-Glass) --}}
             <div class="relative group rounded-[3rem] p-8 bg-white border border-slate-100 premium-shadow hover:border-indigo-100 transition-all duration-500 overflow-hidden">

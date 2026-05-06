@@ -139,6 +139,7 @@ class MedicalRecordService
             ->whereMonth('visit_date', $date->month)
             ->where(function ($q) {
                 $q->where('vitamin_a', true)
+                    ->orWhere('vitamin_a_color', '!=', 'none')
                     ->orWhere('pill_fe', true);
             });
 
@@ -183,6 +184,8 @@ class MedicalRecordService
         $data['user_id'] = $user->id;
         $data['immunization'] = $data['immunization'] ?? 'Tidak ada';
         $data['complaint'] = $data['complaint'] ?? '—';
+        $data['vitamin_a_color'] = $data['vitamin_a_color'] ?? 'none';
+        $data['deworming_medicine'] = $data['deworming_medicine'] ?? false;
 
         return $data;
     }
@@ -205,6 +208,8 @@ class MedicalRecordService
 
         $data['immunization'] = $data['immunization'] ?? $medicalRecord->immunization ?? 'Tidak ada';
         $data['complaint'] = $data['complaint'] ?? $medicalRecord->complaint ?? '—';
+        $data['vitamin_a_color'] = $data['vitamin_a_color'] ?? $medicalRecord->vitamin_a_color ?? 'none';
+        $data['deworming_medicine'] = $data['deworming_medicine'] ?? $medicalRecord->deworming_medicine ?? false;
 
         return $data;
     }

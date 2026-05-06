@@ -33,6 +33,8 @@ class AdminDashboard extends BaseAdminComponent
 
     public $posyanduStats = [];
 
+    public $missingImmunizations = [];
+
     public function mount()
     {
         $this->loadStatistics();
@@ -100,6 +102,24 @@ class AdminDashboard extends BaseAdminComponent
             ->latest('created_at')
             ->limit(5)
             ->get();
+
+        // Missing Immunizations Alert
+        $this->missingImmunizations = $this->applyPosyanduScope(\App\Models\Patient::query())
+            ->where('category', 'balita')
+            ->with('medicalRecords')
+            ->get()
+            ->map(function ($patient) {
+                $missing = $patient->getMissingVaccines();
+                if (empty($missing)) return null;
+                return [
+                    'patient' => $patient,
+                    'missing_count' => count($missing),
+                    'next_vaccine' => $missing[0]
+                ];
+            })
+            ->filter()
+            ->sortByDesc('missing_count')
+            ->take(5);
 
         if ($user->isSuperAdmin()) {
             $this->posyanduStats = \App\Models\Posyandu::withCount('patients')->get();
