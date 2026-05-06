@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\Schedule;
 use App\Models\Posyandu;
+use App\Models\Schedule;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 

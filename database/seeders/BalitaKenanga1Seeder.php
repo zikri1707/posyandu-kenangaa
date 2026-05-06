@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Patient;
 use App\Models\Posyandu;
 use Carbon\Carbon;
+use Illuminate\Database\Seeder;
 
 class BalitaKenanga1Seeder extends Seeder
 {
@@ -16,9 +16,10 @@ class BalitaKenanga1Seeder extends Seeder
     {
         // Find or create Posyandu Kenanga 1
         $posyandu = Posyandu::where('name', 'KENANGA 1')->first();
-        
-        if (!$posyandu) {
+
+        if (! $posyandu) {
             $this->command->error('Posyandu KENANGA 1 tidak ditemukan. Silakan buat posyandu terlebih dahulu.');
+
             return;
         }
 
@@ -91,6 +92,7 @@ class BalitaKenanga1Seeder extends Seeder
 
             if ($exists) {
                 $skipped++;
+
                 continue;
             }
 
@@ -109,7 +111,7 @@ class BalitaKenanga1Seeder extends Seeder
 
                 $imported++;
             } catch (\Exception $e) {
-                $this->command->error("Gagal mengimport {$nama}: " . $e->getMessage());
+                $this->command->error("Gagal mengimport {$nama}: ".$e->getMessage());
             }
         }
 

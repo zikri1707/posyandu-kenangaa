@@ -42,7 +42,7 @@ abstract class Job implements ShouldQueue
     protected function logError(string $message, \Throwable $exception, array $context = []): void
     {
         Log::error(sprintf('[%s] %s: %s', class_basename($this), $message, $exception->getMessage()), array_merge($context, [
-            'exception' => $exception->getTraceAsString()
+            'exception' => $exception->getTraceAsString(),
         ]));
     }
 

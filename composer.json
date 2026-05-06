@@ -41,6 +41,14 @@
         }
     },
     "scripts": {
+        "setup": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
+            "php artisan key:generate --ansi",
+            "@php -r \"echo 'Pastikan Database MySQL telah dibuat sesuai konfigurasi .env\\n';\"",
+            "php artisan migrate:fresh --seed --force",
+            "npm install",
+            "npm run build"
+        ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"

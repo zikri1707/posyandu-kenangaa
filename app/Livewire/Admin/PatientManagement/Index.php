@@ -2,9 +2,8 @@
 
 namespace App\Livewire\Admin\PatientManagement;
 
-use App\Models\Patient;
 use App\Livewire\Shared\BaseAdminComponent;
-
+use App\Models\Patient;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 
@@ -13,12 +12,17 @@ use Livewire\Attributes\Title;
 class Index extends BaseAdminComponent
 {
     public string $search = '';
+
     public string $status = 'all';
+
     public string $category = 'all';
+
     public string $sortBy = 'created_at';
+
     public string $sortDirection = 'desc';
 
     public bool $showDeleteModal = false;
+
     public ?int $selectedId = null;
 
     protected $queryString = [
@@ -26,6 +30,17 @@ class Index extends BaseAdminComponent
         'status' => ['except' => 'all'],
         'category' => ['except' => 'all'],
     ];
+
+    public function updatedCategory(): void
+    {
+        $this->resetPage();
+    }
+
+    public function resetFilters(): void
+    {
+        $this->reset(['search', 'category', 'status']);
+        $this->resetPage();
+    }
 
     public function sortByField(string $field): void
     {
@@ -68,15 +83,15 @@ class Index extends BaseAdminComponent
         $query = $this->applyPosyanduScope(Patient::with('posyandu'))
             ->when($this->search, function ($q) {
                 $q->where(function ($q2) {
-                    $q2->where('full_name', 'like', '%' . $this->search . '%')
-                       ->orWhere('id_number_hash', Patient::generateBlindIndex($this->search));
+                    $q2->where('full_name', 'like', '%'.$this->search.'%')
+                        ->orWhere('id_number_hash', Patient::generateBlindIndex($this->search));
                 });
             })
-            ->when($this->category !== 'all', fn($q) => $q->where('category', $this->category))
+            ->when($this->category !== 'all', fn ($q) => $q->where('category', $this->category))
             ->orderBy($this->sortBy === 'name' ? 'full_name' : $this->sortBy, $this->sortDirection);
 
         return view('livewire.admin.patient-management.index', [
-            'patients' => $query->paginate(10)
+            'patients' => $query->paginate(10),
         ]);
     }
 }

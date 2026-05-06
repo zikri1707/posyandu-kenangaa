@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers\Web;
 
-use App\Models\MedicalRecord;
-use App\Models\Patient;
+use App\Http\Controllers\Controller;
 use App\Models\Posyandu;
 use App\Services\ActivityLogService;
 use App\Services\ReportService;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 class ReportController extends Controller
@@ -37,7 +35,8 @@ class ReportController extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(false);
         } catch (\Exception $e) {
-            \Log::error('Export Excel failed: ' . $e->getMessage());
+            \Log::error('Export Excel failed: '.$e->getMessage());
+
             return back()->with('error', 'Ekspor gagal. Silakan coba lagi.');
         }
     }
@@ -58,7 +57,8 @@ class ReportController extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(false);
         } catch (\Exception $e) {
-            \Log::error('Export PDF failed: ' . $e->getMessage());
+            \Log::error('Export PDF failed: '.$e->getMessage());
+
             return back()->with('error', 'Ekspor gagal. Silakan coba lagi.');
         }
     }
@@ -66,21 +66,21 @@ class ReportController extends Controller
     private function prepareExport(Request $request, ReportService $reportService)
     {
         $request->validate([
-            'month'       => 'required|integer|between:1,12',
-            'year'        => 'required|integer|min:2020',
+            'month' => 'required|integer|between:1,12',
+            'year' => 'required|integer|min:2020',
             'posyandu_id' => 'nullable|integer|exists:posyandus,id',
         ]);
 
-        $user       = Auth::user();
+        $user = Auth::user();
         $posyanduId = $user->isSuperAdmin() || $user->isCoordinator()
             ? $request->posyandu_id
             : $user->posyandu_id;
 
-        if (!$posyanduId) {
+        if (! $posyanduId) {
             return back()->with('error', 'Posyandu tidak ditemukan.');
         }
 
-        $posyandu   = Posyandu::findOrFail($posyanduId);
+        $posyandu = Posyandu::findOrFail($posyanduId);
         $reportData = $reportService->generateMonthlyReport($posyanduId, (int) $request->month, (int) $request->year);
 
         return compact('posyandu', 'reportData');
@@ -90,7 +90,7 @@ class ReportController extends Controller
     {
         $posyandu = $data['posyandu'];
         $reportData = $data['reportData'];
-        
+
         $activityLogService->log(
             'export_report',
             "Ekspor laporan {$type}: {$posyandu->name} - {$reportData['period']['month_name']} {$reportData['period']['year']}",

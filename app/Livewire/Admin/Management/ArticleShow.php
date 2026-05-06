@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Admin\Management;
 
-use App\Models\Article;
 use App\Livewire\Shared\BaseAdminComponent;
+use App\Models\Article;
 use Illuminate\View\View;
 
 /**

@@ -143,9 +143,18 @@
                         <td class="px-10 py-8">
                             <div class="flex items-center justify-end gap-3">
                                 <a href="{{ route('admin.articles.show', $article->id) }}"
-                                   class="w-14 h-14 flex items-center justify-center rounded-2xl bg-slate-50 text-slate-400 hover:bg-indigo-600 hover:text-white transition-all shadow-sm hover:shadow-indigo-500/20 group/btn">
+                                   class="w-14 h-14 flex items-center justify-center rounded-2xl bg-slate-50 text-slate-400 hover:bg-indigo-600 hover:text-white transition-all shadow-sm hover:shadow-indigo-500/20 group/btn"
+                                   title="Detail Admin">
                                     <span class="material-symbols-outlined text-[24px]">visibility</span>
                                 </a>
+
+                                @if($article->status === 'published')
+                                <a href="{{ route('public.articles.show', $article->slug) }}" target="_blank"
+                                   class="w-14 h-14 flex items-center justify-center rounded-2xl bg-emerald-50 text-emerald-500 hover:bg-emerald-600 hover:text-white transition-all shadow-sm hover:shadow-emerald-500/20 group/btn"
+                                   title="Lihat di Web">
+                                    <span class="material-symbols-outlined text-[24px]">open_in_new</span>
+                                </a>
+                                @endif
                                 
                                 @can('update', $article)
                                 <a href="{{ route('admin.articles.edit', $article->id) }}"

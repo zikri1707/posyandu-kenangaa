@@ -3,145 +3,176 @@
 @section('title', 'Artikel Kesehatan - Posyandu Digital Bekasi Timur')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-6 md:px-12 py-12">
+<div class="max-w-screen-xl mx-auto px-6 md:px-12 py-16">
 
-    {{-- ── HERO: Featured Article ── --}}
+    {{-- ── Trending Section (Top Header) ── --}}
     @if($featured)
-    <section class="mb-16">
-        <div class="relative w-full h-[450px] md:h-[500px] rounded-[3rem] overflow-hidden group shadow-2xl">
-            <img src="{{ $featured->thumbnail ? asset('storage/'.$featured->thumbnail) : 'https://images.unsplash.com/photo-1576091160550-217359f4ecf8?q=80&w=2070&auto=format&fit=crop' }}"
-                 alt="{{ $featured->title }}"
-                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"/>
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex flex-col justify-end p-10 md:p-16">
-                <span class="inline-block px-5 py-2 bg-primary text-white text-[10px] font-black rounded-full mb-6 w-fit uppercase tracking-widest">
-                    {{ $featured->category?->name ?? 'Unggulan' }}
+    <section class="mb-20 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <div class="lg:col-span-7 space-y-8">
+            <div class="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600">
+                <span class="material-symbols-outlined text-[18px] animate-pulse">star</span>
+                <span class="text-[10px] font-black uppercase tracking-[0.2em]">Artikel Terpopuler</span>
+            </div>
+            
+            <h1 class="text-4xl md:text-6xl font-black text-slate-900 leading-tight tracking-tight">
+                {{ $featured->title }}
+            </h1>
+            
+            <p class="text-lg text-slate-500 font-medium leading-relaxed max-w-2xl">
+                {{ Str::limit(strip_tags($featured->content), 180) }}
+            </p>
+
+            <div class="flex items-center gap-6 pt-6">
+                <a href="{{ route('public.articles.show', $featured->slug) }}" 
+                   class="h-14 px-10 flex items-center justify-center bg-slate-900 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] hover:bg-indigo-600 transition-all shadow-xl active:scale-95">
+                    Mulai Membaca
+                </a>
+                <span class="text-slate-400 text-[11px] font-bold uppercase tracking-widest flex items-center gap-2">
+                    {{ ceil(str_word_count(strip_tags($featured->content)) / 200) }} mnt baca
                 </span>
-                <h1 class="text-white font-black text-3xl md:text-5xl max-w-4xl mb-6 leading-tight tracking-tight">
-                    {{ $featured->title }}
-                </h1>
-                <div class="flex items-center gap-6 flex-wrap">
-                    <a href="{{ route('public.articles.show', $featured->slug) }}"
-                       class="flex items-center gap-3 bg-white text-primary px-10 py-4 rounded-full font-black uppercase tracking-widest transition-all active:scale-95 text-xs shadow-xl">
-                        BACA LENGKAP <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-                    </a>
-                    <span class="text-white/70 text-xs font-bold uppercase tracking-widest flex items-center gap-2">
-                         <span class="material-symbols-outlined text-[16px]">calendar_today</span>
-                        {{ $featured->published_at ? \Carbon\Carbon::parse($featured->published_at)->translatedFormat('d M Y') : $featured->created_at->translatedFormat('d M Y') }}
-                    </span>
+            </div>
+        </div>
+        <div class="lg:col-span-5">
+            <div class="relative group">
+                <div class="absolute inset-0 bg-indigo-600 rounded-[3rem] rotate-3 opacity-10 group-hover:rotate-6 transition-transform"></div>
+                <div class="relative aspect-[4/3] rounded-[3rem] overflow-hidden shadow-2xl border-4 border-white">
+                    <img src="{{ $featured->thumbnail ? asset('storage/'.$featured->thumbnail) : 'https://images.unsplash.com/photo-1576091160550-217359f4ecf8?q=80&w=1200&auto=format&fit=crop' }}" 
+                         alt="{{ $featured->title }}" 
+                         class="w-full h-full object-cover transition-transform duration-[3s] group-hover:scale-110">
                 </div>
             </div>
         </div>
     </section>
     @endif
 
-    <div class="flex flex-col lg:flex-row gap-16">
-        {{-- ── Artikels Grid ── --}}
-        <div class="flex-1">
-            <div class="flex items-center justify-between mb-10">
-                <h2 class="text-2xl font-black text-on-surface uppercase tracking-tight">Katalog Artikel</h2>
-                <div class="h-1 flex-1 mx-6 bg-surface-container rounded-full hidden md:block"></div>
-            </div>
-
-            {{-- Categories --}}
-            <div class="flex flex-wrap gap-3 mb-10">
-                 <a href="{{ route('public.articles.index') }}" 
-                    class="px-6 py-2.5 rounded-full text-xs font-black uppercase tracking-widest transition-all
-                           {{ !request('category') ? 'bg-primary text-white shadow-lg' : 'bg-white text-on-surface-variant border border-outline-variant hover:bg-surface-container' }}">
-                    Semua
-                </a>
-                @foreach($categories as $cat)
-                <a href="{{ route('public.articles.index', ['category' => $cat->slug]) }}" 
-                   class="px-6 py-2.5 rounded-full text-xs font-black uppercase tracking-widest transition-all
-                          {{ request('category') === $cat->slug ? 'bg-primary text-white shadow-lg' : 'bg-white text-on-surface-variant border border-outline-variant hover:bg-surface-container' }}">
-                    {{ $cat->name }}
-                </a>
-                @endforeach
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                @forelse($articles as $article)
-                <article class="bg-white rounded-[2.5rem] border border-outline-variant overflow-hidden hover:shadow-2xl transition-all duration-500 group flex flex-col h-full">
-                    <a href="{{ route('public.articles.show', $article->slug) }}" class="block relative aspect-[16/10] overflow-hidden">
-                        <img src="{{ $article->thumbnail ? asset('storage/'.$article->thumbnail) : 'https://images.unsplash.com/photo-1576091160550-217359f4ecf8?q=80&w=800&auto=format&fit=crop' }}"
-                             alt="{{ $article->title }}"
-                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"/>
-                        @if($article->category)
-                        <span class="absolute top-6 left-6 bg-white/90 backdrop-blur-md px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest text-primary shadow-sm">
-                            {{ $article->category->name }}
-                        </span>
-                        @endif
+    <div class="flex flex-col lg:flex-row gap-20">
+        
+        {{-- ── Main Articles Stream (Medium-style List) ── --}}
+        <div class="flex-1 space-y-16">
+            <div class="flex items-center gap-8 mb-12">
+                <h2 class="text-2xl font-black text-slate-900 tracking-tight">Koleksi Pengetahuan</h2>
+                <div class="h-[1px] flex-1 bg-slate-100"></div>
+                
+                {{-- Category Filter Pills --}}
+                <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide max-w-[400px]">
+                    <a href="{{ route('public.articles.index') }}" 
+                       class="px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all whitespace-nowrap {{ !request('category') ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-500 border-slate-100 hover:border-slate-300' }}">
+                        Semua
                     </a>
-                    <div class="p-8 flex flex-col flex-1">
-                        <h3 class="font-black text-on-surface text-lg mb-4 leading-tight group-hover:text-primary transition-colors line-clamp-2 italic">
-                            <a href="{{ route('public.articles.show', $article->slug) }}">{{ $article->title }}</a>
-                        </h3>
-                        <p class="text-on-surface-variant text-[13px] leading-relaxed mb-8 flex-1 line-clamp-3 font-medium opacity-80">
-                            {{ Str::limit(strip_tags($article->content), 120) }}
-                        </p>
-                        <div class="pt-6 border-t border-outline-variant/30 flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-outline">
-                            <div class="flex items-center gap-2">
-                                <span class="material-symbols-outlined text-[16px] text-primary opacity-50">schedule</span>
-                                {{ $article->published_at ? \Carbon\Carbon::parse($article->published_at)->translatedFormat('d M Y') : $article->created_at->format('d M Y') }}
-                            </div>
-                            <span class="text-on-surface-variant italic">{{ $article->user->name ?? 'Admin' }}</span>
-                        </div>
-                    </div>
-                </article>
-                @empty
-                <div class="col-span-full py-32 text-center bg-white rounded-[4rem] border border-dashed border-outline-variant">
-                    <span class="material-symbols-outlined text-[84px] text-outline-variant mb-6">description</span>
-                    <h3 class="text-xl font-bold text-on-surface">Tidak Ditemukan Artikel</h3>
-                    <p class="text-on-surface-variant text-sm mt-2">Belum ada konten untuk kategori atau kriteria ini.</p>
-                </div>
-                @endforelse
-            </div>
-
-            {{-- Pagination --}}
-            <div class="mt-16">
-                {{ $articles->links() }}
-            </div>
-        </div>
-
-        {{-- ── Sidebar ── --}}
-        <aside class="w-full lg:w-80 space-y-10 flex-shrink-0">
-            {{-- Search --}}
-            <div class="bg-white p-8 rounded-[2.5rem] border border-outline-variant shadow-sm">
-                <h4 class="text-xs font-black text-on-surface uppercase tracking-widest mb-6">Cari Berita</h4>
-                <form action="{{ route('public.articles.index') }}" method="GET" class="relative group">
-                    <input type="text" name="search" value="{{ request('search') }}"
-                           placeholder="Kata kunci..."
-                           class="w-full h-12 pl-12 pr-4 rounded-2xl bg-surface-container border-none text-sm font-bold text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary transition-all">
-                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">search</span>
-                </form>
-            </div>
-
-            {{-- Popular --}}
-            <div class="bg-white p-8 rounded-[2.5rem] border border-outline-variant shadow-sm">
-                <h4 class="text-xs font-black text-on-surface uppercase tracking-widest mb-8 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-primary text-[20px]">trending_up</span>
-                    Terpopuler
-                </h4>
-                <div class="space-y-8">
-                    @foreach($popularArticles as $pop)
-                    <a href="{{ route('public.articles.show', $pop->slug) }}" class="group block">
-                         <span class="text-[9px] font-black uppercase tracking-[0.2em] text-primary mb-2 block opacity-70">{{ $pop->category->name ?? 'Umum' }}</span>
-                        <h5 class="text-sm font-bold text-on-surface leading-tight group-hover:text-primary transition-colors line-clamp-2">{{ $pop->title }}</h5>
-                         <span class="text-[10px] text-outline font-medium mt-2 block">{{ \Carbon\Carbon::parse($pop->published_at)->translatedFormat('d M Y') }}</span>
+                    @foreach($categories as $cat)
+                    <a href="{{ route('public.articles.index', ['category' => $cat->slug]) }}" 
+                       class="px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all whitespace-nowrap {{ request('category') === $cat->slug ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-500 border-slate-100 hover:border-slate-300' }}">
+                        {{ $cat->name }}
                     </a>
                     @endforeach
                 </div>
             </div>
 
-            {{-- Support Card --}}
-            <div class="bg-primary p-8 rounded-[2.5rem] shadow-xl text-white relative overflow-hidden group">
-                 <div class="relative z-10">
-                    <h4 class="text-lg font-black mb-4">Konsultasi <span class="italic text-primary-light">Kesehatan</span></h4>
-                    <p class="text-xs font-medium opacity-80 leading-relaxed mb-6">Hubungi kader kami untuk bantuan seputar gizi dan tumbuh kembang anak.</p>
-                    <a href="{{ route('public.contact') }}" class="inline-flex items-center justify-center w-full py-4 bg-white text-primary text-[10px] font-black uppercase tracking-widest rounded-2xl hover:bg-primary-light transition-all shadow-lg active:scale-95">
-                        HUBUNGI KAMI
+            <div class="space-y-20">
+                @forelse($articles as $article)
+                <article class="group relative flex flex-col md:flex-row gap-10 items-start">
+                    <div class="flex-1 space-y-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-black text-slate-500">
+                                {{ strtoupper(substr($article->user->name ?? 'A', 0, 1)) }}
+                            </div>
+                            <span class="text-[12px] font-black text-slate-800 tracking-tight">{{ $article->user->name ?? 'Tim Redaksi' }}</span>
+                            <span class="w-1 h-1 rounded-full bg-slate-200"></span>
+                            <span class="text-[11px] text-slate-400 font-medium italic">{{ $article->category->name ?? 'Umum' }}</span>
+                        </div>
+                        
+                        <a href="{{ route('public.articles.show', $article->slug) }}" class="block">
+                            <h3 class="text-2xl md:text-3xl font-black text-slate-900 leading-tight tracking-tight group-hover:text-indigo-600 transition-colors">
+                                {{ $article->title }}
+                            </h3>
+                            <p class="mt-4 text-slate-500 font-medium leading-relaxed line-clamp-3 md:line-clamp-2">
+                                {{ Str::limit(strip_tags($article->content), 150) }}
+                            </p>
+                        </a>
+
+                        <div class="flex items-center justify-between pt-6">
+                            <div class="flex items-center gap-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                                <span>{{ $article->published_at ? \Carbon\Carbon::parse($article->published_at)->translatedFormat('d M Y') : $article->created_at->format('d M Y') }}</span>
+                                <span class="w-1 h-1 rounded-full bg-slate-200"></span>
+                                <span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[14px]">timer</span> {{ ceil(str_word_count(strip_tags($article->content)) / 200) }} mnt</span>
+                            </div>
+                            <div class="flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button class="text-slate-300 hover:text-indigo-600"><span class="material-symbols-outlined text-[20px]">share</span></button>
+                                <button class="text-slate-300 hover:text-red-500"><span class="material-symbols-outlined text-[20px]">bookmark</span></button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="w-full md:w-56 aspect-[4/3] rounded-3xl overflow-hidden shadow-lg border-4 border-white flex-shrink-0 relative group-hover:scale-[1.02] transition-all duration-500">
+                        <img src="{{ $article->thumbnail ? asset('storage/'.$article->thumbnail) : 'https://images.unsplash.com/photo-1576091160550-217359f4ecf8?q=80&w=800&auto=format&fit=crop' }}" 
+                             alt="{{ $article->title }}" 
+                             class="w-full h-full object-cover">
+                    </div>
+                </article>
+                @empty
+                <div class="py-32 text-center bg-slate-50 rounded-[4rem] border-2 border-dashed border-slate-200">
+                    <span class="material-symbols-outlined text-[84px] text-slate-200 mb-6">description</span>
+                    <h3 class="text-xl font-black text-slate-900 tracking-tight italic">Belum Ada Cerita Baru</h3>
+                    <p class="text-slate-400 text-sm mt-2 font-medium">Kami sedang meracik konten edukasi terbaik untuk Anda.</p>
+                </div>
+                @endforelse
+
+                <div class="pt-10 border-t border-slate-100">
+                    {{ $articles->links() }}
+                </div>
+            </div>
+        </div>
+
+        {{-- ── Sidebar (Medium Style Sidebar) ── --}}
+        <aside class="w-full lg:w-96 space-y-16 flex-shrink-0">
+            
+            {{-- Search Module --}}
+            <div class="space-y-6">
+                <h4 class="text-[11px] font-black text-slate-900 uppercase tracking-[0.3em]">Cari Pengetahuan</h4>
+                <form action="{{ route('public.articles.index') }}" method="GET" class="relative group">
+                    <input type="text" name="search" value="{{ request('search') }}"
+                           placeholder="Ingin cari apa hari ini?"
+                           class="w-full h-16 pl-14 pr-6 rounded-2xl bg-white border border-slate-100 text-sm font-bold text-slate-900 placeholder:text-slate-300 focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-600 transition-all shadow-sm">
+                    <span class="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-indigo-600 transition-colors">search</span>
+                </form>
+            </div>
+
+            {{-- Popular Stream --}}
+            <div class="space-y-10">
+                <h4 class="text-[11px] font-black text-slate-900 uppercase tracking-[0.3em] flex items-center gap-3">
+                    <span class="w-6 h-6 rounded-lg bg-indigo-600 flex items-center justify-center text-white"><span class="material-symbols-outlined text-[14px]">trending_up</span></span>
+                    Paling Banyak Dibaca
+                </h4>
+                <div class="space-y-10">
+                    @foreach($popularArticles as $index => $pop)
+                    <a href="{{ route('public.articles.show', $pop->slug) }}" class="flex gap-6 group">
+                        <span class="text-4xl font-black text-slate-100 group-hover:text-indigo-50 transition-colors leading-none">0{{ $index + 1 }}</span>
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] font-black text-slate-900 uppercase tracking-tighter">{{ $article->user->name ?? 'Admin' }}</span>
+                                <span class="w-0.5 h-0.5 rounded-full bg-slate-300"></span>
+                                <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{{ $pop->category->name ?? 'Umum' }}</span>
+                            </div>
+                            <h5 class="text-[15px] font-black text-slate-800 leading-tight group-hover:text-indigo-600 transition-colors line-clamp-2">
+                                {{ $pop->title }}
+                            </h5>
+                        </div>
                     </a>
-                 </div>
-                 <span class="material-symbols-outlined absolute -right-6 -bottom-6 text-white opacity-10 text-[120px] group-hover:scale-110 transition-transform duration-700">support_agent</span>
+                    @endforeach
+                </div>
+            </div>
+
+            {{-- Support Bento --}}
+            <div class="relative p-10 bg-slate-900 rounded-[3rem] text-white shadow-2xl overflow-hidden group">
+                <div class="relative z-10 space-y-6">
+                    <h4 class="text-2xl font-black italic leading-tight">Butuh Konsultasi <br><span class="text-indigo-400">Pribadi?</span></h4>
+                    <p class="text-slate-400 text-[13px] font-medium leading-relaxed">Hubungi tim medis dan kader kami melalui pesan WhatsApp untuk konsultasi cepat.</p>
+                    <a href="{{ route('public.contact') }}" class="h-14 w-full flex items-center justify-center bg-indigo-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-600/20 active:scale-95">
+                        Hubungi Kader Sekarang
+                    </a>
+                </div>
+                <span class="material-symbols-outlined absolute -right-8 -bottom-8 text-[140px] text-white/5 group-hover:scale-110 transition-transform duration-700">medical_services</span>
+                <div class="absolute -left-10 -top-10 w-40 h-40 bg-indigo-500/10 rounded-full blur-[80px]"></div>
             </div>
         </aside>
     </div>

@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('type');  // Image, Video, etc.
             $table->timestamps();
         });
-    }    
+    }
 
     /**
      * Reverse the migrations.

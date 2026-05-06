@@ -2,16 +2,18 @@
 
 namespace App\Livewire\User\Profile;
 
-use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 
 class UserProfile extends Component
 {
-    public $name, $email;
+    public $name;
+
+    public $email;
 
     protected $rules = [
         'name' => 'required|string|max:255',
-        'email' => 'required|email|unique:users,email,' . Auth::id(),
+        'email' => 'required|email|unique:users,email,'.Auth::id(),
     ];
 
     public function mount()

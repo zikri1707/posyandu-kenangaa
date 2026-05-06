@@ -2,14 +2,18 @@
 
 namespace App\Livewire\User\Settings;
 
-use Livewire\Component;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Livewire\Component;
 
 class Password extends Component
 {
-    public $current_password, $new_password, $new_password_confirmation;
+    public $current_password;
+
+    public $new_password;
+
+    public $new_password_confirmation;
 
     protected $rules = [
         'current_password' => 'required|min:6',
@@ -22,7 +26,7 @@ class Password extends Component
         $this->validate();
 
         // Cek apakah password saat ini sesuai dengan yang ada di database
-        if (!Hash::check($this->current_password, Auth::user()->getAuthPassword())) {
+        if (! Hash::check($this->current_password, Auth::user()->getAuthPassword())) {
             throw ValidationException::withMessages([
                 'current_password' => 'The current password is incorrect.',
             ]);

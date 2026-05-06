@@ -5,8 +5,8 @@ namespace App\Services;
 use App\Models\Patient;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 
 class PatientService
 {
@@ -20,15 +20,12 @@ class PatientService
     /**
      * Create a new patient.
      *
-     * @param array $data
-     * @param User $user
-     * @return Patient
      * @throws ValidationException
      */
     public function createPatient(array $data, User $user): Patient
     {
         // Enforce posyandu_id for non-superadmin users
-        if (!$user->isSuperAdmin()) {
+        if (! $user->isSuperAdmin()) {
             $data['posyandu_id'] = $user->posyandu_id;
         }
 
@@ -39,7 +36,7 @@ class PatientService
 
         if ($existingPatient) {
             throw ValidationException::withMessages([
-                'id_number' => 'NIK sudah terdaftar dalam sistem untuk Posyandu ini.'
+                'id_number' => 'NIK sudah terdaftar dalam sistem untuk Posyandu ini.',
             ]);
         }
 
@@ -65,10 +62,6 @@ class PatientService
     /**
      * Update an existing patient.
      *
-     * @param Patient $patient
-     * @param array $data
-     * @param User $user
-     * @return Patient
      * @throws ValidationException
      */
     public function updatePatient(Patient $patient, array $data, User $user): Patient
@@ -77,7 +70,7 @@ class PatientService
         $oldValues = $patient->toArray();
 
         // Enforce posyandu_id for non-superadmin users
-        if (!$user->isSuperAdmin()) {
+        if (! $user->isSuperAdmin()) {
             $data['posyandu_id'] = $user->posyandu_id;
         }
 
@@ -89,7 +82,7 @@ class PatientService
 
         if ($existingPatient) {
             throw ValidationException::withMessages([
-                'id_number' => 'NIK sudah terdaftar dalam sistem untuk Posyandu ini.'
+                'id_number' => 'NIK sudah terdaftar dalam sistem untuk Posyandu ini.',
             ]);
         }
 
@@ -116,9 +109,6 @@ class PatientService
 
     /**
      * Delete a patient.
-     *
-     * @param Patient $patient
-     * @return void
      */
     public function deletePatient(Patient $patient): void
     {

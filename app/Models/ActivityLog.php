@@ -66,7 +66,7 @@ class ActivityLog extends Model
     /**
      * Log aktivitas create
      */
-    public static function logCreate(Model $model, string $description = null): self
+    public static function logCreate(Model $model, ?string $description = null): self
     {
         return static::create([
             'user_id' => auth()->id(),
@@ -75,7 +75,7 @@ class ActivityLog extends Model
             'action_type' => 'create',
             'entity_type' => get_class($model),
             'entity_id' => $model->id,
-            'description' => $description ?? 'Membuat data ' . class_basename($model),
+            'description' => $description ?? 'Membuat data '.class_basename($model),
             'new_values' => $model->toArray(),
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
@@ -85,7 +85,7 @@ class ActivityLog extends Model
     /**
      * Log aktivitas update
      */
-    public static function logUpdate(Model $model, array $oldValues, array $newValues, string $description = null): self
+    public static function logUpdate(Model $model, array $oldValues, array $newValues, ?string $description = null): self
     {
         return static::create([
             'user_id' => auth()->id(),
@@ -94,7 +94,7 @@ class ActivityLog extends Model
             'action_type' => 'update',
             'entity_type' => get_class($model),
             'entity_id' => $model->id,
-            'description' => $description ?? 'Memperbarui data ' . class_basename($model),
+            'description' => $description ?? 'Memperbarui data '.class_basename($model),
             'old_values' => $oldValues,
             'new_values' => $newValues,
             'ip_address' => request()->ip(),
@@ -105,7 +105,7 @@ class ActivityLog extends Model
     /**
      * Log aktivitas delete
      */
-    public static function logDelete(Model $model, array $oldValues, string $description = null): self
+    public static function logDelete(Model $model, array $oldValues, ?string $description = null): self
     {
         return static::create([
             'user_id' => auth()->id(),
@@ -114,7 +114,7 @@ class ActivityLog extends Model
             'action_type' => 'delete',
             'entity_type' => get_class($model),
             'entity_id' => $model->id,
-            'description' => $description ?? 'Menghapus data ' . class_basename($model),
+            'description' => $description ?? 'Menghapus data '.class_basename($model),
             'old_values' => $oldValues,
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),

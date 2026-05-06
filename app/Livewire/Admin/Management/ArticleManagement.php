@@ -2,12 +2,12 @@
 
 namespace App\Livewire\Admin\Management;
 
+use App\Livewire\Shared\BaseAdminComponent;
 use App\Models\Article;
 use App\Services\ArticleService;
-use App\Livewire\Shared\BaseAdminComponent;
+use Illuminate\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
-use Illuminate\View\View;
 
 /**
  * Komponen Manajemen Artikel (OOP & Clean Code).
@@ -35,7 +35,7 @@ class ArticleManagement extends BaseAdminComponent
         $filters = [
             'search' => $this->search,
             'status' => $this->status,
-            'sort'   => $this->sort,
+            'sort' => $this->sort,
         ];
 
         return view('livewire.admin.article-management.index', [
@@ -50,7 +50,7 @@ class ArticleManagement extends BaseAdminComponent
     {
         $article = Article::findOrFail($id);
         $this->authorize('delete', $article);
-        
+
         $service->deleteArticle($article);
         $this->notify('Artikel berhasil dihapus permanen.');
     }

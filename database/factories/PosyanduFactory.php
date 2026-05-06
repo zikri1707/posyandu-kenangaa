@@ -13,9 +13,9 @@ class PosyanduFactory extends Factory
     {
         return [
             'pedukuhan_id' => \App\Models\Pedukuhan::factory(),
-            'name' => 'Posyandu ' . fake()->city(),
+            'name' => 'Posyandu '.fake()->city(),
             'address' => fake()->address(),
-            'unique_code' => 'POS' . fake()->unique()->numberBetween(1000, 9999),
+            'unique_code' => 'POS'.fake()->unique()->numberBetween(1000, 9999),
             'logo_photo' => null,
         ];
     }

@@ -1,11 +1,11 @@
 <?php
 
-use App\Models\User;
-use App\Models\Patient;
 use App\Models\MedicalRecord;
-use App\Models\Schedule;
-use App\Models\Posyandu;
+use App\Models\Patient;
 use App\Models\Pedukuhan;
+use App\Models\Posyandu;
+use App\Models\Schedule;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -14,7 +14,7 @@ test('admin dashboard displays correct statistics for superadmin', function () {
     // Create test data
     $pedukuhan = Pedukuhan::factory()->create();
     $posyandu = Posyandu::factory()->create(['pedukuhan_id' => $pedukuhan->id]);
-    
+
     $superadmin = User::factory()->create([
         'role' => 'superadmin',
         'posyandu_id' => null,
@@ -42,7 +42,7 @@ test('admin dashboard displays correct statistics for superadmin', function () {
         'posyandu_id' => $posyandu->id,
         'category' => 'balita',
     ]);
-    
+
     MedicalRecord::factory()->count(4)->create([
         'patient_id' => $patient->id,
         'visit_date' => now(),
@@ -62,7 +62,7 @@ test('admin dashboard displays scoped statistics for admin', function () {
     $pedukuhan = Pedukuhan::factory()->create();
     $posyandu1 = Posyandu::factory()->create(['pedukuhan_id' => $pedukuhan->id]);
     $posyandu2 = Posyandu::factory()->create(['pedukuhan_id' => $pedukuhan->id]);
-    
+
     $admin = User::factory()->create([
         'role' => 'admin',
         'posyandu_id' => $posyandu1->id,
@@ -93,7 +93,7 @@ test('admin dashboard displays balita stunting warning', function () {
     // Create test data
     $pedukuhan = Pedukuhan::factory()->create();
     $posyandu = Posyandu::factory()->create(['pedukuhan_id' => $pedukuhan->id]);
-    
+
     $admin = User::factory()->create([
         'role' => 'admin',
         'posyandu_id' => $posyandu->id,
@@ -127,7 +127,7 @@ test('coordinator can see data from all posyandu in their RW', function () {
     $posyandu1 = Posyandu::factory()->create(['pedukuhan_id' => $pedukuhan->id]);
     $posyandu2 = Posyandu::factory()->create(['pedukuhan_id' => $pedukuhan->id]);
     $posyandu3 = Posyandu::factory()->create(); // Different pedukuhan
-    
+
     $coordinator = User::factory()->create([
         'role' => 'coordinator',
         'posyandu_id' => $posyandu1->id, // Coordinator assigned to posyandu1

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Web;
 
+use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Models\Category;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 class PublicArticleController extends Controller
 {
@@ -15,17 +15,17 @@ class PublicArticleController extends Controller
             ->where('status', 'published')
             ->filter([
                 'category' => $request->category,
-                'search'   => $request->search,
+                'search' => $request->search,
             ])
             ->latest('published_at');
 
-        $featured   = Article::with(['category', 'user'])
+        $featured = Article::with(['category', 'user'])
             ->where('status', 'published')
             ->latest('published_at')
             ->first();
 
-        $articles   = $query->paginate(4)->withQueryString();
-        $categories = Category::withCount(['articles' => fn($q) => $q->where('status', 'published')])->get();
+        $articles = $query->paginate(4)->withQueryString();
+        $categories = Category::withCount(['articles' => fn ($q) => $q->where('status', 'published')])->get();
 
         $popularArticles = Article::with(['category'])
             ->where('status', 'published')

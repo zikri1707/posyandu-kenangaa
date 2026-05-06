@@ -62,15 +62,14 @@ class WhoWeightForAge extends Model
     /**
      * Get WHO reference data for specific gender and age
      *
-     * @param string $gender 'M' for male, 'F' for female
-     * @param int $ageMonths Age in months (0-59)
-     * @return self|null
+     * @param  string  $gender  'M' for male, 'F' for female
+     * @param  int  $ageMonths  Age in months (0-59)
      */
     public static function getReference(string $gender, int $ageMonths): ?self
     {
         $cacheKey = "{$gender}_{$ageMonths}";
 
-        if (!isset(self::$cache[$cacheKey])) {
+        if (! isset(self::$cache[$cacheKey])) {
             self::$cache[$cacheKey] = self::where('gender', $gender)
                 ->where('age_months', $ageMonths)
                 ->first();

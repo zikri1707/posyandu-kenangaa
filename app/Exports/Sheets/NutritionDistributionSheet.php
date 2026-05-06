@@ -18,15 +18,17 @@ class NutritionDistributionSheet
         $sheet->setCellValue('A1', 'DISTRIBUSI STATUS GIZI BALITA');
         $sheet->getStyle('A1')->getFont()->setBold(true);
 
-        $sheet->setCellValue('A3', 'Status Gizi');
-        $sheet->setCellValue('B3', 'Jumlah');
+        $headers = ['Status Gizi', 'Jumlah'];
+        $sheet->fromArray([$headers], null, 'A3');
         $sheet->getStyle('A3:B3')->getFont()->setBold(true);
 
-        $row = 4;
+        $dataRows = [];
         foreach ($this->reportData['nutrition_distribution'] as $status => $count) {
-            $sheet->setCellValue('A' . $row, $status);
-            $sheet->setCellValue('B' . $row, $count);
-            $row++;
+            $dataRows[] = [$status, $count];
+        }
+
+        if (! empty($dataRows)) {
+            $sheet->fromArray($dataRows, null, 'A4');
         }
 
         $sheet->getColumnDimension('A')->setAutoSize(true);

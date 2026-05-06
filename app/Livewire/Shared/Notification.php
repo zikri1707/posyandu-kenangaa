@@ -6,7 +6,9 @@ use Livewire\Component;
 
 class Notification extends Component
 {
-    public $message, $type;
+    public $message;
+
+    public $type;
 
     protected $rules = [
         'message' => 'required|string',

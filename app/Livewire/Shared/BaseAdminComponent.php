@@ -3,8 +3,8 @@
 namespace App\Livewire\Shared;
 
 use App\Livewire\Traits\HasPosyanduScope;
-use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\Component;
 use Livewire\WithPagination;
 
 /**
@@ -13,7 +13,7 @@ use Livewire\WithPagination;
  */
 abstract class BaseAdminComponent extends Component
 {
-    use WithPagination, HasPosyanduScope;
+    use HasPosyanduScope, WithPagination;
 
     /**
      * Dispatch browser event untuk notifikasi (Toast).
@@ -22,9 +22,9 @@ abstract class BaseAdminComponent extends Component
     {
         $this->dispatch('notify', [
             'message' => $message,
-            'type'    => $type
+            'type' => $type,
         ]);
-        
+
         session()->flash($type, $message);
     }
 

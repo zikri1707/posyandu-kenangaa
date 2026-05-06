@@ -1,10 +1,9 @@
 <?php
 
-use App\Models\User;
-use App\Models\Patient;
 use App\Models\MedicalRecord;
+use App\Models\Patient;
 use App\Models\Posyandu;
-use App\Services\NutritionCalculatorService;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -16,7 +15,7 @@ beforeEach(function () {
         'postal_code' => '12345',
         'geo_location' => '-6.2088,106.8456',
     ]);
-    
+
     // Create a posyandu
     $this->posyandu = Posyandu::create([
         'pedukuhan_id' => $pedukuhan->id,
@@ -24,13 +23,13 @@ beforeEach(function () {
         'address' => 'Test Address',
         'unique_code' => 'POS001',
     ]);
-    
+
     // Create an admin user
     $this->user = User::factory()->create([
         'role' => 'admin',
         'posyandu_id' => $this->posyandu->id,
     ]);
-    
+
     // Create a balita patient
     $this->patient = Patient::create([
         'posyandu_id' => $this->posyandu->id,
@@ -58,7 +57,7 @@ beforeEach(function () {
 
 test('medical record automatically calculates nutrition status for balita on store', function () {
     $this->actingAs($this->user);
-    
+
     $medicalRecordData = [
         'patient_id' => $this->patient->id,
         'user_id' => $this->user->id,
@@ -71,26 +70,26 @@ test('medical record automatically calculates nutrition status for balita on sto
         'measurement_method' => 'standing',
         'complaint' => 'Tidak ada keluhan',
     ];
-    
+
     $response = $this->post(route('admin.medical-records.store'), $medicalRecordData);
-    
+
     $response->assertRedirect(route('admin.medical-records.index'));
-    
+
     // Verify medical record was created with nutrition status
     $medicalRecord = MedicalRecord::where('patient_id', $this->patient->id)->first();
-    
+
     expect($medicalRecord)->not->toBeNull()
         ->and($medicalRecord->z_score)->not->toBeNull()
         ->and($medicalRecord->z_score)->toBeNumeric()
         ->and($medicalRecord->nutrition_status)->not->toBeNull()
         ->and($medicalRecord->nutrition_status)->toBeIn([
-            'Gizi Baik', 'Gizi Kurang', 'Gizi Lebih', 'Gizi Buruk', 'Tidak Dapat Dihitung'
+            'Gizi Baik', 'Gizi Kurang', 'Gizi Lebih', 'Gizi Buruk', 'Tidak Dapat Dihitung',
         ]);
 });
 
 test('medical record recalculates nutrition status when weight changes on update', function () {
     $this->actingAs($this->user);
-    
+
     // Create initial medical record
     $medicalRecord = MedicalRecord::create([
         'patient_id' => $this->patient->id,
@@ -105,9 +104,9 @@ test('medical record recalculates nutrition status when weight changes on update
         'z_score' => null,
         'nutrition_status' => null,
     ]);
-    
+
     $oldZScore = $medicalRecord->z_score;
-    
+
     // Update with new weight
     $updateData = [
         'patient_id' => $this->patient->id,
@@ -121,14 +120,14 @@ test('medical record recalculates nutrition status when weight changes on update
         'measurement_method' => 'standing',
         'complaint' => 'Tidak ada keluhan',
     ];
-    
+
     $response = $this->put(route('admin.medical-records.update', $medicalRecord), $updateData);
-    
+
     $response->assertRedirect(route('admin.medical-records.index'));
-    
+
     // Verify nutrition status was recalculated
     $medicalRecord->refresh();
-    
+
     expect($medicalRecord->z_score)->not->toBeNull()
         ->and($medicalRecord->nutrition_status)->not->toBeNull()
         ->and($medicalRecord->z_score)->not->toBe($oldZScore);
@@ -136,7 +135,7 @@ test('medical record recalculates nutrition status when weight changes on update
 
 test('medical record calculates nutrition trend by comparing with previous record', function () {
     $this->actingAs($this->user);
-    
+
     // Create first medical record with Normal status
     $firstRecord = MedicalRecord::create([
         'patient_id' => $this->patient->id,
@@ -151,7 +150,7 @@ test('medical record calculates nutrition trend by comparing with previous recor
         'nutrition_status' => 'Gizi Baik',
         'z_score' => 0.0,
     ]);
-    
+
     // Create second medical record
     $secondRecordData = [
         'patient_id' => $this->patient->id,
@@ -165,17 +164,17 @@ test('medical record calculates nutrition trend by comparing with previous recor
         'measurement_method' => 'standing',
         'complaint' => 'Tidak ada keluhan',
     ];
-    
+
     $response = $this->post(route('admin.medical-records.store'), $secondRecordData);
-    
+
     $response->assertSessionDoesntHaveErrors();
     $response->assertRedirect(route('admin.medical-records.index'));
-    
+
     // Verify nutrition trend was calculated
     $secondRecord = MedicalRecord::where('patient_id', $this->patient->id)
         ->latest('id')
         ->first();
-    
+
     expect($secondRecord)->not->toBeNull()
         ->and($secondRecord->nutrition_trend)->not->toBeNull()
         ->and($secondRecord->nutrition_trend)->toBeIn(['naik', 'turun', 'tetap']);
@@ -183,7 +182,7 @@ test('medical record calculates nutrition trend by comparing with previous recor
 
 test('medical record does not calculate nutrition status for non-balita categories', function () {
     $this->actingAs($this->user);
-    
+
     // Create a non-balita patient
     $adultPatient = Patient::create([
         'posyandu_id' => $this->posyandu->id,
@@ -196,7 +195,7 @@ test('medical record does not calculate nutrition status for non-balita categori
         'address' => 'Test Address',
         'phone_number' => '08123456789',
     ]);
-    
+
     $medicalRecordData = [
         'patient_id' => $adultPatient->id,
         'user_id' => $this->user->id,
@@ -208,14 +207,14 @@ test('medical record does not calculate nutrition status for non-balita categori
         'measurement_method' => 'standing',
         'complaint' => 'Tidak ada keluhan',
     ];
-    
+
     $response = $this->post(route('admin.medical-records.store'), $medicalRecordData);
-    
+
     $response->assertRedirect(route('admin.medical-records.index'));
-    
+
     // Verify medical record was created without nutrition status
     $medicalRecord = MedicalRecord::where('patient_id', $adultPatient->id)->first();
-    
+
     expect($medicalRecord)->not->toBeNull()
         ->and($medicalRecord->z_score)->toBeNull()
         ->and($medicalRecord->nutrition_status)->toBeNull();
@@ -226,23 +225,23 @@ test('compareNutritionStatus returns correct trend values', function () {
     $reflection = new ReflectionClass($service);
     $method = $reflection->getMethod('compareNutritionStatus');
     $method->setAccessible(true);
-    
+
     // Test improvement: Gizi Kurang -> Gizi Baik
     $trend = $method->invoke($service, 'Gizi Kurang', 'Gizi Baik');
     expect($trend)->toBe('naik');
-    
+
     // Test worsening: Gizi Baik -> Gizi Kurang
     $trend = $method->invoke($service, 'Gizi Baik', 'Gizi Kurang');
     expect($trend)->toBe('turun');
-    
+
     // Test same: Gizi Baik -> Gizi Baik
     $trend = $method->invoke($service, 'Gizi Baik', 'Gizi Baik');
     expect($trend)->toBe('tetap');
-    
+
     // Test severe worsening: Gizi Baik -> Gizi Buruk
     $trend = $method->invoke($service, 'Gizi Baik', 'Gizi Buruk');
     expect($trend)->toBe('turun');
-    
+
     // Test improvement from severe: Gizi Buruk -> Gizi Kurang
     $trend = $method->invoke($service, 'Gizi Buruk', 'Gizi Kurang');
     expect($trend)->toBe('naik');

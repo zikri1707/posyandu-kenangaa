@@ -2,19 +2,20 @@
 
 namespace App\Http\Controllers\Web;
 
-use App\Models\Pedukuhan;
-use App\Http\Requests\PedukuhanRequest;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PedukuhanRequest;
+use App\Models\Pedukuhan;
+use Illuminate\Http\Request;
 
 class PedukuhanController extends Controller
 {
     public function index(Request $request)
     {
         $pedukuhans = Pedukuhan::withCount(['posyandus'])
-            ->when($request->search, fn($q, $s) => $q->where('name', 'like', "%{$s}%"))
+            ->when($request->search, fn ($q, $s) => $q->where('name', 'like', "%{$s}%"))
             ->paginate(10)
             ->withQueryString();
+
         return view('livewire.admin.pedukuhan-management.index', compact('pedukuhans'));
     }
 
@@ -28,6 +29,7 @@ class PedukuhanController extends Controller
     {
         // Menambah data Pedukuhan baru
         $pedukuhanService->createPedukuhan($request->validated());
+
         return redirect()->route('admin.pedukuhans.index')->with('success', 'Pedukuhan berhasil ditambahkan.');
     }
 
@@ -47,6 +49,7 @@ class PedukuhanController extends Controller
     {
         // Memperbarui data Pedukuhan
         $pedukuhanService->updatePedukuhan($pedukuhan, $request->validated());
+
         return redirect()->route('admin.pedukuhans.index')->with('success', 'Pedukuhan berhasil diperbarui.');
     }
 
@@ -54,6 +57,7 @@ class PedukuhanController extends Controller
     {
         // Menghapus data Pedukuhan
         $pedukuhanService->deletePedukuhan($pedukuhan);
+
         return redirect()->route('admin.pedukuhans.index')->with('success', 'Pedukuhan berhasil dihapus.');
     }
 }

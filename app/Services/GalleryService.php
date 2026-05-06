@@ -11,14 +11,10 @@ class GalleryService
 {
     /**
      * Create a new gallery entry.
-     *
-     * @param array $data
-     * @param User $user
-     * @return Gallery
      */
     public function createGallery(array $data, User $user): Gallery
     {
-        if (!$user->isSuperAdmin()) {
+        if (! $user->isSuperAdmin()) {
             $data['posyandu_id'] = $user->posyandu_id;
         }
 
@@ -33,10 +29,6 @@ class GalleryService
 
     /**
      * Update an existing gallery entry.
-     *
-     * @param Gallery $gallery
-     * @param array $data
-     * @return Gallery
      */
     public function updateGallery(Gallery $gallery, array $data): Gallery
     {
@@ -48,14 +40,12 @@ class GalleryService
         }
 
         $gallery->update($data);
+
         return $gallery;
     }
 
     /**
      * Delete a gallery entry.
-     *
-     * @param Gallery $gallery
-     * @return void
      */
     public function deleteGallery(Gallery $gallery): void
     {

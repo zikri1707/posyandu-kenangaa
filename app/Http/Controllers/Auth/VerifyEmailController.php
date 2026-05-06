@@ -1,20 +1,19 @@
-<?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers\Auth;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Auth\Events\Verified;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use App\Models\User;
-
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class VerifyEmailController extends Controller
 {
     /**
      * Menampilkan halaman konfirmasi verifikasi email.
      */
-    public function show(Request $request)
+    public function show(Request $request): View|RedirectResponse
     {
         if ($request->user()->hasVerifiedEmail()) {
             return redirect()->route('dashboard')->with('info', 'Your email is already verified.');
@@ -26,7 +25,7 @@ class VerifyEmailController extends Controller
     /**
      * Memverifikasi email pengguna berdasarkan ID dan hash.
      */
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): RedirectResponse
     {
         $request->validate([
             'id' => 'required|exists:users,id',
@@ -47,7 +46,7 @@ class VerifyEmailController extends Controller
     /**
      * Mengirim ulang link verifikasi email.
      */
-    public function resend(Request $request)
+    public function resend(Request $request): RedirectResponse
     {
         if ($request->user()->hasVerifiedEmail()) {
             return redirect()->route('dashboard');

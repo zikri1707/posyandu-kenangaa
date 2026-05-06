@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 class WhoWeightForHeight extends Model
 {
     protected $table = 'who_weight_for_height';
+
     public $timestamps = false;
 
     protected $fillable = [
@@ -21,14 +22,14 @@ class WhoWeightForHeight extends Model
     ];
 
     protected $casts = [
-        'height_cm'  => 'float',
-        'l_value'    => 'float',
-        'm_value'    => 'float',
-        's_value'    => 'float',
-        'sd_minus3'  => 'float',
-        'sd_minus2'  => 'float',
-        'sd_plus2'   => 'float',
-        'sd_plus3'   => 'float',
+        'height_cm' => 'float',
+        'l_value' => 'float',
+        'm_value' => 'float',
+        's_value' => 'float',
+        'sd_minus3' => 'float',
+        'sd_minus2' => 'float',
+        'sd_plus2' => 'float',
+        'sd_plus3' => 'float',
     ];
 
     /**
@@ -42,8 +43,8 @@ class WhoWeightForHeight extends Model
      * Dapatkan referensi LMS untuk gender dan tinggi badan tertentu.
      * Menggunakan rounding ke 0.5 cm terdekat sesuai tabel WHO.
      *
-     * @param string $gender 'M' atau 'F'
-     * @param float $heightCm Tinggi badan dalam cm
+     * @param  string  $gender  'M' atau 'F'
+     * @param  float  $heightCm  Tinggi badan dalam cm
      */
     public static function getReference(string $gender, float $heightCm): ?self
     {
@@ -52,7 +53,7 @@ class WhoWeightForHeight extends Model
         $rounded = max(45.0, min(120.0, $rounded));
         $cacheKey = "{$gender}_{$rounded}";
 
-        if (!isset(self::$cache[$cacheKey])) {
+        if (! isset(self::$cache[$cacheKey])) {
             self::$cache[$cacheKey] = self::where('gender', $gender)
                 ->where('height_cm', $rounded)
                 ->first();

@@ -50,56 +50,37 @@ Aplikasi ini dibangun dengan menggunakan **Laravel** untuk backend dan **Tailwin
 
 ## Teknologi yang Digunakan
 
-- **Backend**: Laravel 8.x
+- **Backend**: Laravel 12.x
 - **Frontend**: Tailwind CSS, Blade Templating Engine
-- **Livewire**: Untuk komponen dinamis dan interaktif di frontend
-- **Database**: MySQL atau SQLite
-- **Authentication**: Laravel Breeze untuk autentikasi pengguna
+- **Livewire**: Untuk komponen dinamis dan interaktif di frontend (Flux & Volt)
+- **Database**: MySQL (Default) atau SQLite
+- **Authentication**: Laravel Fortify/Custom Auth
 - **Version Control**: Git, GitHub
 
-## Instalasi
+## Instalasi (Plug & Play)
 
-1. **Clone Repository**:
-   Pertama, clone repository ini ke komputer lokal Anda menggunakan perintah Git:
-   
-   ```bash
-   git clone https://github.com/Alarave/posyandu-admin.git
-   cd posyandu-admin-dashboard
-   ```
+Perintah ini akan membantu mengotomatisasi instalasi awal:
 
-2. **Instalasi Dependencies**:
-   Pastikan Anda sudah menginstal Composer dan npm di sistem Anda. Kemudian jalankan perintah berikut untuk menginstal dependencies:
-   ```bash
-   composer install
-   npm install
-`
+```bash
+composer install
+composer setup
+php artisan serve
+```
 
-3. **Buat File `.env`**:
-   Salin file `.env.example` menjadi `.env` dan sesuaikan pengaturan database dan konfigurasi lainnya.
-   
-   ```bash
-   cp .env.example .env
-   ```
-4. **Generate Key Aplikasi**:
-   Laravel membutuhkan key aplikasi yang unik. Jalankan perintah berikut untuk menggenerasi key:
-   
-   ```bash
-   php artisan key:generate
-   ```
-5. **Migrasi Database**:
-   Setelah konfigurasi database selesai, jalankan migrasi untuk membuat tabel yang diperlukan:
-   
-   ```bash
-   php artisan migrate
-   ```
-6. **Menjalankan Aplikasi**:
-   Anda dapat menjalankan aplikasi secara lokal dengan menggunakan perintah artisan berikut:
-   
-   ```bash
-   php artisan serve
-   ```
-   
-   Akses aplikasi melalui `http://127.0.0.1:8000` di browser.
+> [!IMPORTANT]
+> Karena menggunakan **MySQL**, teman Anda harus membuat database kosong bernama `posyandu_admin` (atau sesuai konfigurasi `.env`) terlebih dahulu sebelum menjalankan `composer setup`.
+
+Perintah `composer setup` akan secara otomatis:
+1. Membuat file `.env` dari `.env.example`.
+2. Menghasilkan App Key.
+3. Menjalankan migrasi dan **seeding** data awal (Admin, Data WHO, dll).
+4. Menginstal dependencies frontend dan melakukan build.
+
+Setelah itu, buka `http://127.0.0.1:8000` di browser.
+
+### Login Default
+- **Email**: `admin@posyandu.local`
+- **Password**: `password`
 
 ## Kontribusi
 

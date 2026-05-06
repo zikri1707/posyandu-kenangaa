@@ -2,10 +2,10 @@
 
 namespace App\Casts;
 
-use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
-use Illuminate\Database\Eloquent\Model;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
+use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -14,18 +14,25 @@ use Illuminate\Support\Facades\Log;
  */
 class EncryptedCast implements CastsAttributes
 {
-    protected ?Key $key = null;
+    protected static ?Key $staticKey = null;
 
     public function __construct()
     {
-        $keyString = config('app.encryption_key');
-        if ($keyString) {
-            try {
-                $this->key = Key::loadFromAsciiSafeString($keyString);
-            } catch (\Exception $e) {
-                Log::error('EncryptedCast: Gagal memuat kunci enkripsi. ' . $e->getMessage());
+        if (static::$staticKey === null) {
+            $keyString = config('app.encryption_key');
+            if ($keyString) {
+                try {
+                    static::$staticKey = Key::loadFromAsciiSafeString($keyString);
+                } catch (\Exception $e) {
+                    Log::error('EncryptedCast: Gagal memuat kunci enkripsi. '.$e->getMessage());
+                }
             }
         }
+    }
+
+    protected function getKey(): ?Key
+    {
+        return static::$staticKey;
     }
 
     /**
@@ -33,15 +40,18 @@ class EncryptedCast implements CastsAttributes
      */
     public function get(Model $model, string $key, mixed $value, array $attributes): mixed
     {
-        if (empty($value) || !$this->key) {
+        $encryptionKey = $this->getKey();
+        if (empty($value) || ! $encryptionKey) {
             return $value;
         }
 
         try {
-            return Crypto::decrypt($value, $this->key);
+            $decrypted = Crypto::decrypt($value, $encryptionKey);
+
+            return (string) $decrypted;
         } catch (\Exception $e) {
             // Jika gagal dekripsi, mungkin data belum terenkripsi (plain text)
-            return $value;
+            return (string) $value;
         }
     }
 
@@ -50,15 +60,17 @@ class EncryptedCast implements CastsAttributes
      */
     public function set(Model $model, string $key, mixed $value, array $attributes): mixed
     {
-        if (empty($value) || !$this->key) {
+        $encryptionKey = $this->getKey();
+        if (empty($value) || ! $encryptionKey) {
             return $value;
         }
 
         try {
-            return Crypto::encrypt($value, $this->key);
+            return Crypto::encrypt((string) $value, $encryptionKey);
         } catch (\Exception $e) {
-            Log::error("EncryptedCast: Gagal mengenkripsi kolom {$key}. " . $e->getMessage());
-            return $value;
+            Log::error("EncryptedCast: Gagal mengenkripsi kolom {$key}. ".$e->getMessage());
+
+            return (string) $value;
         }
     }
 }

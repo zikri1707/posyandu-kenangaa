@@ -20,7 +20,7 @@ return new class extends Migration
             $table->text('logo_photo')->nullable();
             $table->timestamps();
         });
-    }    
+    }
 
     /**
      * Reverse the migrations.

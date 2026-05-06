@@ -34,8 +34,10 @@ class ArticlePolicy
         }
 
         // Admins can edit any, Kader can edit their own
-        if ($user->isAdmin()) return true;
-        
+        if ($user->isAdmin()) {
+            return true;
+        }
+
         return $user->isKader() && $user->id === $article->user_id;
     }
 

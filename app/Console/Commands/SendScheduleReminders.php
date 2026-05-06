@@ -39,22 +39,24 @@ class SendScheduleReminders extends Command
 
         if ($schedules->isEmpty()) {
             $this->info('Tidak ada jadwal untuk besok.');
+
             return Command::SUCCESS;
         }
 
         foreach ($schedules as $schedule) {
             $this->info("Mengirim pengingat untuk: {$schedule->title} (Posyandu ID: {$schedule->posyandu_id})");
-            
+
             try {
                 $count = $scheduleService->sendReminders($schedule);
                 $this->info("Berhasil antrikan {$count} pesan.");
             } catch (\Exception $e) {
-                Log::error("Gagal mengirim pengingat otomatis: " . $e->getMessage());
-                $this->error("Gagal mengirim pengingat: " . $e->getMessage());
+                Log::error('Gagal mengirim pengingat otomatis: '.$e->getMessage());
+                $this->error('Gagal mengirim pengingat: '.$e->getMessage());
             }
         }
 
         $this->info('Pengiriman selesai.');
+
         return Command::SUCCESS;
     }
 }

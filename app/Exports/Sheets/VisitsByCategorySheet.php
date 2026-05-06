@@ -24,8 +24,8 @@ class VisitsByCategorySheet
 
         $row = 4;
         foreach ($this->reportData['visits_by_category'] as $category => $count) {
-            $sheet->setCellValue('A' . $row, ucfirst($category));
-            $sheet->setCellValue('B' . $row, $count);
+            $sheet->setCellValue('A'.$row, ucfirst($category));
+            $sheet->setCellValue('B'.$row, $count);
             $row++;
         }
 

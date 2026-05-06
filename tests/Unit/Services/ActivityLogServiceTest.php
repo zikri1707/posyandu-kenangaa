@@ -18,7 +18,7 @@ beforeEach(function () {
 
     Auth::login($this->user);
 
-    $this->service = new ActivityLogService();
+    $this->service = new ActivityLogService;
 });
 
 describe('log method', function () {
@@ -157,7 +157,7 @@ describe('immutability (log tidak dapat diubah)', function () {
 
         // Verify data is stored as JSON in database
         $dbLog = ActivityLog::find($log->id);
-        
+
         expect($dbLog->old_values)->toBe($oldValues)
             ->and($dbLog->new_values)->toBe($newValues);
     });

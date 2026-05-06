@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasTable('who_weight_for_age')) {
+        if (! Schema::hasTable('who_weight_for_age')) {
             Schema::create('who_weight_for_age', function (Blueprint $table) {
                 $table->id();
                 $table->char('gender', 1)->comment('M untuk laki-laki, F untuk perempuan');
@@ -21,7 +21,7 @@ return new class extends Migration
                 $table->decimal('median', 5, 2)->comment('Median (Normal)');
                 $table->decimal('sd_plus2', 5, 2)->comment('Standar deviasi +2 (Gizi Lebih)');
                 $table->decimal('sd_plus3', 5, 2)->comment('Standar deviasi +3');
-                
+
                 // Unique constraint untuk kombinasi gender dan age_months
                 $table->unique(['gender', 'age_months'], 'uk_gender_age');
             });

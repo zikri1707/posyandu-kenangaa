@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('status');  // Pending, Completed, etc.
             $table->timestamps();
         });
-    }    
+    }
 
     /**
      * Reverse the migrations.

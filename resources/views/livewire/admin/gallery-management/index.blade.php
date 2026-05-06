@@ -1,100 +1,91 @@
-{{-- resources/views/admin/gallery-management/index.blade.php --}}
-
-
-<div class="space-y-6">
+<div class="max-w-7xl mx-auto space-y-8 pb-20">
     
-    <!-- Header -->
-    <div class="flex justify-between items-center">
+    {{-- ── Header ── --}}
+    <div class="flex items-center justify-between px-2">
         <div>
-            <h2 class="text-2xl font-bold text-gray-800">Manajemen Galeri</h2>
-            <p class="text-sm text-gray-500 mt-1">Kelola foto kegiatan posyandu.</p>
+            <h2 class="text-3xl font-black text-slate-800 tracking-tight">Manajemen Galeri</h2>
+            <p class="text-sm text-slate-400 font-medium mt-1">Dokumentasi kegiatan dan momen bermakna di Posyandu.</p>
         </div>
-        <a href="{{ route('admin.gallery.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-sm transition flex items-center">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-            Tambah Foto
-        </a>
+        <x-button href="{{ route('admin.gallery.create') }}" variant="secondary" icon="add_photo_alternate">Tambah Foto</x-button>
     </div>
 
-    <!-- Card Utama -->
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        
-        <!-- Search Bar (Sederhana) -->
-        <div class="mb-6">
-            <form action="{{ route('admin.gallery.index') }}" method="GET" class="relative max-w-md group">
-                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-600 transition-colors pointer-events-none text-[20px]">search</span>
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari judul foto..." 
-                    class="search-input-premium w-full pl-11">
-                <button type="submit" class="hidden">Cari</button>
-            </form>
+    {{-- ── Search & Filter ── --}}
+    <div class="bg-white rounded-[32px] border border-slate-100 p-6 flex flex-col md:flex-row gap-4 items-center">
+        <div class="relative flex-1 w-full group">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-teal-500 transition-colors pointer-events-none" style="font-variation-settings: 'wght' 300;">search</span>
+            <input type="text" wire:model.live="search" placeholder="Cari judul kegiatan atau foto..." 
+                class="w-full h-12 pl-12 pr-4 bg-slate-50 border-transparent rounded-2xl text-sm font-semibold text-slate-700 focus:bg-white focus:ring-0 focus:border-teal-500 transition-all border-2">
         </div>
+        {{-- Optional: Add Posyandu Filter here if needed --}}
+    </div>
 
-        @if($galleries->isEmpty())
-            <div class="text-center py-12">
-                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h14a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <h3 class="mt-2 text-sm font-medium text-gray-900">Belum ada Foto</h3>
-                <p class="mt-1 text-sm text-gray-500">Mulai dengan menambahkan foto baru ke galeri.</p>
-                <div class="mt-6">
-                    <a href="{{ route('admin.gallery.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
-                        <svg class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                        </svg>
-                        Tambah Foto
-                    </a>
-                </div>
+    {{-- ── Gallery Grid ── --}}
+    @if($galleries->isEmpty())
+        <div class="bg-white rounded-[40px] border border-slate-100 py-24 text-center">
+            <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                <span class="material-symbols-outlined text-slate-200 text-[40px]" style="font-variation-settings: 'wght' 100;">image_not_supported</span>
             </div>
-        @else
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Foto</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Judul</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Posyandu</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Featured</th>
-                            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach($galleries as $gallery)
-                        <tr class="hover:bg-gray-50 transition">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <img class="h-12 w-12 rounded object-cover" src="{{ asset('storage/' . $gallery->photo) }}" alt="{{ $gallery->title }}">
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900">{{ $gallery->title }}</div>
-                                <div class="text-xs text-gray-500 truncate max-w-xs">{{ Str::limit($gallery->description, 50) }}</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ $gallery->posyandu->name ?? 'Semua' }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                @if($gallery->is_featured)
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Ya</span>
-                                @else
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Tidak</span>
-                                @endif
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <div class="flex space-x-2 justify-end">
-                                    <a href="{{ route('admin.gallery.edit', $gallery->id) }}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
-                                    <form action="{{ route('admin.gallery.destroy', $gallery->id) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus foto ini?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:text-red-900">Hapus</button>
-                                    </form>
+            <h3 class="text-lg font-black text-slate-800 mb-1">Belum ada Foto</h3>
+            <p class="text-sm text-slate-400 font-medium mb-8">Dokumentasikan kegiatan Posyandu Anda di sini.</p>
+            <x-button href="{{ route('admin.gallery.create') }}" variant="secondary" icon="add">Tambah Sekarang</x-button>
+        </div>
+    @else
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            @foreach($galleries as $gallery)
+                <div class="bg-white rounded-[32px] border border-slate-100 overflow-hidden group hover:border-teal-500/30 transition-all duration-500">
+                    {{-- Image Container --}}
+                    <div class="aspect-[4/3] relative overflow-hidden bg-slate-100">
+                        <img src="{{ asset('storage/' . $gallery->photo) }}" 
+                             alt="{{ $gallery->title }}"
+                             class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105">
+                        
+                        {{-- Featured Badge --}}
+                        @if($gallery->is_featured)
+                            <div class="absolute top-4 left-4">
+                                <div class="bg-white/90 backdrop-blur px-3 py-1.5 rounded-full flex items-center gap-1.5 border border-white/50 shadow-sm">
+                                    <span class="material-symbols-outlined text-amber-500 text-[14px]">star</span>
+                                    <span class="text-[9px] font-black text-slate-800 uppercase tracking-widest">Featured</span>
                                 </div>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+                            </div>
+                        @endif
 
-            <div class="mt-4">
-                {{ $galleries->links() }}
-            </div>
-        @endif
-    </div>
+                        {{-- Action Overlay (Minimalist) --}}
+                        <div class="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-all duration-300 backdrop-blur-[2px] flex items-center justify-center gap-3">
+                            <a href="{{ route('admin.gallery.edit', $gallery->id) }}" 
+                               class="w-11 h-11 bg-white text-slate-700 rounded-full flex items-center justify-center shadow-lg hover:bg-teal-500 hover:text-white transition-all transform translate-y-4 group-hover:translate-y-0 delay-75">
+                                <span class="material-symbols-outlined text-[20px]">edit</span>
+                            </a>
+                            <form action="{{ route('admin.gallery.destroy', $gallery->id) }}" method="POST" 
+                                  onsubmit="return confirm('Yakin ingin menghapus foto ini?');">
+                                @csrf @method('DELETE')
+                                <button type="submit" 
+                                        class="w-11 h-11 bg-white text-red-500 rounded-full flex items-center justify-center shadow-lg hover:bg-red-500 hover:text-white transition-all transform translate-y-4 group-hover:translate-y-0 delay-150">
+                                    <span class="material-symbols-outlined text-[20px]">delete</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    {{-- Content --}}
+                    <div class="p-7 space-y-3">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-1 bg-slate-50 text-slate-500 rounded-lg text-[9px] font-black uppercase tracking-tighter">
+                                {{ $gallery->posyandu->name ?? 'Semua Posyandu' }}
+                            </span>
+                        </div>
+                        <h3 class="text-base font-black text-slate-800 leading-snug line-clamp-1" title="{{ $gallery->title }}">
+                            {{ $gallery->title }}
+                        </h3>
+                        <p class="text-xs font-medium text-slate-400 line-clamp-2 leading-relaxed italic">
+                            "{{ $gallery->description }}"
+                        </p>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+
+        <div class="mt-12 px-4">
+            {{ $galleries->links() }}
+        </div>
+    @endif
 </div>

@@ -1,19 +1,19 @@
 <?php
 
-use App\Models\User;
+use App\Livewire\Admin\PatientManagement\GrowthChart;
+use App\Models\MedicalRecord;
 use App\Models\Patient;
 use App\Models\Posyandu;
-use App\Models\MedicalRecord;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
-use App\Livewire\Admin\PatientManagement\GrowthChart;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
     // Create a posyandu
     $this->posyandu = Posyandu::factory()->create();
-    
+
     // Create an admin user
     $this->admin = User::factory()->create([
         'role' => 'admin',
@@ -61,10 +61,9 @@ it('displays growth chart for balita patient with medical records', function () 
     // Test Livewire component
     Livewire::actingAs($this->admin)
         ->test(GrowthChart::class, ['patient' => $patient])
-        ->assertSee('Grafik Pertumbuhan Balita')
-        ->assertSee('BB (kg)')
-        ->assertSee('TB (cm)')
-        ->assertSee('LK (cm)')
+        ->assertSee('Grafik Pertumbuhan')
+        ->assertSee('Berat Badan (kg)')
+        ->assertSee('Tinggi Badan (cm)')
         ->assertSet('chartData.weight', function ($weight) {
             return count($weight) === 2 && $weight[0] == 12.5 && $weight[1] == 13.0;
         })
@@ -169,7 +168,7 @@ it('color codes data points based on nutrition status', function () {
     Livewire::actingAs($this->admin)
         ->test(GrowthChart::class, ['patient' => $patient])
         ->assertSet('chartData.nutrition_status', function ($statuses) {
-            return count($statuses) === 3 
+            return count($statuses) === 3
                 && $statuses[0] === 'Gizi Buruk'
                 && $statuses[1] === 'Gizi Kurang'
                 && $statuses[2] === 'Gizi Baik';

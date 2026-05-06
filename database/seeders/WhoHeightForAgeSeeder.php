@@ -16,7 +16,7 @@ class WhoHeightForAgeSeeder extends Seeder
 
         // Data L, M, S untuk perhitungan Z-Score (Sampel Poin Utama)
         // Kita isi 0-60 bulan untuk Laki-laki (M) dan Perempuan (F)
-        
+
         $data = [];
 
         // MALE (M) - 0-60 months
@@ -68,7 +68,7 @@ class WhoHeightForAgeSeeder extends Seeder
             $data[] = [
                 'gender' => 'M', 'age_months' => $age,
                 'l_value' => $v[0], 'm_value' => $v[1], 's_value' => $v[2],
-                'sd_minus3' => $v[3], 'sd_minus2' => $v[4], 'sd_plus2' => $v[5], 'sd_plus3' => $v[6]
+                'sd_minus3' => $v[3], 'sd_minus2' => $v[4], 'sd_plus2' => $v[5], 'sd_plus3' => $v[6],
             ];
         }
 
@@ -77,7 +77,7 @@ class WhoHeightForAgeSeeder extends Seeder
             $data[] = [
                 'gender' => 'F', 'age_months' => $age,
                 'l_value' => $v[0], 'm_value' => $v[1], 's_value' => $v[2],
-                'sd_minus3' => $v[3], 'sd_minus2' => $v[4], 'sd_plus2' => $v[5], 'sd_plus3' => $v[6]
+                'sd_minus3' => $v[3], 'sd_minus2' => $v[4], 'sd_plus2' => $v[5], 'sd_plus3' => $v[6],
             ];
         }
 

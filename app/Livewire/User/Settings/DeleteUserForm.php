@@ -2,10 +2,10 @@
 
 namespace App\Livewire\User\Settings;
 
-use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Livewire\Component;
 
 class DeleteUserForm extends Component
 {
@@ -21,7 +21,7 @@ class DeleteUserForm extends Component
         $this->validate();
 
         // Cek apakah password saat ini sesuai dengan yang ada di database
-        if (!Hash::check($this->password, Auth::user()->getAuthPassword())) {
+        if (! Hash::check($this->password, Auth::user()->getAuthPassword())) {
             throw ValidationException::withMessages([
                 'password' => 'The password you entered is incorrect.',
             ]);
@@ -32,6 +32,7 @@ class DeleteUserForm extends Component
         Auth::logout();
 
         session()->flash('status', 'Your account has been deleted.');
+
         return redirect()->route('login'); // Redirect to home page after deletion
     }
 

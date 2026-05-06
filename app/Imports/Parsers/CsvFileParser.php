@@ -37,6 +37,7 @@ class CsvFileParser implements FileParserInterface
         if ($content === false) {
             throw new \RuntimeException('Tidak dapat membaca file CSV.');
         }
+
         // Strip UTF-8 BOM
         return preg_replace('/^\xEF\xBB\xBF/', '', $content);
     }
@@ -47,6 +48,7 @@ class CsvFileParser implements FileParserInterface
         if ($encoding && $encoding !== 'UTF-8') {
             $content = mb_convert_encoding($content, 'UTF-8', $encoding);
         }
+
         return $content;
     }
 
@@ -57,9 +59,9 @@ class CsvFileParser implements FileParserInterface
 
     private function detectDelimiter(string $content): string
     {
-        $firstLine  = strtok($content, "\n");
-        $tabCount   = substr_count($firstLine, "\t");
-        $semiCount  = substr_count($firstLine, ';');
+        $firstLine = strtok($content, "\n");
+        $tabCount = substr_count($firstLine, "\t");
+        $semiCount = substr_count($firstLine, ';');
         $commaCount = substr_count($firstLine, ',');
 
         if ($tabCount >= $semiCount && $tabCount >= $commaCount) {
@@ -71,7 +73,7 @@ class CsvFileParser implements FileParserInterface
 
     private function parseLines(string $content, string $delimiter): array
     {
-        $rows  = [];
+        $rows = [];
         $lines = explode("\n", $content);
 
         foreach ($lines as $line) {
@@ -85,7 +87,7 @@ class CsvFileParser implements FileParserInterface
                 : str_getcsv($line, $delimiter, '"', '\\');
 
             // Skip fully empty rows
-            if (count(array_filter($row, static fn($v) => trim($v) !== '')) === 0) {
+            if (count(array_filter($row, static fn ($v) => trim($v) !== '')) === 0) {
                 continue;
             }
 

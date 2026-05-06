@@ -2,13 +2,13 @@
 
 namespace App\Exports;
 
+use App\Exports\Sheets\NutritionDistributionSheet;
+use App\Exports\Sheets\RawMedicalRecordsSheet;
+use App\Exports\Sheets\ReportSummarySheet;
+use App\Exports\Sheets\SchedulesSheet;
+use App\Exports\Sheets\VisitsByCategorySheet;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use App\Exports\Sheets\ReportSummarySheet;
-use App\Exports\Sheets\VisitsByCategorySheet;
-use App\Exports\Sheets\NutritionDistributionSheet;
-use App\Exports\Sheets\SchedulesSheet;
-use App\Exports\Sheets\RawMedicalRecordsSheet;
 
 /**
  * Class Export Laporan Bulanan menggunakan PhpSpreadsheet native.
@@ -28,8 +28,8 @@ class MonthlyReportExport
      */
     public function generate(): Spreadsheet
     {
-        $spreadsheet = new Spreadsheet();
-        
+        $spreadsheet = new Spreadsheet;
+
         // Remove default sheet
         $spreadsheet->removeSheetByIndex(0);
 

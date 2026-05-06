@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\ActivityLog;
 use App\Models\Patient;
 use App\Models\Posyandu;
 use App\Models\User;
@@ -376,8 +375,6 @@ describe('scoping data per posyandu', function () {
         $response2->assertOk();
     });
 });
-
-
 
 describe('otorisasi per role', function () {
     it('kader tidak dapat menambahkan pasien', function () {

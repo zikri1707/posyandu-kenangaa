@@ -2,27 +2,35 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\Patient;
-use App\Models\MedicalRecord;
-use App\Models\Schedule;
 use App\Livewire\Shared\BaseAdminComponent;
-use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class AdminDashboard extends BaseAdminComponent
 {
     // Properties untuk statistik
     public $totalBalita;
+
     public $totalIbuHamil;
+
     public $totalRemaja;
+
     public $totalLansia;
+
     public $jadwalAktif;
+
     public $kunjunganBaru;
+
     public $balitaStunting;
+
     public $nutritionStatusDistribution;
+
     public $monthlyWeighingData;
+
     public $upcomingSchedule;
+
     public $recentActivities;
+
     public $posyanduStats = [];
 
     public function mount()
@@ -64,10 +72,21 @@ class AdminDashboard extends BaseAdminComponent
         $this->balitaStunting = $this->applyPosyanduScope(\App\Models\Patient::query())
             ->where('category', 'balita')
             ->whereHas('medicalRecords', function ($query) use ($latestRecordSubquery) {
-                $query->whereIn('nutrition_status', [\App\Models\MedicalRecord::NUTRITION_STUNTING, \App\Models\MedicalRecord::NUTRITION_GIZI_BURUK])
-                      ->whereIn('id', $latestRecordSubquery);
+                $query->where(function ($sq) {
+                    $sq->whereIn('nutrition_status', [
+                        \App\Models\MedicalRecord::STATUS_BB_U_SANGAT_KURANG, // Gizi Buruk
+                        \App\Models\MedicalRecord::STATUS_BB_U_KURANG,        // Gizi Kurang
+                    ])->orWhereIn('stunting_status', [
+                        \App\Models\MedicalRecord::STATUS_TB_U_SANGAT_PENDEK,
+                        \App\Models\MedicalRecord::STATUS_TB_U_PENDEK,
+                    ])->orWhereIn('wasting_status', [
+                        \App\Models\MedicalRecord::STATUS_GIZI_BURUK,
+                        \App\Models\MedicalRecord::STATUS_GIZI_KURANG,
+                    ]);
+                })->whereIn('id', $latestRecordSubquery);
             })
-            ->with(['medicalRecords' => fn($q) => $q->latest('visit_date')->limit(1)])
+            ->with(['medicalRecords' => fn ($q) => $q->latest('visit_date')->limit(1)])
+            ->limit(10)
             ->get();
 
         $this->upcomingSchedule = $scheduleQuery
@@ -95,7 +114,7 @@ class AdminDashboard extends BaseAdminComponent
         $currentYear = now()->year;
 
         $counts = (clone $patientQuery)
-            ->selectRaw('COUNT(CASE WHEN category = "balita" THEN 1 END) as balita')
+            ->selectRaw('COUNT(CASE WHEN category IN ("balita", "bayi", "baduta") THEN 1 END) as balita')
             ->selectRaw('COUNT(CASE WHEN category = "ibu_hamil" THEN 1 END) as ibu_hamil')
             ->selectRaw('COUNT(CASE WHEN category = "remaja" THEN 1 END) as remaja')
             ->selectRaw('COUNT(CASE WHEN category = "lansia" THEN 1 END) as lansia')
@@ -120,7 +139,7 @@ class AdminDashboard extends BaseAdminComponent
     {
         $distribution = (clone $medicalRecordQuery)
             ->whereIn('id', $latestRecordSubquery)
-            ->whereHas('patient', fn($q) => $q->where('category', 'balita'))
+            ->whereHas('patient', fn($q) => $q->whereIn('category', ['balita', 'bayi', 'baduta']))
             ->whereNotNull('nutrition_status')
             ->select('nutrition_status', \Illuminate\Support\Facades\DB::raw('COUNT(*) as total'))
             ->groupBy('nutrition_status')
@@ -135,25 +154,29 @@ class AdminDashboard extends BaseAdminComponent
     protected function getMonthlyWeighingData($medicalRecordQuery)
     {
         $startDate = Carbon::now()->subMonths(11)->startOfMonth();
-        
+
+        // Optimize: Use DB-level grouping to reduce memory usage
+        $dateFormat = config('database.default') === 'sqlite'
+            ? "strftime('%m %Y', visit_date)"
+            : "DATE_FORMAT(visit_date, '%m %Y')";
+
         $trends = (clone $medicalRecordQuery)
             ->where('visit_date', '>=', $startDate)
-            ->select('id', 'visit_date')
+            ->selectRaw("$dateFormat as month_year")
+            ->selectRaw('COUNT(*) as total')
+            ->groupBy('month_year')
             ->get()
-            ->groupBy(function ($record) {
-                return Carbon::parse($record->visit_date)->format('M Y');
-            })
-            ->map(function ($group) {
-                return $group->count();
-            });
+            ->pluck('total', 'month_year');
 
         $labels = [];
         $data = [];
 
         for ($i = 11; $i >= 0; $i--) {
-            $label = Carbon::now()->subMonths($i)->format('M Y');
+            $carbon = Carbon::now()->subMonths($i);
+            $label = $carbon->translatedFormat('M Y');
+            $key = $carbon->format('m Y');
             $labels[] = $label;
-            $data[] = $trends->get($label, 0);
+            $data[] = $trends->get($key, 0);
         }
 
         return ['labels' => $labels, 'data' => $data];

@@ -45,7 +45,7 @@ class ScheduleSeeder extends Seeder
                 'status' => 'upcoming',
                 'created_at' => now(),
                 'updated_at' => now(),
-            ]
+            ],
         ]);
     }
 }

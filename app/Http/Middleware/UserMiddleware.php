@@ -9,11 +9,11 @@ class UserMiddleware
 {
     public function handle(Request $request, Closure $next, $role)
     {
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             return redirect()->route('login');
         }
 
-        if (!auth()->user()->hasRole($role)) {
+        if (! auth()->user()->hasRole($role)) {
             return redirect()->route('dashboard')->with('error', 'You do not have access to this resource.');
         }
 

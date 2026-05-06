@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Web;
 
-use App\Models\Schedule;
-use App\Http\Requests\ScheduleRequest;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ScheduleRequest;
+use App\Models\Schedule;
+use Illuminate\Http\Request;
 
 class ScheduleController extends Controller
 {
@@ -17,7 +17,7 @@ class ScheduleController extends Controller
             ->when($request->search, function ($q, $search) {
                 return $q->where(function ($q) use ($search) {
                     $q->where('title', 'like', "%{$search}%")
-                      ->orWhere('location', 'like', "%{$search}%");
+                        ->orWhere('location', 'like', "%{$search}%");
                 });
             })
             ->when($request->status, function ($q, $status) {
@@ -25,14 +25,14 @@ class ScheduleController extends Controller
             });
 
         // Statistik bulan ini
-        $now          = now();
-        $statsQuery   = clone $query;
+        $now = now();
+        $statsQuery = clone $query;
         $totalBulanIni = (clone $statsQuery)
             ->whereMonth('start_time', $now->month)
             ->whereYear('start_time', $now->year)
             ->count();
-        $selesai      = (clone $statsQuery)->where('status', 'completed')->count();
-        $mendatang    = (clone $statsQuery)->where('status', 'upcoming')->count();
+        $selesai = (clone $statsQuery)->where('status', 'completed')->count();
+        $mendatang = (clone $statsQuery)->where('status', 'upcoming')->count();
 
         // Agenda terdekat (upcoming berikutnya)
         $agendaTerdekat = (clone $query)
@@ -78,18 +78,21 @@ class ScheduleController extends Controller
     public function edit(Schedule $schedule)
     {
         $posyandus = \App\Models\Posyandu::all();
+
         return view('livewire.admin.schedule-management.update', compact('schedule', 'posyandus'));
     }
 
     public function update(ScheduleRequest $request, Schedule $schedule, \App\Services\ScheduleService $scheduleService)
     {
         $scheduleService->updateSchedule($schedule, $request->validated());
+
         return redirect()->route('admin.schedules.index')->with('success', 'Jadwal berhasil diperbarui.');
     }
 
     public function destroy(Schedule $schedule, \App\Services\ScheduleService $scheduleService)
     {
         $scheduleService->deleteSchedule($schedule);
+
         return redirect()->route('admin.schedules.index')->with('success', 'Jadwal berhasil dihapus.');
     }
 }

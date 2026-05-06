@@ -2,16 +2,16 @@
 
 namespace App\Models;
 
+use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\LogsActivity;
 
 class Article extends Model
 {
     use HasFactory, LogsActivity;
 
     protected $fillable = [
-        'user_id', 'category_id', 'title', 'content', 'thumbnail', 'slug', 'status', 'published_at'
+        'user_id', 'category_id', 'title', 'content', 'thumbnail', 'slug', 'status', 'published_at',
     ];
 
     protected $casts = [
@@ -33,15 +33,14 @@ class Article extends Model
     /**
      * Scope a query to apply standard filters.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param array $filters
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeFilter($query, array $filters)
     {
         $query->when($filters['search'] ?? false, function ($q, $search) {
             $q->where('title', 'like', "%{$search}%")
-              ->orWhere('content', 'like', "%{$search}%");
+                ->orWhere('content', 'like', "%{$search}%");
         });
 
         $query->when($filters['status'] ?? false, function ($q, $status) {
@@ -51,7 +50,7 @@ class Article extends Model
         });
 
         $query->when($filters['category'] ?? false, function ($q, $category) {
-            $q->whereHas('category', fn($q) => $q->where('slug', $category));
+            $q->whereHas('category', fn ($q) => $q->where('slug', $category));
         });
 
         $sort = $filters['sort'] ?? 'latest';

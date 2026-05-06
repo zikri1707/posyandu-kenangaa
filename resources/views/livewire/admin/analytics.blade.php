@@ -302,12 +302,13 @@
                     @php
                         $initials = strtoupper(substr($record->patient?->full_name ?? 'X', 0, 2));
                         $status = $record->nutrition_status;
-                        $badgeStyles = match($status) {
-                            'Normal', 'Gizi Baik'   => 'bg-emerald-50 text-emerald-600 border-emerald-100',
-                            'Gizi Kurang', 'Risiko' => 'bg-amber-50 text-amber-600 border-amber-100',
-                            'Gizi Lebih'            => 'bg-indigo-50 text-indigo-600 border-indigo-100',
-                            'Gizi Buruk', 'Stunting' => 'bg-red-50 text-red-600 border-red-100',
-                            default                 => 'bg-slate-50 text-slate-400 border-slate-100',
+                        $badgeStyles = match(true) {
+                            str_contains($status, 'Normal') || str_contains($status, 'Baik') => 'bg-emerald-50 text-emerald-600 border-emerald-100',
+                            str_contains($status, 'Kurang') && !str_contains($status, 'Sangat') => 'bg-amber-50 text-amber-600 border-amber-100',
+                            str_contains($status, 'Risiko') || str_contains($status, 'Berisiko') => 'bg-amber-50 text-amber-600 border-amber-100',
+                            str_contains($status, 'Sangat') || str_contains($status, 'Buruk') || str_contains($status, 'Pendek') => 'bg-red-50 text-red-600 border-red-100',
+                            str_contains($status, 'Lebih') || str_contains($status, 'Obesitas') => 'bg-indigo-50 text-indigo-600 border-indigo-100',
+                            default => 'bg-slate-50 text-slate-400 border-slate-100',
                         };
                     @endphp
                     <tr class="hover:bg-slate-50 transition-colors group">

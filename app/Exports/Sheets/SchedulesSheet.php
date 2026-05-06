@@ -2,8 +2,8 @@
 
 namespace App\Exports\Sheets;
 
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Illuminate\Support\Carbon;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class SchedulesSheet
 {
@@ -27,10 +27,10 @@ class SchedulesSheet
 
         $row = 4;
         foreach ($this->reportData['schedules'] as $schedule) {
-            $sheet->setCellValue('A' . $row, $schedule['title']);
-            $sheet->setCellValue('B' . $row, Carbon::parse($schedule['date'])->format('d/m/Y'));
-            $sheet->setCellValue('C' . $row, $schedule['location']);
-            $sheet->setCellValue('D' . $row, $schedule['status']);
+            $sheet->setCellValue('A'.$row, $schedule['title']);
+            $sheet->setCellValue('B'.$row, Carbon::parse($schedule['date'])->format('d/m/Y'));
+            $sheet->setCellValue('C'.$row, $schedule['location']);
+            $sheet->setCellValue('D'.$row, $schedule['status']);
             $row++;
         }
 

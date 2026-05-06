@@ -16,7 +16,7 @@ Schedule::call(function () {
     \App\Jobs\ComputeAnalyticsSnapshot::dispatch(null);
 
     // Per-Posyandu Snapshots
-    \App\Models\Posyandu::all()->each(function ($posyandu) {
+    foreach (\App\Models\Posyandu::cursor() as $posyandu) {
         \App\Jobs\ComputeAnalyticsSnapshot::dispatch($posyandu->id);
-    });
+    }
 })->hourly();

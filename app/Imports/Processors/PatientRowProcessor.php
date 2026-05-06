@@ -18,19 +18,24 @@ use Carbon\Carbon;
  */
 class PatientRowProcessor
 {
-    public int   $imported        = 0;
-    public int   $skipped         = 0;
-    public int   $recordsImported = 0;
-    public array $errors          = [];
+    public int $imported = 0;
 
-    private int                       $posyanduId;
-    private int                       $userId;
+    public int $skipped = 0;
+
+    public int $recordsImported = 0;
+
+    public array $errors = [];
+
+    private int $posyanduId;
+
+    private int $userId;
+
     private NutritionCalculatorService $nutritionService;
 
     public function __construct(int $posyanduId, int $userId)
     {
-        $this->posyanduId       = $posyanduId;
-        $this->userId           = $userId;
+        $this->posyanduId = $posyanduId;
+        $this->userId = $userId;
         $this->nutritionService = app(NutritionCalculatorService::class);
     }
 
@@ -40,7 +45,7 @@ class PatientRowProcessor
      * Process all data rows.
      *
      * @param  array<int, array<int, string>>  $rows
-     * @param  array<string, int>              $colMap  Column-name → index map
+     * @param  array<string, int>  $colMap  Column-name → index map
      */
     public function processRows(array $rows, array $colMap): void
     {
@@ -56,31 +61,33 @@ class PatientRowProcessor
         $get = $this->makeGetter($row, $colMap);
 
         // Extract fields
-        $nama      = $get('nama_anak');
-        $nik       = $get('nik');
-        $tglLahir  = $get('tgl_lahir');
-        $jk        = $get('jk');
-        $namaOrtu  = $get('nm_ortu');
-        $rt        = $get('rt');
-        $rw        = $get('rw');
-        $alamat    = $get('alamat');
+        $nama = $get('nama_anak');
+        $nik = $get('nik');
+        $tglLahir = $get('tgl_lahir');
+        $jk = $get('jk');
+        $namaOrtu = $get('nm_ortu');
+        $rt = $get('rt');
+        $rw = $get('rw');
+        $alamat = $get('alamat');
 
         // Medical fields
-        $tglUkur       = $get('tanggal_ukur');
-        $berat         = $get('berat');
-        $tinggi        = $get('tinggi');
+        $tglUkur = $get('tanggal_ukur');
+        $berat = $get('berat');
+        $tinggi = $get('tinggi');
         $lingkarKepala = $get('lingkar_kepala');
-        $vitamin       = $get('vitamin');
-        $imunisasi     = $get('imunisasi');
+        $vitamin = $get('vitamin');
+        $imunisasi = $get('imunisasi');
 
         // Validate required fields
         if ($nama === '' && $nik === '') {
             $this->skipped++;
+
             return;
         }
         if ($nama === '') {
             $this->errors[] = "Baris {$rowNum}: Nama anak kosong, dilewati.";
             $this->skipped++;
+
             return;
         }
 
@@ -88,13 +95,14 @@ class PatientRowProcessor
         if ($birthDate === false) {
             $this->errors[] = "Baris {$rowNum}: Format tanggal lahir '{$tglLahir}' tidak valid untuk '{$nama}'.";
             $this->skipped++;
+
             return;
         }
 
-        $gender      = $this->normalizeGender($jk);
+        $gender = $this->normalizeGender($jk);
         $fullAddress = $this->buildAddress($alamat, $rt, $rw);
-        $nikClean    = preg_replace('/\s+/', '', $nik);
-        $hasValidNik = strlen($nikClean) === 16 && ctype_digit($nikClean);
+        $nikClean = preg_replace('/[^0-9]/', '', $nik); // Strip everything except digits
+        $hasValidNik = strlen($nikClean) >= 15 && strlen($nikClean) <= 17; // More lenient length check
 
         try {
             $patient = $this->resolvePatient(
@@ -102,17 +110,17 @@ class PatientRowProcessor
             );
 
             // Detailed Debugging: If placeholder was used, let's find out why
-            if (!$hasValidNik && $nama !== '') {
+            if (! $hasValidNik && $nama !== '') {
                 $rawNik = $get('nik');
                 $colNames = implode(', ', array_keys($colMap));
-                $this->errors[] = "DEBUG Baris {$rowNum}: NIK asli='{$rawNik}', NIK bersih='{$nikClean}', Panjang=" . strlen($nikClean) . ". Kolom terdeteksi: [{$colNames}]";
+                $this->errors[] = "DEBUG Baris {$rowNum}: NIK asli='{$rawNik}', NIK bersih='{$nikClean}', Panjang=".strlen($nikClean).". Kolom terdeteksi: [{$colNames}]";
             }
 
             if ($berat !== '' || $tinggi !== '') {
                 $this->saveMedicalRecord($patient, $berat, $tinggi, $lingkarKepala, $vitamin, $imunisasi, $birthDate, $tglUkur, $gender, $rowNum);
             }
         } catch (\Exception $e) {
-            $this->errors[] = "Baris {$rowNum}: Gagal menyimpan '{$nama}' — " . $e->getMessage();
+            $this->errors[] = "Baris {$rowNum}: Gagal menyimpan '{$nama}' — ".$e->getMessage();
             $this->skipped++;
         }
     }
@@ -120,21 +128,22 @@ class PatientRowProcessor
     // ── Patient resolution ────────────────────────────────────────────
 
     private function resolvePatient(
-        bool          $hasValidNik,
-        string        $nikClean,
-        string        $nama,
-        Carbon|null   $birthDate,
-        string        $namaOrtu,
-        string        $fullAddress,
-        ?string       $gender
+        bool $hasValidNik,
+        string $nikClean,
+        string $nama,
+        ?Carbon $birthDate,
+        string $namaOrtu,
+        string $fullAddress,
+        ?string $gender
     ): Patient {
         $existing = $this->findExistingPatient($hasValidNik, $nikClean, $nama, $birthDate);
 
         if ($existing) {
             $updateData = [
                 'parent_name' => $namaOrtu ?: $existing->parent_name,
-                'address'     => $fullAddress ?: $existing->address,
-                'gender'      => $gender ?? $existing->gender,
+                'address' => $fullAddress ?: $existing->address,
+                'gender' => $gender ?? $existing->gender,
+                'category' => $this->determineCategory($birthDate ?: $existing->birth_date),
             ];
 
             // If existing has a placeholder NIK (9999...) and we now have a valid one, update it
@@ -143,34 +152,36 @@ class PatientRowProcessor
             }
 
             $existing->update($updateData);
+
             return $existing;
         }
 
-        if (!$hasValidNik) {
+        if (! $hasValidNik) {
             $nikClean = $this->generatePlaceholderNik();
         }
 
         $patient = Patient::create([
-            'posyandu_id'  => $this->posyanduId,
-            'id_number'    => $nikClean,
-            'full_name'    => $nama,
-            'birth_date'   => $birthDate,
-            'gender'       => $gender,
-            'category'     => 'balita',
-            'parent_name'  => $namaOrtu,
-            'address'      => $fullAddress,
+            'posyandu_id' => $this->posyanduId,
+            'id_number' => $nikClean,
+            'full_name' => $nama,
+            'birth_date' => $birthDate,
+            'gender' => $gender,
+            'category' => $this->determineCategory($birthDate),
+            'parent_name' => $namaOrtu,
+            'address' => $fullAddress,
             'phone_number' => '',
         ]);
 
         $this->imported++;
+
         return $patient;
     }
 
     private function findExistingPatient(
-        bool       $hasValidNik,
-        string     $nikClean,
-        string     $nama,
-        Carbon|null $birthDate
+        bool $hasValidNik,
+        string $nikClean,
+        string $nama,
+        ?Carbon $birthDate
     ): ?Patient {
         if ($hasValidNik) {
             $found = Patient::where('id_number', $nikClean)
@@ -194,19 +205,19 @@ class PatientRowProcessor
     // ── Medical record ────────────────────────────────────────────────
 
     private function saveMedicalRecord(
-        Patient     $patient,
-        string      $berat,
-        string      $tinggi,
-        string      $lingkarKepala,
-        string      $vitamin,
-        string      $imunisasi,
-        Carbon|null $birthDate,
-        string      $tglUkur,
-        ?string     $gender,
-        int         $rowNum
+        Patient $patient,
+        string $berat,
+        string $tinggi,
+        string $lingkarKepala,
+        string $vitamin,
+        string $imunisasi,
+        ?Carbon $birthDate,
+        string $tglUkur,
+        ?string $gender,
+        int $rowNum
     ): void {
         $visitDate = $this->parseDate($tglUkur);
-        if (!($visitDate instanceof Carbon)) {
+        if (! ($visitDate instanceof Carbon)) {
             $visitDate = now();
         }
 
@@ -220,36 +231,36 @@ class PatientRowProcessor
 
         $weightVal = $this->parseDecimal($berat);
         $heightVal = $this->parseDecimal($tinggi);
-        $lkVal     = $this->parseDecimal($lingkarKepala);
-        $vitaminA  = $this->parseBool($vitamin);
+        $lkVal = $this->parseDecimal($lingkarKepala);
+        $vitaminA = $this->parseBool($vitamin);
 
         [$zScore, $nutritionStatus] = $this->calcNutrition($weightVal, $heightVal, $birthDate, $visitDate, $gender);
 
         MedicalRecord::create([
-            'patient_id'         => $patient->id,
-            'user_id'            => $this->userId,
-            'visit_date'         => $visitDate->format('Y-m-d'),
-            'weight'             => $weightVal,
-            'height'             => $heightVal,
+            'patient_id' => $patient->id,
+            'user_id' => $this->userId,
+            'visit_date' => $visitDate->format('Y-m-d'),
+            'weight' => $weightVal,
+            'height' => $heightVal,
             'head_circumference' => $lkVal,
-            'immunization'       => $imunisasi,
-            'vitamin_a'          => $vitaminA,
-            'pill_fe'            => false,
-            'z_score'            => $zScore,
-            'nutrition_status'   => $nutritionStatus,
+            'immunization' => $imunisasi,
+            'vitamin_a' => $vitaminA,
+            'pill_fe' => false,
+            'z_score' => $zScore,
+            'nutrition_status' => $nutritionStatus,
         ]);
 
         $this->recordsImported++;
     }
 
     private function calcNutrition(
-        ?float      $weight,
-        ?float      $height,
-        Carbon|null $birthDate,
-        Carbon      $visitDate,
-        ?string     $gender
+        ?float $weight,
+        ?float $height,
+        ?Carbon $birthDate,
+        Carbon $visitDate,
+        ?string $gender
     ): array {
-        if (!$weight || !($birthDate instanceof Carbon)) {
+        if (! $weight || ! ($birthDate instanceof Carbon)) {
             return [null, null];
         }
 
@@ -273,8 +284,8 @@ class PatientRowProcessor
     /**
      * Build a getter closure that reads a named column from a row.
      *
-     * @param  array<int, string>   $row
-     * @param  array<string, int>   $colMap
+     * @param  array<int, string>  $row
+     * @param  array<string, int>  $colMap
      */
     private function makeGetter(array $row, array $colMap): \Closure
     {
@@ -283,14 +294,15 @@ class PatientRowProcessor
             if ($idx === null) {
                 return '';
             }
-            
+
             $val = $row[$idx] ?? '';
-            
-            // Handle scientific notation (e.g. 3.57E+15) commonly found in Excel for NIK
-            if (is_numeric($val) && str_contains(strtoupper((string)$val), 'E')) {
-                $val = sprintf("%.0f", (float)$val);
+
+            // Handle scientific notation (e.g. 3.27E+15) commonly found in Excel for NIK
+            // We use number_format without decimals to get the full string representation
+            if (is_numeric($val) && (str_contains(strtoupper((string) $val), 'E') || strlen((string) $val) >= 15)) {
+                $val = number_format((float) $val, 0, '', '');
             }
-            
+
             return trim((string) $val);
         };
     }
@@ -301,8 +313,8 @@ class PatientRowProcessor
             return $alamat;
         }
 
-        $rtRw = 'RT ' . str_pad($rt, 2, '0', STR_PAD_LEFT)
-              . ' / RW ' . str_pad($rw, 2, '0', STR_PAD_LEFT);
+        $rtRw = 'RT '.str_pad($rt, 2, '0', STR_PAD_LEFT)
+              .' / RW '.str_pad($rw, 2, '0', STR_PAD_LEFT);
 
         return $alamat !== '' ? "{$alamat}, {$rtRw}" : $rtRw;
     }
@@ -318,6 +330,7 @@ class PatientRowProcessor
             // Excel serial number (e.g. 44380)
             if (is_numeric($str) && (float) $str > 1000) {
                 $unixTs = ((float) $str - 25569) * 86400;
+
                 return Carbon::createFromTimestamp((int) $unixTs)->startOfDay();
             }
             // "6 Aug 2022" / "6 August 2022"
@@ -325,9 +338,11 @@ class PatientRowProcessor
                 foreach (['j M Y', 'j F Y', 'd M Y', 'd F Y'] as $fmt) {
                     try {
                         return Carbon::createFromFormat($fmt, $str)->startOfDay();
-                    } catch (\Exception) {}
+                    } catch (\Exception) {
+                    }
                 }
             }
+
             return Carbon::parse($str)->startOfDay();
         } catch (\Exception) {
             return false;
@@ -341,6 +356,7 @@ class PatientRowProcessor
             return null;
         }
         $clean = str_replace(',', '.', $value);
+
         return is_numeric($clean) ? (float) $clean : null;
     }
 
@@ -357,8 +373,8 @@ class PatientRowProcessor
     {
         return match (strtoupper(trim($jk))) {
             'L', 'LAKI', 'LAKI-LAKI', 'MALE', 'M' => 'L',
-            'P', 'PEREMPUAN', 'FEMALE', 'F'        => 'P',
-            default                                 => null,
+            'P', 'PEREMPUAN', 'FEMALE', 'F' => 'P',
+            default => null,
         };
     }
 
@@ -366,10 +382,43 @@ class PatientRowProcessor
     {
         do {
             $nik = '9999'
-                . str_pad((string) $this->posyanduId, 4, '0', STR_PAD_LEFT)
-                . str_pad((string) rand(0, 99999999), 8, '0', STR_PAD_LEFT);
+                .str_pad((string) $this->posyanduId, 4, '0', STR_PAD_LEFT)
+                .str_pad((string) rand(0, 99999999), 8, '0', STR_PAD_LEFT);
         } while (Patient::where('id_number', $nik)->exists());
 
         return $nik;
+    }
+
+    /**
+     * Menentukan kategori berdasarkan usia anak dalam bulan.
+     */
+    private function determineCategory(?Carbon $birthDate): string
+    {
+        if (! $birthDate) {
+            return 'umum';
+        }
+
+        $ageMonths = (int) $birthDate->diffInMonths(now());
+
+        if ($ageMonths <= 11) {
+            return 'bayi';
+        }
+        if ($ageMonths <= 23) {
+            return 'baduta';
+        }
+        if ($ageMonths <= 59) {
+            return 'balita';
+        }
+        if ($ageMonths <= 119) {
+            return 'anak_sekolah';
+        } // 5-9 tahun
+        if ($ageMonths <= 227) {
+            return 'remaja';
+        }      // 10-18 tahun
+        if ($ageMonths >= 720) {
+            return 'lansia';
+        }      // 60 tahun+
+
+        return 'umum';
     }
 }

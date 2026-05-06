@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->unsignedBigInteger('posyandu_id')->nullable()->after('id');
             $table->foreign('posyandu_id')
-                  ->references('id')
-                  ->on('posyandus')
-                  ->onDelete('set null');
+                ->references('id')
+                ->on('posyandus')
+                ->onDelete('set null');
         });
     }
 

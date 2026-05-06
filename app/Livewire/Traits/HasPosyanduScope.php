@@ -18,13 +18,13 @@ trait HasPosyanduScope
     {
         $user = Auth::user();
 
-        if ($user->isSuperAdmin()) {
+        if ($user->isSuperAdmin() || $user->isCoordinator()) {
             return $query;
         }
 
         // Default: Admin/Kader hanya melihat posyandu mereka
         if ($query->getModel() instanceof \App\Models\MedicalRecord) {
-            return $query->whereHas('patient', fn($q) => $q->where('posyandu_id', $user->posyandu_id));
+            return $query->whereHas('patient', fn ($q) => $q->where('posyandu_id', $user->posyandu_id));
         }
 
         return $query->where('posyandu_id', $user->posyandu_id);
@@ -37,7 +37,7 @@ trait HasPosyanduScope
     {
         $user = Auth::user();
 
-        if ($user->isSuperAdmin()) {
+        if ($user->isSuperAdmin() || $user->isCoordinator()) {
             return Posyandu::all();
         }
 

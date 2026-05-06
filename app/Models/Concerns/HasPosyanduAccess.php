@@ -33,7 +33,7 @@ trait HasPosyanduAccess
     {
         $pedukuhanId = $user->getPedukuhanId();
 
-        if (!$pedukuhanId) {
+        if (! $pedukuhanId) {
             return $query->whereNull('id');
         }
 
@@ -47,7 +47,7 @@ trait HasPosyanduAccess
      */
     protected function scopeByPosyandu(Builder $query, User $user): Builder
     {
-        if (!$user->posyandu_id) {
+        if (! $user->posyandu_id) {
             return $query->whereNull('id');
         }
 

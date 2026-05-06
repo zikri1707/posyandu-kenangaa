@@ -2,12 +2,11 @@
 
 namespace App\Livewire\Admin\Management;
 
-use App\Models\Schedule;
 use App\Models\Posyandu;
+use App\Models\Schedule;
 use App\Services\ScheduleService;
-use Livewire\Component;
 use Illuminate\View\View;
-use Illuminate\Support\Facades\Gate;
+use Livewire\Component;
 
 /**
  * Komponen untuk memperbarui jadwal (OOP & Clean Code).
@@ -15,14 +14,20 @@ use Illuminate\Support\Facades\Gate;
 class ScheduleUpdate extends Component
 {
     public Schedule $schedule;
-    
+
     // Form fields
     public string $title = '';
+
     public string $description = '';
+
     public string $start_time = '';
+
     public string $end_time = '';
+
     public string $location = '';
+
     public string $status = '';
+
     public ?int $posyandu_id = null;
 
     /**
@@ -48,12 +53,12 @@ class ScheduleUpdate extends Component
     protected function rules(): array
     {
         return [
-            'title'       => 'required|string|max:255',
+            'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'start_time'  => 'required|date',
-            'end_time'    => 'required|date|after:start_time',
-            'location'    => 'required|string|max:255',
-            'status'      => 'required|in:upcoming,ongoing,completed,cancelled',
+            'start_time' => 'required|date',
+            'end_time' => 'required|date|after:start_time',
+            'location' => 'required|string|max:255',
+            'status' => 'required|in:upcoming,ongoing,completed,cancelled',
             'posyandu_id' => 'required|exists:posyandus,id',
         ];
     }
@@ -68,6 +73,7 @@ class ScheduleUpdate extends Component
         $service->updateSchedule($this->schedule, $validated);
 
         session()->flash('success', 'Jadwal kegiatan berhasil diperbarui.');
+
         return redirect()->route('admin.schedules.index');
     }
 
@@ -77,12 +83,12 @@ class ScheduleUpdate extends Component
     public function render(): View
     {
         $user = auth()->user();
-        $posyandus = $user->isSuperAdmin() 
-            ? Posyandu::orderBy('name')->get() 
+        $posyandus = $user->isSuperAdmin()
+            ? Posyandu::orderBy('name')->get()
             : Posyandu::where('id', $user->posyandu_id)->get();
 
         return view('livewire.admin.schedule-management.update', [
-            'posyandus' => $posyandus
+            'posyandus' => $posyandus,
         ]);
     }
 }

@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers\Web;
 
+use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Models\Schedule;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 class PublicController extends Controller
 {

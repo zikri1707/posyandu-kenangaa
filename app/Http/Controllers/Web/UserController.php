@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Web;
 
-use App\Models\User;
-use App\Http\Requests\UserRequest;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Services\ActivityLogService;
+use App\Http\Requests\UserRequest;
+use App\Models\User;
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
@@ -15,17 +14,17 @@ class UserController extends Controller
         $users = User::with('posyandu')
             ->filter([
                 'search' => $request->search,
-                'role'   => $request->role,
+                'role' => $request->role,
                 'status' => $request->status,
             ])
             ->orderBy('name')
             ->paginate(10)
             ->withQueryString();
 
-        $totalUsers     = User::count();
-        $totalRoles     = User::distinct('role')->count('role');
-        $inactiveUsers  = User::where('is_active', false)->count();
-        $totalPosyandu  = \App\Models\Posyandu::count();
+        $totalUsers = User::count();
+        $totalRoles = User::distinct('role')->count('role');
+        $inactiveUsers = User::where('is_active', false)->count();
+        $totalPosyandu = \App\Models\Posyandu::count();
 
         return view('livewire.admin.user-management.index', compact(
             'users', 'totalUsers', 'totalRoles', 'inactiveUsers', 'totalPosyandu'
@@ -40,6 +39,7 @@ class UserController extends Controller
     public function store(UserRequest $request, \App\Services\UserService $userService)
     {
         $userService->createUser($request->validated(), $request->has('is_active'));
+
         return redirect()->route('admin.users.index')->with('success', 'Pengguna berhasil ditambahkan.');
     }
 
@@ -63,6 +63,7 @@ class UserController extends Controller
     public function destroy(User $user, \App\Services\UserService $userService)
     {
         $userService->deleteUser($user);
+
         return redirect()->route('admin.users.index')->with('success', 'Pengguna berhasil dihapus.');
     }
 }

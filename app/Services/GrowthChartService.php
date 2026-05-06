@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use App\Models\Patient;
-use App\Models\WhoWeightForAge;
 use App\Models\WhoHeightForAge;
+use App\Models\WhoWeightForAge;
 use Illuminate\Support\Collection;
 
 /**
@@ -30,12 +30,12 @@ class GrowthChartService
         return [
             'labels' => $references->pluck('age_months')->toArray(),
             'datasets' => [
-                $this->createReferenceDataset('Median', $references->pluck('median'), '#22c55e', 3), // Hijau
-                $this->createReferenceDataset('+2 SD', $references->pluck('sd_plus2'), '#eab308', 1, 'dash'), // Kuning
-                $this->createReferenceDataset('-2 SD', $references->pluck('sd_minus2'), '#eab308', 1, 'dash'), // Kuning
-                $this->createReferenceDataset('+3 SD', $references->pluck('sd_plus3'), '#ef4444', 1, 'dash'), // Merah
-                $this->createReferenceDataset('-3 SD', $references->pluck('sd_minus3'), '#ef4444', 1, 'dash'), // Merah
-                $this->createChildDataset('Berat Badan Anak', $this->mapRecordsToAge($patient, $records, 'weight'), '#3b82f6'), // Biru
+                $this->createReferenceDataset('Median', $references->pluck('median')->toArray(), '#16a34a', 3), // Green
+                $this->createReferenceDataset('+2 SD', $references->pluck('sd_plus2')->toArray(), '#dc2626', 1, 'solid'), // Red
+                $this->createReferenceDataset('-2 SD', $references->pluck('sd_minus2')->toArray(), '#dc2626', 1, 'solid'), // Red
+                $this->createReferenceDataset('+3 SD', $references->pluck('sd_plus3')->toArray(), '#000000', 1, 'solid'), // Black
+                $this->createReferenceDataset('-3 SD', $references->pluck('sd_minus3')->toArray(), '#000000', 1, 'solid'), // Black
+                $this->createChildDataset('Berat Badan Anak', $this->mapRecordsToAge($patient, $records, 'weight'), '#ffffff'), // White for high contrast on themed bg
             ],
             'weight' => $records->pluck('weight')->toArray(),
             'height' => $records->pluck('height')->toArray(),
@@ -56,25 +56,16 @@ class GrowthChartService
             ->orderBy('age_months')
             ->get();
 
-        // Map reference data to correct age index (0-60)
-        $median = array_fill(0, 61, null);
-        $sd2 = array_fill(0, 61, null);
-        $sd3 = array_fill(0, 61, null);
-
-        foreach ($references as $ref) {
-            $median[$ref->age_months] = $ref->m_value;
-            $sd2[$ref->age_months] = $ref->sd_minus2;
-            $sd3[$ref->age_months] = $ref->sd_minus3;
-        }
-        
         return [
-            'labels' => range(0, 60),
+            'labels' => $references->pluck('age_months')->toArray(),
             'datasets' => [
-                $this->createReferenceDataset('Median', $median, '#22c55e', 3),
-                $this->createReferenceDataset('-2 SD', $sd2, '#eab308', 1, 'dash'),
-                $this->createReferenceDataset('-3 SD', $sd3, '#ef4444', 1, 'dash'),
-                $this->createChildDataset('Tinggi Badan Anak', $this->mapRecordsToAge($patient, $records, 'height'), '#3b82f6'),
-            ]
+                $this->createReferenceDataset('Median', $references->pluck('m_value')->toArray(), '#16a34a', 3), // Green
+                $this->createReferenceDataset('+2 SD', $references->pluck('sd_plus2')->toArray(), '#dc2626', 1, 'solid'), // Red
+                $this->createReferenceDataset('-2 SD', $references->pluck('sd_minus2')->toArray(), '#dc2626', 1, 'solid'), // Red
+                $this->createReferenceDataset('+3 SD', $references->pluck('sd_plus3')->toArray(), '#000000', 1, 'solid'), // Black
+                $this->createReferenceDataset('-3 SD', $references->pluck('sd_minus3')->toArray(), '#000000', 1, 'solid'), // Black
+                $this->createChildDataset('Tinggi Badan Anak', $this->mapRecordsToAge($patient, $records, 'height'), '#ffffff'), // White
+            ],
         ];
     }
 
@@ -93,7 +84,7 @@ class GrowthChartService
             'pointRadius' => 0,
             'borderDash' => $style === 'dash' ? [5, 5] : [],
             'fill' => false,
-            'tension' => 0.4
+            'tension' => 0.4,
         ];
     }
 
@@ -109,7 +100,7 @@ class GrowthChartService
             'pointHoverRadius' => 8,
             'fill' => false,
             'tension' => 0.2,
-            'zIndex' => 10
+            'zIndex' => 10,
         ];
     }
 
@@ -125,14 +116,17 @@ class GrowthChartService
                 $data[$ageMonths] = (float) $record->$field;
             }
         }
+
         return $data;
     }
 
-
     private function normalizeGender(?string $gender): string
     {
-        if (!$gender) return 'M';
+        if (! $gender) {
+            return 'M';
+        }
         $gender = strtoupper($gender);
+
         return ($gender === 'L' || $gender === 'M') ? 'M' : 'F';
     }
 }

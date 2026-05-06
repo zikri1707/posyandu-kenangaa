@@ -24,7 +24,7 @@ class PosyanduScopeMiddleware
         if (Auth::check()) {
             app()->instance('current_posyandu_id', Auth::user()?->posyandu_id);
         }
-        
+
         return $next($request);
     }
 }

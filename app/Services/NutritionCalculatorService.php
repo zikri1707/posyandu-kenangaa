@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
-use App\Models\WhoWeightForAge;
-use App\Models\WhoHeightForAge;
-use App\Models\WhoWeightForHeight;
 use App\Models\WhoBmiForAge;
+use App\Models\WhoHeightForAge;
+use App\Models\WhoWeightForAge;
+use App\Models\WhoWeightForHeight;
 
 /**
  * Service perhitungan gizi antropometri menggunakan standar WHO 2006 / Kemenkes RI.
@@ -29,21 +29,20 @@ class NutritionCalculatorService
     /**
      * Hitung semua 4 indeks antropometri sekaligus.
      *
-     * @param float  $weight     Berat badan dalam kg
-     * @param float  $height     Tinggi badan dalam cm (0 jika tidak diukur)
-     * @param int    $ageMonths  Usia dalam bulan (0–59)
-     * @param string $gender     'L'/'M' atau 'P'/'F'
-     * @return \App\DataTransferObjects\NutritionResult
+     * @param  float  $weight  Berat badan dalam kg
+     * @param  float  $height  Tinggi badan dalam cm (0 jika tidak diukur)
+     * @param  int  $ageMonths  Usia dalam bulan (0–59)
+     * @param  string  $gender  'L'/'M' atau 'P'/'F'
      */
     public function calculateAll(float $weight, float $height, int $ageMonths, string $gender): \App\DataTransferObjects\NutritionResult
     {
         $gender = $this->normalizeGender($gender);
- 
-        $zWfa  = $this->calculateWeightForAge($weight, $ageMonths, $gender);
-        $zHfa  = $height > 0 ? $this->calculateHeightForAge($height, $ageMonths, $gender) : null;
-        $zWfh  = ($weight > 0 && $height > 0) ? $this->calculateWeightForHeight($weight, $height, $gender) : null;
-        $zBfa  = ($weight > 0 && $height > 0 && $height > 45) ? $this->calculateBmiForAge($weight, $height, $ageMonths, $gender) : null;
- 
+
+        $zWfa = $this->calculateWeightForAge($weight, $ageMonths, $gender);
+        $zHfa = $height > 0 ? $this->calculateHeightForAge($height, $ageMonths, $gender) : null;
+        $zWfh = ($weight > 0 && $height > 0) ? $this->calculateWeightForHeight($weight, $height, $gender) : null;
+        $zBfa = ($weight > 0 && $height > 0 && $height > 45) ? $this->calculateBmiForAge($weight, $height, $ageMonths, $gender) : null;
+
         return new \App\DataTransferObjects\NutritionResult(
             $zWfa,
             $this->classifyNutritionStatus($zWfa),
@@ -59,10 +58,10 @@ class NutritionCalculatorService
     /**
      * Hitung Z-Score dan status gizi (backward-compatible dengan kode lama).
      *
-     * @param float  $weight     Berat badan dalam kg
-     * @param float  $height     Tinggi badan dalam cm
-     * @param int    $ageMonths  Usia dalam bulan
-     * @param string $gender     'L'/'P' atau 'M'/'F'
+     * @param  float  $weight  Berat badan dalam kg
+     * @param  float  $height  Tinggi badan dalam cm
+     * @param  int  $ageMonths  Usia dalam bulan
+     * @param  string  $gender  'L'/'P' atau 'M'/'F'
      * @return array ['z_score' => float|null, 'status' => string]
      */
     public function calculate(float $weight, float $height, int $ageMonths, string $gender): array
@@ -72,7 +71,7 @@ class NutritionCalculatorService
 
         return [
             'z_score' => $zScore,
-            'status'  => $status,
+            'status' => $status,
         ];
     }
 
@@ -87,27 +86,33 @@ class NutritionCalculatorService
     public function calculateZScore(float $weight, int $ageInMonths, string $gender): ?float
     {
         $normalizedGender = $this->normalizeGender($gender);
-        if ($normalizedGender === null) return null;
- 
+        if ($normalizedGender === null) {
+            return null;
+        }
+
         $reference = WhoWeightForAge::getReference($normalizedGender, $ageInMonths);
-        if (!$reference) return null;
- 
+        if (! $reference) {
+            return null;
+        }
+
         $median = (float) $reference->median;
- 
+
         // Pilih SD berdasarkan posisi relatif terhadap median
-        // Karena sd_plus2 dan sd_minus2 adalah jarak 2 standar deviasi, 
+        // Karena sd_plus2 dan sd_minus2 adalah jarak 2 standar deviasi,
         // kita bagi 2 untuk mendapatkan nilai 1 SD.
         if ($weight >= $median) {
             $sd = ((float) $reference->sd_plus2 - $median) / 2;
         } else {
             $sd = ($median - (float) $reference->sd_minus2) / 2;
         }
- 
-        if ($sd == 0) return null;
- 
+
+        if ($sd == 0) {
+            return null;
+        }
+
         return round(($weight - $median) / $sd, 2);
     }
- 
+
     /**
      * Alias untuk calculateZScore (Weight-for-Age).
      */
@@ -121,10 +126,19 @@ class NutritionCalculatorService
      */
     public function classifyNutritionStatus(?float $zScore): string
     {
-        if ($zScore === null) return 'Tidak Dapat Dihitung';
-        if ($zScore < -3)    return 'Gizi Buruk';
-        if ($zScore < -2)    return 'Gizi Kurang';
-        if ($zScore <= 2)    return 'Gizi Baik';
+        if ($zScore === null) {
+            return 'Tidak Dapat Dihitung';
+        }
+        if ($zScore < -3) {
+            return 'Gizi Buruk';
+        }
+        if ($zScore < -2) {
+            return 'Gizi Kurang';
+        }
+        if ($zScore <= 1) {
+            return 'Gizi Baik';
+        }
+
         return 'Gizi Lebih';
     }
 
@@ -136,17 +150,21 @@ class NutritionCalculatorService
      * Hitung Z-Score TB/U menggunakan metode LMS.
      * Mendeteksi stunting.
      *
-     * @param float  $height    Tinggi/panjang badan dalam cm
-     * @param int    $ageMonths Usia dalam bulan
-     * @param string $gender    'M' atau 'F' (sudah dinormalisasi)
+     * @param  float  $height  Tinggi/panjang badan dalam cm
+     * @param  int  $ageMonths  Usia dalam bulan
+     * @param  string  $gender  'M' atau 'F' (sudah dinormalisasi)
      */
     public function calculateHeightForAge(float $height, int $ageMonths, string $gender): ?float
     {
         $gender = $this->normalizeGender($gender);
-        if (!$gender) return null;
+        if (! $gender) {
+            return null;
+        }
 
         $ref = WhoHeightForAge::getReference($gender, $ageMonths);
-        if (!$ref) return null;
+        if (! $ref) {
+            return null;
+        }
 
         return $this->lmsZScore($height, $ref->l_value, $ref->m_value, $ref->s_value);
     }
@@ -156,10 +174,19 @@ class NutritionCalculatorService
      */
     public function classifyStuntingStatus(?float $zScore): string
     {
-        if ($zScore === null) return 'Tidak Dapat Dihitung';
-        if ($zScore < -3)    return 'Sangat Pendek (Severely Stunted)';
-        if ($zScore < -2)    return 'Pendek (Stunted)';
-        if ($zScore <= 3)    return 'Normal';
+        if ($zScore === null) {
+            return 'Tidak Dapat Dihitung';
+        }
+        if ($zScore < -3) {
+            return 'Sangat Pendek (Severely Stunted)';
+        }
+        if ($zScore < -2) {
+            return 'Pendek (Stunted)';
+        }
+        if ($zScore <= 3) {
+            return 'Normal';
+        }
+
         return 'Tinggi';
     }
 
@@ -171,17 +198,21 @@ class NutritionCalculatorService
      * Hitung Z-Score BB/TB menggunakan metode LMS.
      * Mendeteksi wasting (kurus) dan overweight.
      *
-     * @param float  $weight   Berat badan dalam kg
-     * @param float  $height   Tinggi badan dalam cm
-     * @param string $gender   'M' atau 'F' (sudah dinormalisasi)
+     * @param  float  $weight  Berat badan dalam kg
+     * @param  float  $height  Tinggi badan dalam cm
+     * @param  string  $gender  'M' atau 'F' (sudah dinormalisasi)
      */
     public function calculateWeightForHeight(float $weight, float $height, string $gender): ?float
     {
         $gender = $this->normalizeGender($gender);
-        if (!$gender) return null;
+        if (! $gender) {
+            return null;
+        }
 
         $ref = WhoWeightForHeight::getReference($gender, $height);
-        if (!$ref) return null;
+        if (! $ref) {
+            return null;
+        }
 
         return $this->lmsZScore($weight, $ref->l_value, $ref->m_value, $ref->s_value);
     }
@@ -191,12 +222,26 @@ class NutritionCalculatorService
      */
     public function classifyWastingStatus(?float $zScore): string
     {
-        if ($zScore === null) return 'Tidak Dapat Dihitung';
-        if ($zScore < -3)    return 'Sangat Kurus';
-        if ($zScore < -2)    return 'Kurus';
-        if ($zScore <= 2)    return 'Normal';
-        if ($zScore <= 3)    return 'Risiko Gemuk';
-        return 'Gemuk';
+        if ($zScore === null) {
+            return 'Tidak Dapat Dihitung';
+        }
+        if ($zScore < -3) {
+            return 'Gizi Buruk';
+        }
+        if ($zScore < -2) {
+            return 'Gizi Kurang';
+        }
+        if ($zScore <= 1) {
+            return 'Gizi Baik';
+        }
+        if ($zScore <= 2) {
+            return 'Berisiko Gizi Lebih';
+        }
+        if ($zScore <= 3) {
+            return 'Gizi Lebih';
+        }
+
+        return 'Obesitas';
     }
 
     // ─────────────────────────────────────────────
@@ -207,24 +252,30 @@ class NutritionCalculatorService
      * Hitung Z-Score IMT/U menggunakan metode LMS.
      * Mendeteksi obesitas.
      *
-     * @param float  $weight    Berat badan dalam kg
-     * @param float  $height    Tinggi badan dalam cm
-     * @param int    $ageMonths Usia dalam bulan
-     * @param string $gender    'M' atau 'F' (sudah dinormalisasi)
+     * @param  float  $weight  Berat badan dalam kg
+     * @param  float  $height  Tinggi badan dalam cm
+     * @param  int  $ageMonths  Usia dalam bulan
+     * @param  string  $gender  'M' atau 'F' (sudah dinormalisasi)
      */
     public function calculateBmiForAge(float $weight, float $height, int $ageMonths, string $gender): ?float
     {
         $gender = $this->normalizeGender($gender);
-        if (!$gender) return null;
+        if (! $gender) {
+            return null;
+        }
 
-        if ($height <= 0) return null;
+        if ($height <= 0) {
+            return null;
+        }
 
         // Hitung IMT: berat (kg) / (tinggi (m))^2
         $heightM = $height / 100;
-        $bmi     = $weight / ($heightM ** 2);
+        $bmi = $weight / ($heightM ** 2);
 
         $ref = WhoBmiForAge::getReference($gender, $ageMonths);
-        if (!$ref) return null;
+        if (! $ref) {
+            return null;
+        }
 
         return $this->lmsZScore($bmi, $ref->l_value, $ref->m_value, $ref->s_value);
     }
@@ -234,12 +285,25 @@ class NutritionCalculatorService
      */
     public function classifyBmiStatus(?float $zScore): string
     {
-        if ($zScore === null) return 'Tidak Dapat Dihitung';
-        if ($zScore < -3)    return 'Sangat Kurus';
-        if ($zScore < -2)    return 'Kurus';
-        if ($zScore <= 1)    return 'Normal';
-        if ($zScore <= 2)    return 'Risiko Gemuk';
-        if ($zScore <= 3)    return 'Gemuk (Overweight)';
+        if ($zScore === null) {
+            return 'Tidak Dapat Dihitung';
+        }
+        if ($zScore < -3) {
+            return 'Gizi Buruk';
+        }
+        if ($zScore < -2) {
+            return 'Gizi Kurang';
+        }
+        if ($zScore <= 1) {
+            return 'Gizi Baik';
+        }
+        if ($zScore <= 2) {
+            return 'Berisiko Gizi Lebih';
+        }
+        if ($zScore <= 3) {
+            return 'Gizi Lebih';
+        }
+
         return 'Obesitas';
     }
 
@@ -251,15 +315,17 @@ class NutritionCalculatorService
      * Hitung Z-Score menggunakan metode LMS WHO.
      * Rumus: Z = ((y/M)^L - 1) / (L × S)
      *
-     * @param float $y Nilai yang diukur (tinggi, berat, atau IMT)
-     * @param float $L Nilai L (Box-Cox power transformation)
-     * @param float $M Nilai M (Median)
-     * @param float $S Nilai S (Coefficient of variation)
+     * @param  float  $y  Nilai yang diukur (tinggi, berat, atau IMT)
+     * @param  float  $L  Nilai L (Box-Cox power transformation)
+     * @param  float  $M  Nilai M (Median)
+     * @param  float  $S  Nilai S (Coefficient of variation)
      * @return float|null Z-Score atau null jika tidak dapat dihitung
      */
     private function lmsZScore(float $y, float $L, float $M, float $S): ?float
     {
-        if ($M <= 0 || $S <= 0 || $y <= 0) return null;
+        if ($M <= 0 || $S <= 0 || $y <= 0) {
+            return null;
+        }
 
         // Jika L sangat mendekati 0, gunakan pendekatan logaritmik
         if (abs($L) < 0.0001) {
@@ -277,7 +343,7 @@ class NutritionCalculatorService
     /**
      * Normalisasi format gender ke WHO standard (M/F).
      *
-     * @param string $gender Input gender ('L', 'P', 'M', 'F')
+     * @param  string  $gender  Input gender ('L', 'P', 'M', 'F')
      * @return string|null 'M' atau 'F', null jika tidak valid
      */
     private function normalizeGender(string $gender): ?string
@@ -287,7 +353,7 @@ class NutritionCalculatorService
         return match ($gender) {
             'L', 'M' => 'M', // Laki-laki / Male
             'P', 'F' => 'F', // Perempuan / Female
-            default  => null,
+            default => null,
         };
     }
 }

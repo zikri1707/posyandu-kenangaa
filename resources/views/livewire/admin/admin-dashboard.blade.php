@@ -168,8 +168,26 @@
                                 </td>
                                 <td class="px-10 py-5 text-xs font-black text-slate-600 text-center">{{ $balita->age }}</td>
                                 <td class="px-10 py-5 text-center">
+                                    @php
+                                        $latestRecord = $balita->medicalRecords->first();
+                                        // Find which status is problematic
+                                        $displayStatus = 'Atensi Gizi';
+                                        if ($latestRecord) {
+                                            $possibleStatuses = [
+                                                $latestRecord->stunting_status,
+                                                $latestRecord->nutrition_status,
+                                                $latestRecord->wasting_status
+                                            ];
+                                            foreach ($possibleStatuses as $ps) {
+                                                if (str_contains($ps, 'Sangat') || str_contains($ps, 'Buruk') || str_contains($ps, 'Pendek')) {
+                                                    $displayStatus = $ps;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    @endphp
                                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter bg-red-50 text-red-600 border border-red-100">
-                                        Stunting
+                                        {{ $displayStatus }}
                                     </span>
                                 </td>
                                 <td class="px-10 py-5 text-right">

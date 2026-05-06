@@ -10,9 +10,6 @@ class PosyanduService
 {
     /**
      * Create a new posyandu.
-     *
-     * @param array $data
-     * @return Posyandu
      */
     public function createPosyandu(array $data): Posyandu
     {
@@ -25,10 +22,6 @@ class PosyanduService
 
     /**
      * Update an existing posyandu.
-     *
-     * @param Posyandu $posyandu
-     * @param array $data
-     * @return Posyandu
      */
     public function updatePosyandu(Posyandu $posyandu, array $data): Posyandu
     {
@@ -40,14 +33,12 @@ class PosyanduService
         }
 
         $posyandu->update($data);
+
         return $posyandu;
     }
 
     /**
      * Delete a posyandu.
-     *
-     * @param Posyandu $posyandu
-     * @return void
      */
     public function deletePosyandu(Posyandu $posyandu): void
     {

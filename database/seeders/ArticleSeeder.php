@@ -2,11 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\User;
-use Illuminate\Support\Str;
+use Illuminate\Database\Seeder;
 
 class ArticleSeeder extends Seeder
 {
@@ -76,10 +75,10 @@ class ArticleSeeder extends Seeder
             Article::create([
                 'user_id' => $admin->id,
                 'category_id' => Category::inRandomOrder()->first()->id,
-                'title' => 'Tips Kesehatan Keluarga Bagian ' . ($i + 1),
+                'title' => 'Tips Kesehatan Keluarga Bagian '.($i + 1),
                 'content' => '<p>Ini adalah artikel edukasi kesehatan untuk memberikan wawasan lebih mendalam tentang pola hidup sehat di lingkungan keluarga.</p>',
                 'thumbnail' => null,
-                'slug' => 'tips-kesehatan-keluarga-' . ($i + 1),
+                'slug' => 'tips-kesehatan-keluarga-'.($i + 1),
                 'status' => 'published',
                 'published_at' => now()->subDays($i + 3),
             ]);

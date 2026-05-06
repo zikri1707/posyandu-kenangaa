@@ -62,30 +62,28 @@
                 <i class="fas fa-chevron-left text-[11px]"></i>
             </span>
         @else
-            <a href="{{ $paginator->previousPageUrl() }}"
-               wire:navigate
+            <button wire:click="previousPage"
                rel="prev"
                aria-label="Halaman sebelumnya"
                class="inline-flex items-center justify-center w-9 h-9 rounded-xl border border-outline-variant
                       bg-surface-container-lowest text-on-surface-variant
                       hover:bg-surface-container hover:text-on-surface
-                      active:scale-95 transition-all duration-150">
+                      active:scale-95 transition-all duration-150 cursor-pointer">
                 <i class="fas fa-chevron-left text-[11px]"></i>
-            </a>
+            </button>
         @endif
 
         @if(!$simple)
             {{-- First page + ellipsis --}}
             @if($start > 1)
-                <a href="{{ $paginator->url(1) }}"
-                   wire:navigate
+                <button wire:click="gotoPage(1)"
                    aria-label="Halaman 1"
                    class="inline-flex items-center justify-center w-9 h-9 rounded-xl border border-outline-variant
                           bg-surface-container-lowest text-on-surface-variant text-[13px] font-semibold
                           hover:bg-surface-container hover:text-on-surface
-                          active:scale-95 transition-all duration-150">
+                          active:scale-95 transition-all duration-150 cursor-pointer">
                     1
-                </a>
+                </button>
                 @if($start > 2)
                     <span class="inline-flex items-center justify-center w-9 h-9 text-on-surface-variant text-[13px] select-none">
                         …
@@ -104,15 +102,14 @@
                         {{ $page }}
                     </span>
                 @else
-                    <a href="{{ $paginator->url($page) }}"
-                       wire:navigate
+                    <button wire:click="gotoPage({{ $page }})"
                        aria-label="Halaman {{ $page }}"
                        class="inline-flex items-center justify-center w-9 h-9 rounded-xl border border-outline-variant
                               bg-surface-container-lowest text-on-surface-variant text-[13px] font-semibold
                               hover:bg-surface-container hover:text-on-surface
-                              active:scale-95 transition-all duration-150">
+                              active:scale-95 transition-all duration-150 cursor-pointer">
                         {{ $page }}
-                    </a>
+                    </button>
                 @endif
             @endforeach
 
@@ -123,30 +120,28 @@
                         …
                     </span>
                 @endif
-                <a href="{{ $paginator->url($last) }}"
-                   wire:navigate
+                <button wire:click="gotoPage({{ $last }})"
                    aria-label="Halaman {{ $last }}"
                    class="inline-flex items-center justify-center w-9 h-9 rounded-xl border border-outline-variant
                           bg-surface-container-lowest text-on-surface-variant text-[13px] font-semibold
                           hover:bg-surface-container hover:text-on-surface
-                          active:scale-95 transition-all duration-150">
+                          active:scale-95 transition-all duration-150 cursor-pointer">
                     {{ $last }}
-                </a>
+                </button>
             @endif
         @endif
 
         {{-- Next --}}
         @if($paginator->hasMorePages())
-            <a href="{{ $paginator->nextPageUrl() }}"
-               wire:navigate
+            <button wire:click="nextPage"
                rel="next"
                aria-label="Halaman berikutnya"
                class="inline-flex items-center justify-center w-9 h-9 rounded-xl border border-outline-variant
                       bg-surface-container-lowest text-on-surface-variant
                       hover:bg-surface-container hover:text-on-surface
-                      active:scale-95 transition-all duration-150">
+                      active:scale-95 transition-all duration-150 cursor-pointer">
                 <i class="fas fa-chevron-right text-[11px]"></i>
-            </a>
+            </button>
         @else
             <span class="inline-flex items-center justify-center w-9 h-9 rounded-xl border border-outline-variant
                          text-on-surface-variant opacity-40 cursor-not-allowed select-none"

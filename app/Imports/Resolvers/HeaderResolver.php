@@ -17,17 +17,17 @@ class HeaderResolver
      * @var array<string, list<string>>
      */
     private const ALIASES = [
-        'nama_anak'      => ['nama', 'full_name', 'nama_lengkap'],
-        'nik'            => ['nomor_nik', 'no_nik', 'nik_balita', 'nomor_induk_kependudukan', 'id_number'],
-        'tgl_lahir'      => ['tanggal_lahir', 'birth_date', 'tgl_lahir_anak'],
-        'jk'             => ['jenis_kelamin', 'gender', 'kelamin'],
-        'nm_ortu'        => ['nama_ortu', 'parent_name', 'orang_tua', 'nama_orang_tua'],
-        'tanggal_ukur'   => ['tgl_ukur', 'tanggalukur', 'tanggal_periksa', 'tgl_periksa'],
-        'berat'          => ['berat_badan', 'bb', 'weight'],
-        'tinggi'         => ['tinggi_badan', 'tb', 'height', 'panjang'],
+        'nama_anak' => ['nama', 'full_name', 'nama_lengkap'],
+        'nik' => ['nomor_nik', 'no_nik', 'nik_balita', 'nomor_induk_kependudukan', 'id_number', 'nik_16_digit'],
+        'tgl_lahir' => ['tanggal_lahir', 'birth_date', 'tgl_lahir_anak'],
+        'jk' => ['jenis_kelamin', 'gender', 'kelamin'],
+        'nm_ortu' => ['nama_ortu', 'parent_name', 'orang_tua', 'nama_orang_tua'],
+        'tanggal_ukur' => ['tgl_ukur', 'tanggalukur', 'tanggal_periksa', 'tgl_periksa'],
+        'berat' => ['berat_badan', 'bb', 'weight'],
+        'tinggi' => ['tinggi_badan', 'tb', 'height', 'panjang'],
         'lingkar_kepala' => ['lk', 'head_circumference', 'lingkarkepala'],
-        'vitamin'        => ['vitamin_a', 'vita', 'vit_a'],
-        'imunisasi'      => ['immunization', 'vaksin'],
+        'vitamin' => ['vitamin_a', 'vita', 'vit_a'],
+        'imunisasi' => ['immunization', 'vaksin'],
     ];
 
     /** Keywords used to detect which row is the header. */
@@ -55,6 +55,7 @@ class HeaderResolver
                 }
             }
         }
+
         return null;
     }
 
@@ -71,6 +72,7 @@ class HeaderResolver
             $h = strtolower($h);
             $h = preg_replace('/[\s\-\.\/]+/', '_', $h);  // spaces/dashes/dots/slashes → _
             $h = preg_replace('/[^a-z0-9_]/', '', $h);   // strip non-alphanumeric
+
             return trim($h, '_');
         }, $rawHeaders);
     }
@@ -80,14 +82,14 @@ class HeaderResolver
      * by resolving canonical aliases.
      *
      * @param  array<int, string>  $normalizedHeaders
-     * @return array<string, int>  Map of column name → zero-based column index.
+     * @return array<string, int> Map of column name → zero-based column index.
      */
     public function buildColumnMap(array $normalizedHeaders): array
     {
         $map = array_flip($normalizedHeaders);
 
         foreach (self::ALIASES as $canonical => $alternatives) {
-            if (!isset($map[$canonical])) {
+            if (! isset($map[$canonical])) {
                 foreach ($alternatives as $alt) {
                     if (isset($map[$alt])) {
                         $map[$canonical] = $map[$alt];

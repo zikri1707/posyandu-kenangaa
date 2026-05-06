@@ -9,7 +9,7 @@ class WhoWeightForAgeSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     * 
+     *
      * Data ini berdasarkan standar WHO Weight-for-Age untuk anak usia 0-59 bulan.
      * Sumber: WHO Child Growth Standards 2006
      */
@@ -18,6 +18,7 @@ class WhoWeightForAgeSeeder extends Seeder
         // Cek apakah data sudah ada untuk menghindari duplikasi
         if (DB::table('who_weight_for_age')->count() > 0) {
             $this->command->info('Data WHO Weight-for-Age sudah ada, melewati seeder.');
+
             return;
         }
 
@@ -184,6 +185,6 @@ class WhoWeightForAgeSeeder extends Seeder
         // Insert data dalam batch untuk efisiensi
         DB::table('who_weight_for_age')->insert($dataToInsert);
 
-        $this->command->info('Berhasil mengisi ' . count($dataToInsert) . ' baris data WHO Weight-for-Age (60 bulan × 2 gender = 120 baris).');
+        $this->command->info('Berhasil mengisi '.count($dataToInsert).' baris data WHO Weight-for-Age (60 bulan × 2 gender = 120 baris).');
     }
 }

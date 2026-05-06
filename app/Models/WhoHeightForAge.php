@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 class WhoHeightForAge extends Model
 {
     protected $table = 'who_height_for_age';
+
     public $timestamps = false;
 
     protected $fillable = [
@@ -21,13 +22,13 @@ class WhoHeightForAge extends Model
 
     protected $casts = [
         'age_months' => 'integer',
-        'l_value'    => 'float',
-        'm_value'    => 'float',
-        's_value'    => 'float',
-        'sd_minus3'  => 'float',
-        'sd_minus2'  => 'float',
-        'sd_plus2'   => 'float',
-        'sd_plus3'   => 'float',
+        'l_value' => 'float',
+        'm_value' => 'float',
+        's_value' => 'float',
+        'sd_minus3' => 'float',
+        'sd_minus2' => 'float',
+        'sd_plus2' => 'float',
+        'sd_plus3' => 'float',
     ];
 
     /**
@@ -40,15 +41,15 @@ class WhoHeightForAge extends Model
     /**
      * Dapatkan referensi LMS untuk gender dan usia tertentu.
      *
-     * @param string $gender 'M' atau 'F'
-     * @param int $ageMonths Usia dalam bulan (0-60)
+     * @param  string  $gender  'M' atau 'F'
+     * @param  int  $ageMonths  Usia dalam bulan (0-60)
      */
     public static function getReference(string $gender, int $ageMonths): ?self
     {
         $ageMonths = min($ageMonths, 60);
         $cacheKey = "{$gender}_{$ageMonths}";
 
-        if (!isset(self::$cache[$cacheKey])) {
+        if (! isset(self::$cache[$cacheKey])) {
             self::$cache[$cacheKey] = self::where('gender', $gender)
                 ->where('age_months', $ageMonths)
                 ->first();

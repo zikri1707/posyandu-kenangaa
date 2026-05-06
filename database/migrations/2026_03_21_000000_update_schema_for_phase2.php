@@ -12,19 +12,19 @@ return new class extends Migration
     public function up()
     {
         Schema::table('patients', function (Blueprint $table) {
-            if (!Schema::hasColumn('patients', 'category')) {
+            if (! Schema::hasColumn('patients', 'category')) {
                 $table->enum('category', ['balita', 'ibu_hamil', 'remaja', 'lansia'])->default('balita')->after('posyandu_id');
             }
-            if (!Schema::hasColumn('patients', 'parent_name')) {
+            if (! Schema::hasColumn('patients', 'parent_name')) {
                 $table->string('parent_name')->nullable()->after('full_name');
             }
         });
 
         Schema::table('medical_records', function (Blueprint $table) {
-            if (!Schema::hasColumn('medical_records', 'vitamin_a')) {
+            if (! Schema::hasColumn('medical_records', 'vitamin_a')) {
                 $table->boolean('vitamin_a')->default(false)->after('immunization');
             }
-            if (!Schema::hasColumn('medical_records', 'pill_fe')) {
+            if (! Schema::hasColumn('medical_records', 'pill_fe')) {
                 $table->boolean('pill_fe')->default(false)->after('vitamin_a');
             }
         });

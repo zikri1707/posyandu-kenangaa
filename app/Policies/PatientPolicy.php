@@ -106,7 +106,7 @@ class PatientPolicy
         $activityLogService = app(ActivityLogService::class);
         $activityLogService->log(
             'unauthorized_access',
-            "Percobaan akses tidak sah: {$action} pada {$entityType}" . ($entityId ? " (ID: {$entityId})" : ""),
+            "Percobaan akses tidak sah: {$action} pada {$entityType}".($entityId ? " (ID: {$entityId})" : ''),
             $entityId,
             $entityType,
             null,

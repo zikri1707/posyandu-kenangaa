@@ -3,12 +3,6 @@
 namespace App\Jobs;
 
 use App\Services\WhatsAppService;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 
 /**
  * Job untuk mengirim notifikasi WhatsApp secara async via queue.
@@ -31,11 +25,11 @@ class SendWhatsAppNotificationJob extends Job
     {
         $result = $whatsAppService->sendMessage($this->target, $this->message);
 
-        if (!$result['success']) {
-            $errorMessage = "Gagal mengirim WhatsApp ke {$this->target}: " . ($result['message'] ?? 'Unknown error');
-            
+        if (! $result['success']) {
+            $errorMessage = "Gagal mengirim WhatsApp ke {$this->target}: ".($result['message'] ?? 'Unknown error');
+
             $this->logWarning($errorMessage);
-            
+
             throw new \RuntimeException($errorMessage);
         }
 

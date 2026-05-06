@@ -2,30 +2,28 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Blade;
-use App\Models\Patient;
 use App\Models\MedicalRecord;
-use App\Policies\PatientPolicy;
-use App\Policies\MedicalRecordPolicy;
+use App\Models\Patient;
 use App\Policies\ActivityLogPolicy;
+use App\Policies\ArticlePolicy;
+use App\Policies\MedicalRecordPolicy;
+use App\Policies\PatientPolicy;
 use App\Policies\ReportPolicy;
 use App\Policies\SchedulePolicy;
-use App\Policies\ArticlePolicy;
-
+use App\View\Components\Layouts\UI\Alert;
+use App\View\Components\Layouts\UI\Breadcrumbs;
 use App\View\Components\Layouts\UI\Button;
 use App\View\Components\Layouts\UI\Card;
-use App\View\Components\Layouts\UI\Table;
-use App\View\Components\Layouts\UI\Breadcrumbs;
-use App\View\Components\Layouts\UI\Pagination;
-use App\View\Components\Layouts\UI\Navbar;
-use App\View\Components\Layouts\UI\Footer;
-
-use App\View\Components\Layouts\UI\ProgressBar;
-use App\View\Components\Layouts\UI\Alert;
-use App\View\Components\Layouts\UI\Modal;
 use App\View\Components\Layouts\UI\DataCard;
+use App\View\Components\Layouts\UI\Footer;
+use App\View\Components\Layouts\UI\Modal;
+use App\View\Components\Layouts\UI\Navbar;
+use App\View\Components\Layouts\UI\Pagination;
+use App\View\Components\Layouts\UI\ProgressBar;
+use App\View\Components\Layouts\UI\Table;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -67,32 +65,32 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('exportReports', [ReportPolicy::class, 'export']);
 
         // ── UI Component Aliases ──────────────────────────────────────
-        Blade::component(Button::class,      'button');
-        Blade::component(Card::class,        'card');
-        Blade::component(Table::class,       'table');
+        Blade::component(Button::class, 'button');
+        Blade::component(Card::class, 'card');
+        Blade::component(Table::class, 'table');
         Blade::component(Breadcrumbs::class, 'breadcrumb');
-        Blade::component(Pagination::class,  'pagination-ui');
-        Blade::component(Navbar::class,      'ui-navbar');
-        Blade::component(Footer::class,      'ui-footer');
+        Blade::component(Pagination::class, 'pagination-ui');
+        Blade::component(Navbar::class, 'ui-navbar');
+        Blade::component(Footer::class, 'ui-footer');
         Blade::component(ProgressBar::class, 'progress-bar');
 
         // Class-based registration for consistency
-        Blade::component(Alert::class,    'alert');
-        Blade::component(Modal::class,    'modal');
+        Blade::component(Alert::class, 'alert');
+        Blade::component(Modal::class, 'modal');
         Blade::component(DataCard::class, 'datacard');
 
         // ── Date-Time Component Aliases ───────────────────────────────
-        Blade::component('components.date-time.datepicker',      'datepicker');
+        Blade::component('components.date-time.datepicker', 'datepicker');
         Blade::component('components.date-time.datetime-picker', 'datetime-picker');
 
         // ── Modal Component Aliases ───────────────────────────────────
         Blade::component('components.modals.confirm-modal', 'confirm-modal');
-        Blade::component('components.modals.form-modal',    'form-modal');
-        Blade::component('components.modals.info-modal',    'info-modal');
+        Blade::component('components.modals.form-modal', 'form-modal');
+        Blade::component('components.modals.info-modal', 'info-modal');
 
         // ── Widget Component Aliases ──────────────────────────────────
-        Blade::component('components.widget.stats-card',     'widget.stats-card');
+        Blade::component('components.widget.stats-card', 'widget.stats-card');
         Blade::component('components.widget.dashboard-card', 'widget.dashboard-card');
-        Blade::component('components.widget.chart-widget',   'widget.chart-widget');
+        Blade::component('components.widget.chart-widget', 'widget.chart-widget');
     }
 }

@@ -12,9 +12,9 @@ class PedukuhanFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => 'Pedukuhan ' . fake()->city(),
+            'name' => 'Pedukuhan '.fake()->city(),
             'postal_code' => fake()->postcode(),
-            'geo_location' => fake()->latitude() . ',' . fake()->longitude(),
+            'geo_location' => fake()->latitude().','.fake()->longitude(),
         ];
     }
 }

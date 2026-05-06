@@ -2,17 +2,16 @@
 
 namespace App\Models;
 
+use App\Traits\LogsActivity;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
-use App\Traits\LogsActivity;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, Notifiable, LogsActivity;
-
+    use HasFactory, LogsActivity, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -31,7 +30,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'attempt_login',
         'block_expires',
         'email_verified_at',
-        'last_notifications_read_at'
+        'last_notifications_read_at',
     ];
 
     /**
@@ -62,8 +61,11 @@ class User extends Authenticatable implements MustVerifyEmail
      * Role constants
      */
     const ROLE_SUPERADMIN = 'superadmin';
+
     const ROLE_ADMIN = 'admin';
+
     const ROLE_COORDINATOR = 'coordinator';
+
     const ROLE_KADER = 'kader';
 
     /**
@@ -142,7 +144,7 @@ class User extends Authenticatable implements MustVerifyEmail
             $unitSuffix = '2';
         }
 
-        return $this->role . $unitSuffix;
+        return $this->role.$unitSuffix;
     }
 
     /**
@@ -214,9 +216,10 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function getRemainingBlockMinutes(): int
     {
-        if (!$this->isBlocked()) {
+        if (! $this->isBlocked()) {
             return 0;
         }
+
         return now()->diffInMinutes($this->block_expires);
     }
 
@@ -265,8 +268,7 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * Scope a query to apply standard filters.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param array $filters
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeFilter($query, array $filters)
@@ -274,7 +276,7 @@ class User extends Authenticatable implements MustVerifyEmail
         $query->when($filters['search'] ?? false, function ($q, $search) {
             $q->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%");
             });
         });
 

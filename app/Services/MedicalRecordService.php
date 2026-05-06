@@ -5,12 +5,12 @@ namespace App\Services;
 use App\Models\MedicalRecord;
 use App\Models\Patient;
 use App\Models\User;
-use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Carbon;
 
 /**
  * Service untuk mengelola logika bisnis rekam medis
- * 
+ *
  * Menerapkan prinsip:
  * - Single Responsibility Principle
  * - Separation of Concerns
@@ -18,27 +18,14 @@ use Illuminate\Database\Eloquent\Collection;
  */
 class MedicalRecordService
 {
-    /**
-     * @var ActivityLogService
-     */
     protected ActivityLogService $activityLogService;
 
-    /**
-     * @var NutritionCalculatorService
-     */
     protected NutritionCalculatorService $nutritionService;
 
-    /**
-     * @var WhatsAppService
-     */
     protected WhatsAppService $whatsAppService;
 
     /**
      * Constructor dengan dependency injection
-     * 
-     * @param ActivityLogService $activityLogService
-     * @param NutritionCalculatorService $nutritionService
-     * @param WhatsAppService $whatsAppService
      */
     public function __construct(
         ActivityLogService $activityLogService,
@@ -52,11 +39,6 @@ class MedicalRecordService
 
     /**
      * Periksa duplikasi pemberian Vitamin A dan Pill FE dalam bulan yang sama
-     * 
-     * @param int $patientId
-     * @param Carbon|null $visitDate
-     * @param int|null $excludeRecordId
-     * @return MedicalRecord|null
      */
     public function getDuplicateWarnings(
         int $patientId,
@@ -72,10 +54,7 @@ class MedicalRecordService
 
     /**
      * Buat rekam medis baru
-     * 
-     * @param array $data
-     * @param User $user
-     * @return MedicalRecord
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function createRecord(array $data, User $user): MedicalRecord
@@ -95,11 +74,7 @@ class MedicalRecordService
 
     /**
      * Update rekam medis yang sudah ada
-     * 
-     * @param MedicalRecord $medicalRecord
-     * @param array $data
-     * @param User $user
-     * @return MedicalRecord
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function updateRecord(
@@ -110,7 +85,7 @@ class MedicalRecordService
         return \Illuminate\Support\Facades\DB::transaction(function () use ($medicalRecord, $data, $user) {
             $oldValues = $medicalRecord->toArray();
             $patient = $this->getPatientOrFail($data['patient_id']);
-            
+
             $this->verifyPatientAccess($patient, $user);
 
             $preparedData = $this->prepareUpdateData($data, $patient, $medicalRecord, $oldValues);
@@ -130,9 +105,6 @@ class MedicalRecordService
 
     /**
      * Hapus rekam medis
-     * 
-     * @param MedicalRecord $medicalRecord
-     * @return void
      */
     public function deleteRecord(MedicalRecord $medicalRecord): void
     {
@@ -154,10 +126,7 @@ class MedicalRecordService
 
     /**
      * Bangun query untuk memeriksa duplikasi
-     * 
-     * @param int $patientId
-     * @param Carbon $date
-     * @param int|null $excludeRecordId
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     private function buildDuplicateQuery(
@@ -170,7 +139,7 @@ class MedicalRecordService
             ->whereMonth('visit_date', $date->month)
             ->where(function ($q) {
                 $q->where('vitamin_a', true)
-                  ->orWhere('pill_fe', true);
+                    ->orWhere('pill_fe', true);
             });
 
         if ($excludeRecordId) {
@@ -182,9 +151,7 @@ class MedicalRecordService
 
     /**
      * Dapatkan patient atau throw exception
-     * 
-     * @param int $patientId
-     * @return Patient
+     *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
     private function getPatientOrFail(int $patientId): Patient
@@ -194,15 +161,12 @@ class MedicalRecordService
 
     /**
      * Verifikasi user memiliki akses ke patient
-     * 
-     * @param Patient $patient
-     * @param User $user
-     * @return void
+     *
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     private function verifyPatientAccess(Patient $patient, User $user): void
     {
-        if (!$user->isSuperAdmin() && !$user->isCoordinator()) {
+        if (! $user->isSuperAdmin() && ! $user->isCoordinator()) {
             if ($patient->posyandu_id !== $user->posyandu_id) {
                 abort(403, 'Anda tidak memiliki akses untuk membuat rekam medis untuk pasien ini.');
             }
@@ -211,11 +175,6 @@ class MedicalRecordService
 
     /**
      * Siapkan data untuk pembuatan rekam medis baru
-     * 
-     * @param array $data
-     * @param Patient $patient
-     * @param User $user
-     * @return array
      */
     private function prepareRecordData(array $data, Patient $patient, User $user): array
     {
@@ -230,12 +189,6 @@ class MedicalRecordService
 
     /**
      * Siapkan data untuk update rekam medis
-     * 
-     * @param array $data
-     * @param Patient $patient
-     * @param MedicalRecord $medicalRecord
-     * @param array $oldValues
-     * @return array
      */
     private function prepareUpdateData(
         array $data,
@@ -258,26 +211,22 @@ class MedicalRecordService
 
     /**
      * Hitung data gizi (z-score, status, trend)
-     * 
-     * @param array $data
-     * @param Patient $patient
-     * @return array
      */
     private function calculateNutrition(array $data, Patient $patient): array
     {
-        if (!$this->shouldCalculateNutrition($patient, $data)) {
+        if (! $this->shouldCalculateNutrition($patient, $data)) {
             return $data;
         }
 
         $ageInMonths = $patient->birth_date->diffInMonths(now());
-        
+
         $nutritionResult = $this->nutritionService->calculateAll(
             (float) $data['weight'],
             (float) ($data['height'] ?? 0),
             $ageInMonths,
             $patient->gender
         );
-        
+
         $data = array_merge($data, $nutritionResult->toArray());
         $data['nutrition_trend'] = $this->calculateNutritionTrend($patient, $data);
 
@@ -288,24 +237,16 @@ class MedicalRecordService
 
     /**
      * Tentukan apakah perhitungan gizi diperlukan
-     * 
-     * @param Patient $patient
-     * @param array $data
-     * @return bool
      */
     private function shouldCalculateNutrition(Patient $patient, array $data): bool
     {
-        return $patient->category === 'balita' 
-            && isset($data['weight']) 
+        return $patient->category === 'balita'
+            && isset($data['weight'])
             && $patient->birth_date;
     }
 
     /**
      * Hitung tren gizi berdasarkan rekam sebelumnya
-     * 
-     * @param Patient $patient
-     * @param array $data
-     * @return string
      */
     private function calculateNutritionTrend(Patient $patient, array $data): string
     {
@@ -314,8 +255,8 @@ class MedicalRecordService
             ->whereNotNull('nutrition_status')
             ->orderBy('visit_date', 'desc')
             ->first();
-        
-        if (!$previousRecord || !$previousRecord->nutrition_status) {
+
+        if (! $previousRecord || ! $previousRecord->nutrition_status) {
             return 'tetap';
         }
 
@@ -327,10 +268,6 @@ class MedicalRecordService
 
     /**
      * Bandingkan status gizi dan tentukan tren
-     * 
-     * @param string $previousStatus
-     * @param string $currentStatus
-     * @return string
      */
     private function compareNutritionStatus(string $previousStatus, string $currentStatus): string
     {
@@ -339,10 +276,12 @@ class MedicalRecordService
             'Gizi Kurang' => 2,
             'Gizi Baik' => 3,
             'Normal' => 3,
-            'Gizi Lebih' => 2,
-            'Risiko Gemuk' => 2,
-            'Gemuk (Overweight)' => 1,
+            'Berisiko Gizi Lebih' => 2,
+            'Gizi Lebih' => 1,
             'Obesitas' => 1,
+            'Sangat Pendek' => 1,
+            'Pendek' => 2,
+            'Tinggi' => 3,
             'Tidak Dapat Dihitung' => 0,
         ];
 
@@ -364,10 +303,6 @@ class MedicalRecordService
 
     /**
      * Deteksi tren pertumbuhan dan kirim peringatan jika perlu
-     * 
-     * @param Patient $patient
-     * @param array $data
-     * @return void
      */
     private function checkGrowthTrends(Patient $patient, array $data): void
     {
@@ -377,15 +312,11 @@ class MedicalRecordService
 
     /**
      * Periksa alert stunting baru
-     * 
-     * @param Patient $patient
-     * @param array $data
-     * @return void
      */
     private function checkStuntingAlert(Patient $patient, array $data): void
     {
         $stuntingStatus = $data['stunting_status'] ?? '';
-        
+
         if ($stuntingStatus !== 'Normal' && $stuntingStatus !== 'Tidak Dapat Dihitung') {
             $message = "Perhatian: Balita {$patient->full_name} terdeteksi memiliki status {$stuntingStatus}. Mohon konsultasikan dengan petugas kesehatan.";
             $this->sendGrowthAlert($patient, $message);
@@ -394,10 +325,6 @@ class MedicalRecordService
 
     /**
      * Periksa alert 2T (Tidak Naik 2 kali berturut-turut)
-     * 
-     * @param Patient $patient
-     * @param array $data
-     * @return void
      */
     private function checkTwoTAlert(Patient $patient, array $data): void
     {
@@ -419,11 +346,6 @@ class MedicalRecordService
 
     /**
      * Dapatkan rekam medis sebelumnya
-     * 
-     * @param Patient $patient
-     * @param Carbon $beforeDate
-     * @param int $limit
-     * @return Collection
      */
     private function getPreviousRecords(
         Patient $patient,
@@ -439,10 +361,6 @@ class MedicalRecordService
 
     /**
      * Kirim notifikasi alert pertumbuhan via WhatsApp
-     * 
-     * @param Patient $patient
-     * @param string $message
-     * @return void
      */
     private function sendGrowthAlert(Patient $patient, string $message): void
     {
@@ -455,9 +373,6 @@ class MedicalRecordService
 
     /**
      * Dapatkan nomor kontak dari patient
-     * 
-     * @param Patient $patient
-     * @return string|null
      */
     private function getContactNumber(Patient $patient): ?string
     {
@@ -466,13 +381,6 @@ class MedicalRecordService
 
     /**
      * Log aktivitas sistem
-     * 
-     * @param string $action
-     * @param Patient $patient
-     * @param MedicalRecord $medicalRecord
-     * @param array|null $oldValues
-     * @param array|null $newValues
-     * @return void
      */
     private function logActivity(
         string $action,

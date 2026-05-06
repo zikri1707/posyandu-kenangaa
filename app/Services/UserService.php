@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
 class UserService
@@ -18,16 +17,12 @@ class UserService
 
     /**
      * Create a new user.
-     *
-     * @param array $data
-     * @param bool $isActive
-     * @return User
      */
     public function createUser(array $data, bool $isActive): User
     {
         $data['is_active'] = $isActive ? 1 : 0;
         $data['email_verified_at'] = now();
-        
+
         // Handle virtual roles (admin1, admin2, kader1, kader2)
         if (preg_match('/^(admin|kader)([12])$/', $data['role'], $matches)) {
             $data['role'] = $matches[1];
@@ -39,23 +34,18 @@ class UserService
 
     /**
      * Update an existing user.
-     *
-     * @param User $user
-     * @param array $data
-     * @param bool $isActive
-     * @return User
      */
     public function updateUser(User $user, array $data, bool $isActive): User
     {
         $data['is_active'] = $isActive ? 1 : 0;
-        
+
         if (empty($data['password'])) {
             unset($data['password']);
         }
 
         $oldRole = $user->role;
         $newRole = $data['role'] ?? $oldRole;
-        
+
         // Handle virtual roles (admin1, admin2, kader1, kader2)
         if (isset($data['role']) && preg_match('/^(admin|kader)([12])$/', $data['role'], $matches)) {
             $data['role'] = $matches[1];
@@ -86,7 +76,7 @@ class UserService
     public function updateProfile(User $user, array $data): User
     {
         $oldValues = ['name' => $user->name, 'email' => $user->email];
-        
+
         $user->update([
             'name' => $data['name'],
             'email' => $data['email'],
@@ -110,7 +100,7 @@ class UserService
     public function resetPassword(User $user, string $newPassword): void
     {
         $user->update([
-            'password' => Hash::make($newPassword)
+            'password' => Hash::make($newPassword),
         ]);
 
         $this->activityLogService->log(
@@ -126,7 +116,7 @@ class UserService
      */
     public function deleteAccount(User $user, string $password): void
     {
-        if (!Hash::check($password, $user->password)) {
+        if (! Hash::check($password, $user->password)) {
             throw ValidationException::withMessages([
                 'password' => 'Password yang Anda masukkan salah.',
             ]);

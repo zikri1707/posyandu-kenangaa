@@ -2,8 +2,8 @@
 
 namespace App\Livewire\User\Settings;
 
-use Livewire\Component;
-use Illuminate\Support\Facades\Auth; // Pastikan namespace ini ada untuk penggunaan Auth
+use Illuminate\Support\Facades\Auth;
+use Livewire\Component; // Pastikan namespace ini ada untuk penggunaan Auth
 
 class Profile extends Component
 {

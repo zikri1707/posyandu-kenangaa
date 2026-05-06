@@ -12,14 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('medical_records', function (Blueprint $table) {
-            if (!Schema::hasColumn('medical_records', 'z_score')) {
+            if (! Schema::hasColumn('medical_records', 'z_score')) {
                 $table->decimal('z_score', 5, 2)
                     ->nullable()
                     ->after('nutrition_status')
                     ->comment('Z-score BB/U WHO/Kemenkes');
             }
-            
-            if (!Schema::hasColumn('medical_records', 'nutrition_trend')) {
+
+            if (! Schema::hasColumn('medical_records', 'nutrition_trend')) {
                 $table->enum('nutrition_trend', ['naik', 'turun', 'tetap'])
                     ->nullable()
                     ->after('z_score')

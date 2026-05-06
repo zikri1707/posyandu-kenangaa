@@ -2,13 +2,13 @@
 
 namespace App\Livewire\Admin\Management;
 
-use App\Models\Schedule;
 use App\Livewire\Shared\BaseAdminComponent;
+use App\Models\Schedule;
 use App\Services\ScheduleService;
 use Illuminate\View\View;
-use Livewire\WithPagination;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
+use Livewire\WithPagination;
 
 /**
  * Komponen Manajemen Jadwal (OOP & Clean Code).
@@ -30,11 +30,17 @@ class ScheduleManagement extends BaseAdminComponent
 
     // Form properties for Create
     public string $title = '';
+
     public string $description = '';
+
     public string $start_time = '';
+
     public string $end_time = '';
+
     public string $location = '';
+
     public string $new_status = 'upcoming';
+
     public ?int $selected_posyandu_id = null;
 
     public bool $showCreateModal = false;
@@ -51,7 +57,7 @@ class ScheduleManagement extends BaseAdminComponent
     public function mount(): void
     {
         $user = auth()->user();
-        if (!$user->isSuperAdmin()) {
+        if (! $user->isSuperAdmin()) {
             $this->selected_posyandu_id = $user->posyandu_id;
         }
     }
@@ -62,25 +68,25 @@ class ScheduleManagement extends BaseAdminComponent
     public function save(ScheduleService $service)
     {
         $this->authorize('create', Schedule::class);
-        
+
         $validated = $this->validate([
-            'title'       => 'required|string|max:255',
+            'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'start_time'  => 'required|date',
-            'end_time'    => 'required|date|after:start_time',
-            'location'    => 'required|string|max:255',
-            'new_status'  => 'required|in:upcoming,ongoing,completed',
+            'start_time' => 'required|date',
+            'end_time' => 'required|date|after:start_time',
+            'location' => 'required|string|max:255',
+            'new_status' => 'required|in:upcoming,ongoing,completed',
             'selected_posyandu_id' => 'required|exists:posyandus,id',
         ]);
 
         // Map UI names to model names
         $data = [
-            'title'       => $this->title,
+            'title' => $this->title,
             'description' => $this->description,
-            'start_time'  => $this->start_time,
-            'end_time'    => $this->end_time,
-            'location'    => $this->location,
-            'status'      => $this->new_status,
+            'start_time' => $this->start_time,
+            'end_time' => $this->end_time,
+            'location' => $this->location,
+            'status' => $this->new_status,
             'posyandu_id' => $this->selected_posyandu_id,
         ];
 
@@ -99,17 +105,17 @@ class ScheduleManagement extends BaseAdminComponent
         $baseQuery = $this->applyPosyanduScope(Schedule::with('posyandu'));
 
         $schedules = (clone $baseQuery)
-            ->when($this->search, fn($q) => $q->search($this->search))
-            ->when($this->status, fn($q) => $q->where('status', $this->status))
-            ->when($this->posyandu_id, fn($q) => $q->where('posyandu_id', $this->posyandu_id))
+            ->when($this->search, fn ($q) => $q->search($this->search))
+            ->when($this->status, fn ($q) => $q->where('status', $this->status))
+            ->when($this->posyandu_id, fn ($q) => $q->where('posyandu_id', $this->posyandu_id))
             ->orderBy('start_time', 'asc')
             ->paginate(10);
 
         return view('livewire.admin.schedule-management.index', [
-            'schedules'      => $schedules,
-            'stats'          => $this->getStats($baseQuery),
+            'schedules' => $schedules,
+            'stats' => $this->getStats($baseQuery),
             'agendaTerdekat' => $this->getUpcomingAgenda($baseQuery),
-            'posyandus'      => $this->getAllowedPosyandus(),
+            'posyandus' => $this->getAllowedPosyandus(),
         ]);
     }
 
@@ -128,9 +134,9 @@ class ScheduleManagement extends BaseAdminComponent
 
         return [
             'total_month' => $stats->total_month ?? 0,
-            'completed'   => $stats->completed ?? 0,
-            'upcoming'    => $stats->upcoming ?? 0,
-            'ongoing'     => $stats->ongoing ?? 0,
+            'completed' => $stats->completed ?? 0,
+            'upcoming' => $stats->upcoming ?? 0,
+            'ongoing' => $stats->ongoing ?? 0,
         ];
     }
 
@@ -153,7 +159,7 @@ class ScheduleManagement extends BaseAdminComponent
     {
         $schedule = Schedule::findOrFail($id);
         $this->authorize('delete', $schedule);
-        
+
         $service->deleteSchedule($schedule);
         $this->notify('Jadwal kegiatan berhasil dihapus.');
     }

@@ -48,13 +48,14 @@ class PatientImport
 
     // ── Dependencies ──────────────────────────────────────────────────
 
-    private HeaderResolver      $headerResolver;
+    private HeaderResolver $headerResolver;
+
     private PatientRowProcessor $rowProcessor;
 
     public function __construct(int $posyanduId, int $userId)
     {
-        $this->headerResolver = new HeaderResolver();
-        $this->rowProcessor   = new PatientRowProcessor($posyanduId, $userId);
+        $this->headerResolver = new HeaderResolver;
+        $this->rowProcessor = new PatientRowProcessor($posyanduId, $userId);
     }
 
     // ── Public API ────────────────────────────────────────────────────
@@ -63,17 +64,18 @@ class PatientImport
      * Run the full import pipeline for the given uploaded file.
      *
      * @throws \InvalidArgumentException for unsupported or unconvertible formats.
-     * @throws \RuntimeException         for unreadable / corrupt files.
+     * @throws \RuntimeException for unreadable / corrupt files.
      */
     public function import(UploadedFile $file): void
     {
         $extension = strtolower($file->getClientOriginalExtension());
 
         $parser = $this->resolveParser($extension);
-        $rows   = $parser->parse($file->getRealPath());
+        $rows = $parser->parse($file->getRealPath());
 
         if (empty($rows)) {
             $this->errors[] = 'File kosong atau tidak dapat dibaca.';
+
             return;
         }
 
@@ -89,9 +91,9 @@ class PatientImport
     private function resolveParser(string $extension): FileParserInterface
     {
         return match ($extension) {
-            'csv'   => new CsvFileParser(),
-            'xlsx'  => new XlsxFileParser(),
-            'xls'   => new \App\Imports\Parsers\XlsFileParser(),
+            'csv' => new CsvFileParser,
+            'xlsx' => new XlsxFileParser,
+            'xls' => new \App\Imports\Parsers\XlsFileParser,
             default => throw new \InvalidArgumentException(
                 "Format '{$extension}' tidak didukung. Gunakan CSV, XLSX, atau XLS."
             ),
@@ -109,16 +111,16 @@ class PatientImport
         $headerRowIndex = $this->headerResolver->findHeaderRowIndex($rows);
 
         if ($headerRowIndex === null) {
-            $headerRowIndex  = 0;
+            $headerRowIndex = 0;
             $this->errors[] = 'Peringatan: Header tidak terdeteksi otomatis, menggunakan baris pertama sebagai header.';
         }
 
-        $rawHeaders         = $rows[$headerRowIndex];
+        $rawHeaders = $rows[$headerRowIndex];
         $this->debugHeaders = $rawHeaders;
 
         $normalizedHeaders = $this->headerResolver->normalizeHeaders($rawHeaders);
-        $colMap            = $this->headerResolver->buildColumnMap($normalizedHeaders);
-        $dataRows          = array_slice($rows, $headerRowIndex + 1);
+        $colMap = $this->headerResolver->buildColumnMap($normalizedHeaders);
+        $dataRows = array_slice($rows, $headerRowIndex + 1);
 
         return [$dataRows, $colMap];
     }
@@ -128,9 +130,9 @@ class PatientImport
      */
     private function syncCounters(): void
     {
-        $this->imported        = $this->rowProcessor->imported;
-        $this->skipped         = $this->rowProcessor->skipped;
+        $this->imported = $this->rowProcessor->imported;
+        $this->skipped = $this->rowProcessor->skipped;
         $this->recordsImported = $this->rowProcessor->recordsImported;
-        $this->errors          = array_merge($this->errors, $this->rowProcessor->errors);
+        $this->errors = array_merge($this->errors, $this->rowProcessor->errors);
     }
 }

@@ -22,15 +22,51 @@
 
     {{-- ── Summary Cards ── --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-white border border-slate-200 rounded-3xl p-5 flex items-center gap-4 shadow-sm group hover:border-teal-500/30 transition-all">
-            <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                <span class="material-symbols-outlined text-[24px]">groups</span>
+        {{-- Bayi --}}
+        <div class="bg-white border border-slate-200 rounded-3xl p-5 flex items-center gap-4 shadow-sm group hover:border-sky-500/30 transition-all">
+            <div class="w-12 h-12 bg-sky-50 text-sky-600 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                <span class="material-symbols-outlined text-[24px]">baby_changing_station</span>
             </div>
             <div>
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Total Warga</p>
-                <p class="text-2xl font-black text-slate-900 leading-none">{{ number_format($patients->total()) }}</p>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Bayi (0-11 bln)</p>
+                <p class="text-2xl font-black text-slate-900 leading-none">{{ App\Models\Patient::where('category', 'bayi')->count() }}</p>
             </div>
         </div>
+
+        {{-- Baduta --}}
+        <div class="bg-white border border-slate-200 rounded-3xl p-5 flex items-center gap-4 shadow-sm group hover:border-blue-500/30 transition-all">
+            <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                <span class="material-symbols-outlined text-[24px]">child_friendly</span>
+            </div>
+            <div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Baduta (12-23 bln)</p>
+                <p class="text-2xl font-black text-slate-900 leading-none">{{ App\Models\Patient::where('category', 'baduta')->count() }}</p>
+            </div>
+        </div>
+
+        {{-- Balita --}}
+        <div class="bg-white border border-slate-200 rounded-3xl p-5 flex items-center gap-4 shadow-sm group hover:border-teal-500/30 transition-all">
+            <div class="w-12 h-12 bg-teal-50 text-teal-600 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                <span class="material-symbols-outlined text-[24px]">child_care</span>
+            </div>
+            <div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Balita (24-59 bln)</p>
+                <p class="text-2xl font-black text-slate-900 leading-none">{{ App\Models\Patient::where('category', 'balita')->count() }}</p>
+            </div>
+        </div>
+
+        {{-- Anak Sekolah --}}
+        <div class="bg-white border border-slate-200 rounded-3xl p-5 flex items-center gap-4 shadow-sm group hover:border-indigo-500/30 transition-all">
+            <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                <span class="material-symbols-outlined text-[24px]">school</span>
+            </div>
+            <div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Anak Sekolah (5-9 thn)</p>
+                <p class="text-2xl font-black text-slate-900 leading-none">{{ App\Models\Patient::where('category', 'anak_sekolah')->count() }}</p>
+            </div>
+        </div>
+
+        {{-- Ibu Hamil --}}
         <div class="bg-white border border-slate-200 rounded-3xl p-5 flex items-center gap-4 shadow-sm group hover:border-pink-500/30 transition-all">
             <div class="w-12 h-12 bg-pink-50 text-pink-600 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                 <span class="material-symbols-outlined text-[24px]">pregnant_woman</span>
@@ -40,22 +76,37 @@
                 <p class="text-2xl font-black text-slate-900 leading-none">{{ App\Models\Patient::where('category', 'ibu_hamil')->count() }}</p>
             </div>
         </div>
-        <div class="bg-white border border-slate-200 rounded-3xl p-5 flex items-center gap-4 shadow-sm group hover:border-amber-500/30 transition-all">
-            <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                <span class="material-symbols-outlined text-[24px]">child_care</span>
+
+        {{-- Remaja --}}
+        <div class="bg-white border border-slate-200 rounded-3xl p-5 flex items-center gap-4 shadow-sm group hover:border-purple-500/30 transition-all">
+            <div class="w-12 h-12 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                <span class="material-symbols-outlined text-[24px]">emoji_people</span>
             </div>
             <div>
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Balita</p>
-                <p class="text-2xl font-black text-slate-900 leading-none">{{ App\Models\Patient::where('category', 'balita')->count() }}</p>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Remaja</p>
+                <p class="text-2xl font-black text-slate-900 leading-none">{{ App\Models\Patient::where('category', 'remaja')->count() }}</p>
             </div>
         </div>
-        <div class="bg-white border border-slate-200 rounded-3xl p-5 flex items-center gap-4 shadow-sm group hover:border-teal-500/30 transition-all">
-            <div class="w-12 h-12 bg-teal-50 text-teal-600 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                <span class="material-symbols-outlined text-[24px]">face</span>
+
+        {{-- Lansia --}}
+        <div class="bg-white border border-slate-200 rounded-3xl p-5 flex items-center gap-4 shadow-sm group hover:border-orange-500/30 transition-all">
+            <div class="w-12 h-12 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                <span class="material-symbols-outlined text-[24px]">elderly</span>
             </div>
             <div>
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Remaja/Lansia</p>
-                <p class="text-2xl font-black text-slate-900 leading-none">{{ App\Models\Patient::whereIn('category', ['remaja', 'lansia'])->count() }}</p>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Lansia</p>
+                <p class="text-2xl font-black text-slate-900 leading-none">{{ App\Models\Patient::where('category', 'lansia')->count() }}</p>
+            </div>
+        </div>
+
+        {{-- Umum / Lainnya --}}
+        <div class="bg-white border border-slate-200 rounded-3xl p-5 flex items-center gap-4 shadow-sm group hover:border-slate-500/30 transition-all">
+            <div class="w-12 h-12 bg-slate-50 text-slate-600 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                <span class="material-symbols-outlined text-[24px]">groups</span>
+            </div>
+            <div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Umum / Lainnya</p>
+                <p class="text-2xl font-black text-slate-900 leading-none">{{ App\Models\Patient::where('category', 'umum')->count() }}</p>
             </div>
         </div>
     </div>
@@ -90,15 +141,19 @@
                 <select wire:model.live="category"
                         class="w-full h-12 px-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all appearance-none cursor-pointer shadow-sm focus:bg-white">
                     <option value="all">Semua Kategori</option>
+                    <option value="bayi">Bayi</option>
+                    <option value="baduta">Baduta</option>
                     <option value="balita">Balita</option>
+                    <option value="anak_sekolah">Anak Sekolah</option>
                     <option value="ibu_hamil">Ibu Hamil</option>
                     <option value="remaja">Remaja</option>
                     <option value="lansia">Lansia</option>
+                    <option value="umum">Lainnya / Umum</option>
                 </select>
             </div>
 
             @if($search || $category !== 'all')
-            <button wire:click="$set('search', ''); $set('category', 'all');"
+            <button wire:click="resetFilters"
                     class="h-12 px-4 flex items-center gap-2 text-red-500 font-bold text-xs uppercase tracking-widest hover:bg-red-50 rounded-2xl transition-all">
                 <span class="material-symbols-outlined text-[18px]">restart_alt</span>
                 Reset Filter
@@ -128,10 +183,14 @@
                 @php
                     $initials = strtoupper(substr($patient->full_name, 0, 2));
                     $catStyles = [
-                        'balita' => 'bg-amber-100 text-amber-700',
+                        'bayi' => 'bg-sky-100 text-sky-700',
+                        'baduta' => 'bg-blue-100 text-blue-700',
+                        'balita' => 'bg-teal-100 text-teal-700',
+                        'anak_sekolah' => 'bg-indigo-100 text-indigo-700',
                         'ibu_hamil' => 'bg-pink-100 text-pink-700',
                         'remaja' => 'bg-indigo-100 text-indigo-700',
                         'lansia' => 'bg-orange-100 text-orange-700',
+                        'umum' => 'bg-slate-100 text-slate-700',
                     ];
                 @endphp
                 <tr class="group hover:bg-slate-50/50 transition-colors" wire:key="patient-{{ $patient->id }}">
@@ -206,5 +265,21 @@
     {{-- ── Pagination ── --}}
     <div class="px-6 py-4 bg-white border-t border-slate-100">
         <x-layouts.ui.pagination :paginator="$patients" />
+    </div>
+
+    {{-- ── Delete Confirmation Modal ── --}}
+    <div x-data="{ open: @entangle('showDeleteModal') }">
+        <x-modals.confirm-modal
+            title="Hapus Data Warga"
+            message="Apakah Anda yakin ingin menghapus data warga ini?"
+            sub-message="Seluruh riwayat pemeriksaan medis warga ini juga akan dihapus secara permanen."
+            type="danger"
+            confirm-text="Ya, Hapus Permanen"
+        >
+            <x-slot:footer>
+                <x-button @click="open = false" variant="outline">Batal</x-button>
+                <x-button wire:click="deletePatient" variant="danger" icon="delete">Ya, Hapus</x-button>
+            </x-slot:footer>
+        </x-modals.confirm-modal>
     </div>
 </div>

@@ -14,18 +14,36 @@ class PatientRequest extends FormRequest
     public function rules()
     {
         $patientId = $this->route('patient') ? $this->route('patient')->id : null;
-        
+
         return [
             'full_name' => 'required|string|max:255',
-            'id_number' => 'required|digits:16|unique:patients,id_number,' . $patientId,
-            'category' => 'required|string|in:balita,ibu_hamil,remaja,lansia',
+            'head_of_family_name' => 'nullable|string|max:255',
+            'id_number' => 'required|digits:16|unique:patients,id_number,'.$patientId,
+            'category' => 'required|string|in:bayi,baduta,balita,anak_sekolah,ibu_hamil,remaja,lansia,umum',
             'parent_name' => 'nullable|string|max:255',
+            'mother_nik' => 'nullable|digits:16',
+            'kia_book_ownership' => 'nullable|boolean',
             'gender' => 'required|string|in:M,F',
             'birth_date' => 'required|date|before_or_equal:today',
+            'place_of_birth' => 'nullable|string|max:255',
             'address' => 'required|string|max:500',
             'phone_number' => 'required|string|max:15',
             'posyandu_id' => 'nullable|exists:posyandus,id',
             'profile_photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+
+            // New Detail Fields
+            'guardian_status' => 'nullable|string|max:100',
+            'education' => 'nullable|string|max:100',
+            'job' => 'nullable|string|max:100',
+            'number_of_children' => 'nullable|integer|min:0',
+            'is_pregnant' => 'nullable|boolean',
+            'living_status' => 'nullable|string|max:100',
+            'independence_status' => 'nullable|string|max:100',
+            'family_member_count' => 'nullable|integer|min:0',
+            'house_condition' => 'nullable|string|max:100',
+            'water_access' => 'nullable|string|max:100',
+            'has_latrine' => 'nullable|boolean',
+            'economic_status' => 'nullable|string|max:100',
         ];
     }
 
@@ -34,7 +52,7 @@ class PatientRequest extends FormRequest
         return [
             'full_name.required' => 'Nama lengkap wajib diisi.',
             'category.required' => 'Kategori wajib dipilih.',
-            'category.in' => 'Kategori harus salah satu dari: balita, ibu_hamil, remaja, atau lansia.',
+            'category.in' => 'Kategori harus salah satu dari: bayi, baduta, balita, anak_sekolah, ibu_hamil, remaja, lansia, atau umum.',
             'id_number.required' => 'NIK wajib diisi.',
             'id_number.digits' => 'NIK harus terdiri dari tepat 16 digit angka.',
             'id_number.unique' => 'NIK ini sudah terdaftar di sistem.',

@@ -39,7 +39,7 @@ class GallerySeeder extends Seeder
                 'type' => 'education',
                 'created_at' => now(),
                 'updated_at' => now(),
-            ]
+            ],
         ]);
     }
 }

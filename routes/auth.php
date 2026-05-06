@@ -1,9 +1,9 @@
 <?php
 
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Livewire\Actions\Logout;
 use Illuminate\Support\Facades\Route;
-use Livewire\Volt\Volt;
-use App\Livewire\Actions\Logout; // Pastikan Logout terimport dengan benar
+use Livewire\Volt\Volt; // Pastikan Logout terimport dengan benar
 
 // Rute untuk pengguna tamu (guest)
 Route::middleware('guest')->group(function () {

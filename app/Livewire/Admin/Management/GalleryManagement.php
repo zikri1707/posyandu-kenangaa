@@ -3,10 +3,9 @@
 namespace App\Livewire\Admin\Management;
 
 use App\Models\Gallery;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
-
-use Livewire\Attributes\Layout;
 
 #[Layout('layouts.admin-layout')]
 class GalleryManagement extends Component
@@ -19,13 +18,16 @@ class GalleryManagement extends Component
         'search' => ['except' => ''],
     ];
 
-    public function updatingSearch() { $this->resetPage(); }
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
 
     public function render()
     {
         $query = Gallery::query()
-            ->when($this->search, function($q) {
-                $q->where('title', 'like', '%' . $this->search . '%');
+            ->when($this->search, function ($q) {
+                $q->where('title', 'like', '%'.$this->search.'%');
             })
             ->latest();
 

@@ -2,20 +2,23 @@
 
 namespace App\Livewire\Admin\MedicalRecord;
 
-use Livewire\Component;
-use App\Models\Patient;
 use App\Models\MedicalRecord;
+use App\Models\Patient;
 use App\Models\Posyandu;
 use App\Services\NutritionCalculatorService;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 
 class BulkMeasurementEntry extends Component
 {
     public $posyandu_id;
+
     public $visit_date;
+
     public $measurements = [];
+
     public $search = '';
+
     public $searchResults = [];
 
     protected $rules = [
@@ -29,7 +32,7 @@ class BulkMeasurementEntry extends Component
     public function mount()
     {
         $this->visit_date = now()->format('Y-m-d');
-        
+
         // If user is a Kader, set their posyandu_id
         if (Auth::user()->posyandu_id) {
             $this->posyandu_id = Auth::user()->posyandu_id;
@@ -40,19 +43,20 @@ class BulkMeasurementEntry extends Component
     {
         if (strlen($this->search) < 2) {
             $this->searchResults = [];
+
             return;
         }
 
         $query = Patient::query();
-        
+
         if ($this->posyandu_id) {
             $query->where('posyandu_id', $this->posyandu_id);
         }
 
-        $this->searchResults = $query->where(function($q) {
-                $q->where('full_name', 'like', '%' . $this->search . '%')
-                  ->orWhere('id_number', 'like', '%' . $this->search . '%');
-            })
+        $this->searchResults = $query->where(function ($q) {
+            $q->where('full_name', 'like', '%'.$this->search.'%')
+                ->orWhere('id_number', 'like', '%'.$this->search.'%');
+        })
             ->limit(5)
             ->get();
     }
@@ -63,6 +67,7 @@ class BulkMeasurementEntry extends Component
         if (collect($this->measurements)->contains('patient_id', $id)) {
             $this->search = '';
             $this->searchResults = [];
+
             return;
         }
 
@@ -97,22 +102,24 @@ class BulkMeasurementEntry extends Component
     {
         // Format key: "index.field" (contoh: "0.weight")
         $parts = explode('.', $key);
-        if (count($parts) < 2) return;
+        if (count($parts) < 2) {
+            return;
+        }
 
         $index = $parts[0];
         $field = $parts[1];
 
         if ($field === 'weight' || $field === 'height') {
             $m = $this->measurements[$index];
-            
-            if (!empty($m['weight'])) {
-                $nutritionService = new NutritionCalculatorService();
-                
+
+            if (! empty($m['weight'])) {
+                $nutritionService = new NutritionCalculatorService;
+
                 // Use the new DTO-based calculateAll for consistency
                 $results = $nutritionService->calculateAll(
-                    (float)$m['weight'], 
-                    (float)($m['height'] ?: 0), 
-                    (int)$m['age_months'], 
+                    (float) $m['weight'],
+                    (float) ($m['height'] ?: 0),
+                    (int) $m['age_months'],
                     $m['gender']
                 );
 
@@ -132,22 +139,26 @@ class BulkMeasurementEntry extends Component
         $this->validate();
 
         $count = 0;
-        $nutritionService = new NutritionCalculatorService();
+        $nutritionService = new NutritionCalculatorService;
 
         foreach ($this->measurements as $m) {
-            if (empty($m['weight']) || empty($m['height'])) continue;
+            if (empty($m['weight']) || empty($m['height'])) {
+                continue;
+            }
 
             // Check for existing record on same date to avoid duplication
             $existing = MedicalRecord::where('patient_id', $m['patient_id'])
                 ->whereDate('visit_date', $this->visit_date)
                 ->first();
 
-            if ($existing) continue;
+            if ($existing) {
+                continue;
+            }
 
             $results = $nutritionService->calculateAll(
-                (float)$m['weight'],
-                (float)$m['height'],
-                (int)$m['age_months'],
+                (float) $m['weight'],
+                (float) $m['height'],
+                (int) $m['age_months'],
                 $m['gender']
             )->toArray();
 
@@ -170,6 +181,7 @@ class BulkMeasurementEntry extends Component
 
         if ($count > 0) {
             session()->flash('success', "$count data penimbangan berhasil disimpan.");
+
             return redirect()->route('admin.medical-records.index');
         } else {
             $this->dispatch('notify', ['type' => 'warning', 'message' => 'Tidak ada data baru yang disimpan.']);
@@ -178,12 +190,12 @@ class BulkMeasurementEntry extends Component
 
     public function render()
     {
-        $posyandus = Auth::user()->posyandu_id 
+        $posyandus = Auth::user()->posyandu_id
             ? Posyandu::where('id', Auth::user()->posyandu_id)->get()
             : Posyandu::all();
 
         return view('livewire.admin.medical-record.bulk-measurement-entry', [
-            'posyandus' => $posyandus
+            'posyandus' => $posyandus,
         ])->layout('layouts.admin-layout');
     }
 }

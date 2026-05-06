@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\ActivityLog;
 use App\Models\MedicalRecord;
 use App\Models\Patient;
 use App\Models\Posyandu;
@@ -13,7 +12,7 @@ uses(RefreshDatabase::class);
 beforeEach(function () {
     // Create posyandu and users
     $this->posyandu = Posyandu::factory()->create();
-    
+
     $this->admin = User::factory()->create([
         'role' => 'admin',
         'posyandu_id' => $this->posyandu->id,
@@ -332,7 +331,7 @@ describe('kalkulasi status gizi otomatis', function () {
         ]);
 
         $record = MedicalRecord::where('patient_id', $this->patient->id)->first();
-        
+
         expect($record->z_score)->not->toBeNull()
             ->and($record->z_score)->toBeNumeric();
     });
@@ -350,7 +349,7 @@ describe('kalkulasi status gizi otomatis', function () {
         ]);
 
         $record = MedicalRecord::where('patient_id', $this->patient->id)->first();
-        
+
         expect($record->nutrition_status)->not->toBeNull()
             ->and($record->nutrition_status)->toBe('Gizi Baik');
     });
@@ -368,7 +367,7 @@ describe('kalkulasi status gizi otomatis', function () {
         ]);
 
         $record = MedicalRecord::where('patient_id', $this->patient->id)->first();
-        
+
         expect($record->nutrition_status)->toBe('Gizi Baik');
     });
 
@@ -385,7 +384,7 @@ describe('kalkulasi status gizi otomatis', function () {
         ]);
 
         $record = MedicalRecord::where('patient_id', $this->patient->id)->first();
-        
+
         expect($record->nutrition_status)->toBeIn(['Gizi Kurang', 'Gizi Baik']);
     });
 
@@ -402,7 +401,7 @@ describe('kalkulasi status gizi otomatis', function () {
         ]);
 
         $record = MedicalRecord::where('patient_id', $this->patient->id)->first();
-        
+
         expect($record->nutrition_status)->toBeIn(['Gizi Buruk', 'Gizi Kurang']);
     });
 
@@ -419,7 +418,7 @@ describe('kalkulasi status gizi otomatis', function () {
         ]);
 
         $record = MedicalRecord::where('patient_id', $this->patient->id)->first();
-        
+
         expect($record->nutrition_status)->toBeIn(['Gizi Lebih', 'Gizi Baik']);
     });
 
@@ -450,7 +449,7 @@ describe('kalkulasi status gizi otomatis', function () {
         ]);
 
         $record->refresh();
-        
+
         expect($record->nutrition_status)->not->toBe($initialStatus);
     });
 });
@@ -609,7 +608,7 @@ describe('field opsional', function () {
         ]);
 
         $response->assertSessionDoesntHaveErrors();
-        
+
         $record = MedicalRecord::where('patient_id', $this->patient->id)->first();
         expect($record->head_circumference)->toBeNull();
     });

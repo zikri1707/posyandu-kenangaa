@@ -20,10 +20,10 @@ class XlsxFileParser implements FileParserInterface
         [$sharedStrings, $sheetContent] = $this->extractZipContents($path);
 
         $sheetXml = $this->cleanNamespaces($sheetContent);
-        $sheet    = $this->parseXml($sheetXml);
+        $sheet = $this->parseXml($sheetXml);
 
         $sheetData = $sheet->sheetData ?? $sheet->worksheet->sheetData ?? null;
-        if (!$sheetData) {
+        if (! $sheetData) {
             return [];
         }
 
@@ -39,13 +39,13 @@ class XlsxFileParser implements FileParserInterface
      */
     private function extractZipContents(string $path): array
     {
-        $zip = new \ZipArchive();
+        $zip = new \ZipArchive;
         if ($zip->open($path) !== true) {
             throw new \RuntimeException('Tidak dapat membuka file XLSX. Pastikan file tidak rusak.');
         }
 
         $sharedStrings = $this->readSharedStrings($zip);
-        $sheetContent  = $this->readFirstSheet($zip);
+        $sheetContent = $this->readFirstSheet($zip);
 
         $zip->close();
 
@@ -57,17 +57,17 @@ class XlsxFileParser implements FileParserInterface
      */
     private function readSharedStrings(\ZipArchive $zip): array
     {
-        $strings   = [];
+        $strings = [];
         $ssContent = $zip->getFromName('xl/sharedStrings.xml');
 
-        if (!$ssContent) {
+        if (! $ssContent) {
             return $strings;
         }
 
         $ssContent = preg_replace('/xmlns[^=]*="[^"]*"/', '', $ssContent);
-        $ss        = @simplexml_load_string($ssContent);
+        $ss = @simplexml_load_string($ssContent);
 
-        if (!$ss) {
+        if (! $ss) {
             return $strings;
         }
 
@@ -102,17 +102,19 @@ class XlsxFileParser implements FileParserInterface
     private function cleanNamespaces(string $xml): string
     {
         $xml = preg_replace('/xmlns[^=]*="[^"]*"/', '', $xml);
-        $xml = preg_replace('/<[a-z]+:/', '<',           $xml);
-        $xml = preg_replace('/<\/[a-z]+:/', '</',         $xml);
+        $xml = preg_replace('/<[a-z]+:/', '<', $xml);
+        $xml = preg_replace('/<\/[a-z]+:/', '</', $xml);
+
         return $xml;
     }
 
     private function parseXml(string $xml): \SimpleXMLElement
     {
         $result = @simplexml_load_string($xml);
-        if (!$result) {
+        if (! $result) {
             throw new \RuntimeException('Tidak dapat mem-parse file XLSX.');
         }
+
         return $result;
     }
 
@@ -128,16 +130,16 @@ class XlsxFileParser implements FileParserInterface
 
         foreach ($sheetData->row as $row) {
             $cellValues = [];
-            $maxColIdx  = -1;
+            $maxColIdx = -1;
 
             foreach ($row->c as $cell) {
                 $ref = (string) ($cell['r'] ?? '');
-                if (!preg_match('/^([A-Z]+)(\d+)$/', $ref, $m)) {
+                if (! preg_match('/^([A-Z]+)(\d+)$/', $ref, $m)) {
                     continue;
                 }
 
                 $colIdx = $this->colLetterToIndex($m[1]);
-                $value  = $this->resolveCellValue($cell, $sharedStrings);
+                $value = $this->resolveCellValue($cell, $sharedStrings);
 
                 $cellValues[$colIdx] = $value;
                 if ($colIdx > $maxColIdx) {
@@ -152,7 +154,7 @@ class XlsxFileParser implements FileParserInterface
             }
 
             // Skip fully empty rows
-            if (count(array_filter($rowData, static fn($v) => trim($v) !== '')) > 0) {
+            if (count(array_filter($rowData, static fn ($v) => trim($v) !== '')) > 0) {
                 $rows[] = $rowData;
             }
         }
@@ -165,14 +167,14 @@ class XlsxFileParser implements FileParserInterface
      */
     private function resolveCellValue(\SimpleXMLElement $cell, array $sharedStrings): string
     {
-        $type  = (string) ($cell['t'] ?? '');
+        $type = (string) ($cell['t'] ?? '');
         $value = (string) ($cell->v ?? '');
 
         return match ($type) {
-            's'           => $sharedStrings[(int) $value] ?? '',
-            'inlineStr'   => (string) ($cell->is->t ?? ''),
-            'b'           => $value === '1' ? 'TRUE' : 'FALSE',
-            default       => $value,
+            's' => $sharedStrings[(int) $value] ?? '',
+            'inlineStr' => (string) ($cell->is->t ?? ''),
+            'b' => $value === '1' ? 'TRUE' : 'FALSE',
+            default => $value,
         };
     }
 
@@ -181,11 +183,12 @@ class XlsxFileParser implements FileParserInterface
      */
     private function colLetterToIndex(string $col): int
     {
-        $col   = strtoupper($col);
+        $col = strtoupper($col);
         $index = 0;
         for ($i = 0, $len = strlen($col); $i < $len; $i++) {
             $index = $index * 26 + (ord($col[$i]) - 64);
         }
+
         return $index - 1;
     }
 }

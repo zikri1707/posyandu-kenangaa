@@ -1,28 +1,40 @@
 <div wire:key="growth-chart-root" class="max-w-7xl mx-auto space-y-6 pb-12">
     
+    @php
+        $isMale = strtoupper($patient->gender) === 'L' || strtoupper($patient->gender) === 'M';
+        $themeColor = $isMale ? 'bg-sky-600' : 'bg-pink-600';
+        $accentColor = $isMale ? 'teal' : 'pink';
+        $chartBg = $isMale ? '#0284c7' : '#db2777';
+    @endphp
+
+    @if(!$isEmbedded)
     {{-- ── Patient Header: Premium Bento Style ── --}}
     <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100 relative overflow-hidden group">
-        <div class="absolute -right-12 -top-12 w-48 h-48 bg-teal-50 rounded-full opacity-50 transition-transform group-hover:scale-110 duration-700"></div>
+        <div class="absolute -right-12 -top-12 w-48 h-48 {{ $isMale ? 'bg-sky-50' : 'bg-pink-50' }} rounded-full opacity-50 transition-transform group-hover:scale-110 duration-700"></div>
         
         <div class="relative z-10 flex flex-col lg:flex-row items-center gap-6">
-            <div class="w-20 h-20 rounded-2xl bg-teal-50 flex items-center justify-center text-teal-600 shadow-inner border border-teal-100 flex-shrink-0">
-                <span class="material-symbols-outlined text-[40px]">child_care</span>
+            <div class="w-20 h-20 rounded-2xl {{ $isMale ? 'bg-sky-50 text-sky-600 border-sky-100' : 'bg-pink-50 text-pink-600 border-pink-100' }} flex items-center justify-center shadow-inner border flex-shrink-0">
+                <span class="material-symbols-outlined text-[40px]">{{ $isMale ? 'boy' : 'girl' }}</span>
             </div>
             
             <div class="flex-1 text-center lg:text-left">
                 <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3 mb-1">
                     <h2 class="text-2xl font-black text-slate-900 tracking-tight">{{ $patient->full_name }}</h2>
-                    <span class="px-3 py-0.5 rounded-full bg-teal-500 text-white text-[9px] font-black uppercase tracking-widest shadow-sm">
+                    <span @class([
+                        'px-3 py-0.5 rounded-full text-white text-[9px] font-black uppercase tracking-widest shadow-sm',
+                        'bg-sky-600' => $isMale,
+                        'bg-pink-600' => !$isMale
+                    ])>
                         {{ str_replace('_', ' ', $patient->category) }}
                     </span>
                 </div>
                 <div class="flex flex-wrap justify-center lg:justify-start gap-4 text-slate-500 text-[11px] font-bold">
                     <div class="flex items-center gap-1.5">
-                        <span class="material-symbols-outlined text-[16px] text-teal-500/60">fingerprint</span>
+                        <span class="material-symbols-outlined text-[16px] {{ $isMale ? 'text-sky-500/60' : 'text-pink-500/60' }}">fingerprint</span>
                         {{ $patient->id_number }}
                     </div>
                     <div class="flex items-center gap-1.5">
-                        <span class="material-symbols-outlined text-[16px] text-teal-500/60">cake</span>
+                        <span class="material-symbols-outlined text-[16px] {{ $isMale ? 'text-sky-500/60' : 'text-pink-500/60' }}">cake</span>
                         {{ \Carbon\Carbon::parse($patient->birth_date)->translatedFormat('d M Y') }}
                     </div>
                 </div>
@@ -31,7 +43,11 @@
             <div class="flex items-center gap-4 bg-slate-50 p-2 rounded-2xl border border-slate-100">
                 <div class="px-4 py-2 text-center">
                     <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Status Gizi</p>
-                    <p class="text-sm font-black text-emerald-600">Normal</p>
+                    <p @class([
+                        'text-sm font-black',
+                        'text-sky-600' => $isMale,
+                        'text-pink-600' => !$isMale
+                    ])>Normal</p>
                 </div>
                 <div class="w-px h-8 bg-slate-200"></div>
                 <div class="px-4 py-2 text-center">
@@ -41,6 +57,7 @@
             </div>
         </div>
     </div>
+    @endif
 
     {{-- ── Dashboard Grid ── --}}
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -70,8 +87,9 @@
                     </div>
                 </div>
 
-                <div class="relative bg-slate-50/30 rounded-2xl border border-dashed border-slate-200 p-4" 
-                     style="height: 400px;"
+                <script>var initialGrowthData = @json($chartData);</script>
+                <div class="relative {{ $themeColor }} rounded-[2rem] p-6 shadow-xl transition-all duration-500" 
+                     style="height: 550px;"
                      x-data="{ 
                         chart: null,
                         hasData: true,
@@ -96,11 +114,25 @@
                                     animation: { duration: 800 },
                                     interaction: { intersect: false, mode: 'index' },
                                     scales: {
-                                        x: { grid: { display: false }, ticks: { font: { size: 10, weight: '700' } } },
-                                        y: { grid: { color: '#f8fafc' }, ticks: { font: { size: 10, weight: '700' } } }
+                                        x: { 
+                                            grid: { color: 'rgba(255,255,255,0.2)' }, 
+                                            ticks: { color: '#ffffff', font: { size: 10, weight: '700' }, maxRotation: 0, minRotation: 0 },
+                                            title: { display: true, text: data.labels.length > 30 && data.datasets.length > 5 ? 'Umur (bulan dan tahun penuh)' : 'Umur (bulan penuh)', color: '#ffffff', font: { weight: '800', size: 11 } }
+                                        },
+                                        y: { 
+                                            grid: { color: 'rgba(255,255,255,0.2)' }, 
+                                            ticks: { color: '#ffffff', font: { size: 10, weight: '700' } },
+                                            suggestedMin: data.datasets.some(d => d.label.includes('Tinggi')) ? 40 : 0,
+                                            title: { 
+                                                display: true, 
+                                                text: data.datasets.some(d => d.label.includes('Tinggi')) ? 'Tinggi Badan (cm)' : 'Berat Badan (kg)', 
+                                                color: '#ffffff', 
+                                                font: { weight: '800', size: 11 } 
+                                            }
+                                        }
                                     },
                                     plugins: {
-                                        legend: { position: 'bottom', labels: { boxWidth: 12, font: { weight: '700', size: 10 } } },
+                                        legend: { position: 'bottom', labels: { boxWidth: 12, color: '#ffffff', font: { weight: '700', size: 10 } } },
                                         tooltip: { backgroundColor: '#1e293b', padding: 12, cornerRadius: 8 }
                                     }
                                 }
@@ -115,15 +147,14 @@
                         });
                      "
                 >
-                    <script>var initialGrowthData = @json($chartData);</script>
                     <canvas id="growthChart" wire:ignore x-show="hasData"></canvas>
                     
                     <div x-show="!hasData" class="absolute inset-0 flex flex-col items-center justify-center p-8 text-center">
                         <div class="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-300 mb-4">
                             <span class="material-symbols-outlined text-[32px]">query_stats</span>
                         </div>
-                        <h4 class="text-sm font-black text-slate-800">Data Belum Lengkap</h4>
-                        <p class="text-[10px] text-slate-500 font-bold max-w-[200px]">Referensi standar WHO untuk kategori ini belum tersedia.</p>
+                        <h4 class="text-sm font-black text-slate-800">Belum ada data pengukuran untuk ditampilkan di grafik</h4>
+                        <p class="text-[10px] text-slate-500 font-bold max-w-[200px]">Data pemeriksaan balita akan muncul di sini setelah ditambahkan.</p>
                     </div>
 
                     <div wire:loading class="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-10 rounded-2xl">

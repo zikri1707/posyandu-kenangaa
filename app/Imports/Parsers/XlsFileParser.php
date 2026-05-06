@@ -17,23 +17,23 @@ class XlsFileParser implements FileParserInterface
     {
         try {
             $spreadsheet = IOFactory::load($path);
-            $worksheet   = $spreadsheet->getActiveSheet();
-            $data        = $worksheet->toArray('', true, true, true);
-            
+            $worksheet = $spreadsheet->getActiveSheet();
+            $data = $worksheet->toArray('', true, true, true);
+
             $rows = [];
             foreach ($data as $row) {
                 // Convert associative array from toArray() (A => val, B => val) to indexed array
                 $rowData = array_values($row);
-                
+
                 // Skip fully empty rows
-                if (count(array_filter($rowData, static fn($v) => trim((string)$v) !== '')) > 0) {
+                if (count(array_filter($rowData, static fn ($v) => trim((string) $v) !== '')) > 0) {
                     $rows[] = $rowData;
                 }
             }
-            
+
             return $rows;
         } catch (\Exception $e) {
-            throw new \RuntimeException('Tidak dapat mem-parse file XLS: ' . $e->getMessage());
+            throw new \RuntimeException('Tidak dapat mem-parse file XLS: '.$e->getMessage());
         }
     }
 }

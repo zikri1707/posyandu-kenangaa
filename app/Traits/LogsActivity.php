@@ -24,17 +24,17 @@ trait LogsActivity
             if (app()->runningInConsole()) {
                 return;
             }
-            
+
             // Get only the changed attributes
             $oldValues = [];
             $newValues = [];
-            
+
             foreach ($model->getChanges() as $key => $value) {
                 $oldValues[$key] = $model->getOriginal($key);
                 $newValues[$key] = $value;
             }
-            
-            if (!empty($oldValues) || !empty($newValues)) {
+
+            if (! empty($oldValues) || ! empty($newValues)) {
                 ActivityLog::logUpdate($model, $oldValues, $newValues);
             }
         });
@@ -44,7 +44,7 @@ trait LogsActivity
             if (app()->runningInConsole()) {
                 return;
             }
-            
+
             // Get all attributes before deletion
             $oldValues = $model->toArray();
             ActivityLog::logDelete($model, $oldValues);

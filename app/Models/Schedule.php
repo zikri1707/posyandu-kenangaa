@@ -2,21 +2,21 @@
 
 namespace App\Models;
 
+use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\LogsActivity;
 
 class Schedule extends Model
 {
     use HasFactory, LogsActivity;
 
     protected $fillable = [
-        'posyandu_id', 'user_id', 'title', 'description', 'start_time', 'end_time', 'location', 'status'
+        'posyandu_id', 'user_id', 'title', 'description', 'start_time', 'end_time', 'location', 'status',
     ];
 
     protected $casts = [
         'start_time' => 'datetime',
-        'end_time'   => 'datetime',
+        'end_time' => 'datetime',
     ];
 
     // Relationship with Posyandu
@@ -38,15 +38,15 @@ class Schedule extends Model
     {
         return $query->where(function ($q) use ($search) {
             $q->where('title', 'like', "%{$search}%")
-              ->orWhere('location', 'like', "%{$search}%");
+                ->orWhere('location', 'like', "%{$search}%");
         });
     }
 
     /**
      * Scope to filter schedules based on User role access
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param \App\Models\User $user
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeAccessibleBy($query, $user)
@@ -60,6 +60,7 @@ class Schedule extends Model
             if ($pedukuhanId) {
                 // Get all posyandu IDs in this pedukuhan
                 $ids = Posyandu::where('pedukuhan_id', $pedukuhanId)->pluck('id');
+
                 return $query->whereIn('posyandu_id', $ids);
             }
         }

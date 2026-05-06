@@ -7,21 +7,22 @@ use App\Models\Patient;
 use App\Models\Posyandu;
 use App\Models\User;
 use App\Services\ReportService;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use Carbon\Carbon;
 
 class ReportPokjaIVTest extends TestCase
 {
     use RefreshDatabase;
 
     protected ReportService $reportService;
+
     protected Posyandu $posyandu;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->reportService = new ReportService();
+        $this->reportService = new ReportService;
         $this->posyandu = Posyandu::factory()->create();
     }
 
@@ -32,7 +33,7 @@ class ReportPokjaIVTest extends TestCase
         $this->createPatientAtAge(8, 'male');   // 6-11
         $this->createPatientAtAge(15, 'male');  // 12-23
         $this->createPatientAtAge(30, 'male');  // 24-59
-        
+
         $this->createPatientAtAge(4, 'female');  // 0-5
         $this->createPatientAtAge(4, 'female');  // 0-5
 
@@ -40,13 +41,13 @@ class ReportPokjaIVTest extends TestCase
 
         $this->assertArrayHasKey('pokja_iv', $reportData);
         $this->assertArrayHasKey('rows', $reportData['pokja_iv']);
-        
+
         // Row D represents Datang (Visits in current month)
         $this->assertEquals(1, $reportData['pokja_iv']['rows']['D']['male']['0-5']);
         $this->assertEquals(1, $reportData['pokja_iv']['rows']['D']['male']['6-11']);
         $this->assertEquals(1, $reportData['pokja_iv']['rows']['D']['male']['12-23']);
         $this->assertEquals(1, $reportData['pokja_iv']['rows']['D']['male']['24-59']);
-        
+
         $this->assertEquals(2, $reportData['pokja_iv']['rows']['D']['female']['0-5']);
     }
 

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Web;
 
-use App\Models\Patient;
-use App\Http\Requests\PatientRequest;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PatientRequest;
+use App\Models\Patient;
 use App\Services\ActivityLogService;
 use App\Services\PatientService;
 use Illuminate\Http\Request;
@@ -15,7 +15,6 @@ class PatientController extends Controller
         private PatientService $patientService,
         private ActivityLogService $activityLogService
     ) {}
-
 
     /**
      * Show the form for creating a new patient.
@@ -37,8 +36,11 @@ class PatientController extends Controller
     {
         $this->authorize('create', Patient::class);
 
+        \Log::info('Patient store request:', $request->all());
+
         try {
             $this->patientService->createPatient($request->validated(), auth()->user());
+
             return redirect()->route('admin.patients.index')->with('success', 'Data warga berhasil disimpan.');
         } catch (\Illuminate\Validation\ValidationException $e) {
             return redirect()->back()
@@ -58,11 +60,11 @@ class PatientController extends Controller
 
         $medicalRecords = $patient->medicalRecords()
             ->with('user')
-            ->when($request->history_search, function($q) use ($request) {
-                $q->where(function($sq) use ($request) {
+            ->when($request->history_search, function ($q) use ($request) {
+                $q->where(function ($sq) use ($request) {
                     $sq->where('diagnosis', 'like', '%'.$request->history_search.'%')
-                       ->orWhere('immunization', 'like', '%'.$request->history_search.'%')
-                       ->orWhere('visit_date', 'like', '%'.$request->history_search.'%');
+                        ->orWhere('immunization', 'like', '%'.$request->history_search.'%')
+                        ->orWhere('visit_date', 'like', '%'.$request->history_search.'%');
                 });
             })
             ->latest('visit_date')
@@ -94,6 +96,7 @@ class PatientController extends Controller
 
         try {
             $this->patientService->updatePatient($patient, $request->validated(), auth()->user());
+
             return redirect()->route('admin.patients.index')->with('success', 'Data warga berhasil diperbarui.');
         } catch (\Illuminate\Validation\ValidationException $e) {
             return redirect()->back()
@@ -134,12 +137,12 @@ class PatientController extends Controller
         $this->authorize('create', Patient::class);
 
         $request->validate([
-            'file'        => 'required|file|mimes:csv,xlsx,xls|max:5120',
+            'file' => 'required|file|mimes:csv,xlsx,xls|max:5120',
             'posyandu_id' => 'required|exists:posyandus,id',
         ], [
-            'file.required'        => 'File wajib diunggah.',
-            'file.mimes'           => 'Format file harus CSV, XLSX, atau XLS (Excel lama).',
-            'file.max'             => 'Ukuran file maksimal 5 MB.',
+            'file.required' => 'File wajib diunggah.',
+            'file.mimes' => 'Format file harus CSV, XLSX, atau XLS (Excel lama).',
+            'file.max' => 'Ukuran file maksimal 5 MB.',
             'posyandu_id.required' => 'Posyandu wajib dipilih.',
         ]);
 
@@ -157,9 +160,10 @@ class PatientController extends Controller
                 ->with('import_errors', $this->buildImportErrors($import));
 
         } catch (\Exception $e) {
-            \Log::error('Patient import failed: ' . $e->getMessage());
+            \Log::error('Patient import failed: '.$e->getMessage());
+
             return redirect()->back()
-                ->with('error', 'Import gagal: ' . $e->getMessage());
+                ->with('error', 'Import gagal: '.$e->getMessage());
         }
     }
 
@@ -169,7 +173,7 @@ class PatientController extends Controller
     public function downloadTemplate()
     {
         $headers = [
-            'Content-Type'        => 'text/csv; charset=UTF-8',
+            'Content-Type' => 'text/csv; charset=UTF-8',
             'Content-Disposition' => 'attachment; filename="template_import_warga_posyandu.csv"',
         ];
 
@@ -177,7 +181,7 @@ class PatientController extends Controller
 
         return response()->stream(function () use ($rows) {
             $file = fopen('php://output', 'w');
-            fputs($file, "\xEF\xBB\xBF"); // BOM UTF-8
+            fwrite($file, "\xEF\xBB\xBF"); // BOM UTF-8
             foreach ($rows as $row) {
                 fputcsv($file, $row);
             }
@@ -203,7 +207,7 @@ class PatientController extends Controller
     private function logImportActivity($import, int $posyanduId): void
     {
         $posyandu = \App\Models\Posyandu::find($posyanduId);
-        
+
         $this->activityLogService->log(
             'create_patient',
             "Import data warga: {$import->imported} berhasil, {$import->skipped} dilewati — Posyandu {$posyandu?->name}",
@@ -218,13 +222,13 @@ class PatientController extends Controller
     private function buildImportSuccessMessage($import): string
     {
         $message = "Import selesai: {$import->imported} warga berhasil diimpor";
-        
+
         if ($import->recordsImported > 0) {
             $message .= ", {$import->recordsImported} rekam medis tersimpan";
         }
-        
-        $message .= ".";
-        
+
+        $message .= '.';
+
         if ($import->skipped > 0) {
             $message .= " {$import->skipped} baris dilewati.";
         }
@@ -239,9 +243,9 @@ class PatientController extends Controller
     {
         $errors = $import->errors;
 
-        if (!empty($import->debugHeaders)) {
+        if (! empty($import->debugHeaders)) {
             $errors = array_merge(
-                ['[DEBUG] Header terdeteksi: ' . implode(' | ', $import->debugHeaders)],
+                ['[DEBUG] Header terdeteksi: '.implode(' | ', $import->debugHeaders)],
                 $errors
             );
         }

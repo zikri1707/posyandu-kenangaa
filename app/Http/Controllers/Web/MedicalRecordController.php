@@ -7,13 +7,12 @@ use App\Http\Requests\MedicalRecordRequest;
 use App\Models\MedicalRecord;
 use App\Models\Patient;
 use App\Services\MedicalRecordService;
-use Illuminate\Http\Request;
-use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 /**
  * Controller untuk mengelola rekam medis pasien
- * 
+ *
  * Menerapkan prinsip:
  * - Single Responsibility Principle
  * - Dependency Injection
@@ -21,15 +20,10 @@ use Illuminate\Http\RedirectResponse;
  */
 class MedicalRecordController extends Controller
 {
-    /**
-     * @var MedicalRecordService
-     */
     private MedicalRecordService $medicalRecordService;
 
     /**
      * Constructor dengan dependency injection
-     * 
-     * @param MedicalRecordService $medicalRecordService
      */
     public function __construct(MedicalRecordService $medicalRecordService)
     {
@@ -38,8 +32,6 @@ class MedicalRecordController extends Controller
 
     /**
      * Tampilkan daftar rekam medis
-     * 
-     * @return View
      */
     public function index(): View
     {
@@ -55,8 +47,6 @@ class MedicalRecordController extends Controller
 
     /**
      * Tampilkan form pembuatan rekam medis baru
-     * 
-     * @return View
      */
     public function create(): View
     {
@@ -64,8 +54,8 @@ class MedicalRecordController extends Controller
 
         $patients = $this->getAvailablePatients();
         $duplicateWarnings = $this->checkDuplicateWarnings(
-            request()->get('patient_id'), 
-            null, 
+            request()->get('patient_id'),
+            null,
             null
         );
 
@@ -74,9 +64,6 @@ class MedicalRecordController extends Controller
 
     /**
      * Simpan rekam medis baru
-     * 
-     * @param MedicalRecordRequest $request
-     * @return RedirectResponse
      */
     public function store(MedicalRecordRequest $request): RedirectResponse
     {
@@ -91,9 +78,6 @@ class MedicalRecordController extends Controller
 
     /**
      * Tampilkan detail rekam medis
-     * 
-     * @param MedicalRecord $medicalRecord
-     * @return View
      */
     public function show(MedicalRecord $medicalRecord): View
     {
@@ -104,9 +88,6 @@ class MedicalRecordController extends Controller
 
     /**
      * Tampilkan form edit rekam medis
-     * 
-     * @param MedicalRecord $medicalRecord
-     * @return View
      */
     public function edit(MedicalRecord $medicalRecord): View
     {
@@ -124,10 +105,6 @@ class MedicalRecordController extends Controller
 
     /**
      * Update rekam medis yang sudah ada
-     * 
-     * @param MedicalRecordRequest $request
-     * @param MedicalRecord $medicalRecord
-     * @return RedirectResponse
      */
     public function update(MedicalRecordRequest $request, MedicalRecord $medicalRecord): RedirectResponse
     {
@@ -142,9 +119,6 @@ class MedicalRecordController extends Controller
 
     /**
      * Hapus rekam medis
-     * 
-     * @param MedicalRecord $medicalRecord
-     * @return RedirectResponse
      */
     public function destroy(MedicalRecord $medicalRecord): RedirectResponse
     {
@@ -159,7 +133,7 @@ class MedicalRecordController extends Controller
 
     /**
      * Dapatkan daftar pasien yang tersedia berdasarkan role user
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Collection
      */
     private function getAvailablePatients()
@@ -176,10 +150,8 @@ class MedicalRecordController extends Controller
 
     /**
      * Periksa peringatan duplikasi Vitamin A dan Pill FE
-     * 
-     * @param int|null $patientId
-     * @param \Illuminate\Support\Carbon|null $visitDate
-     * @param int|null $excludeRecordId
+     *
+     * @param  \Illuminate\Support\Carbon|null  $visitDate
      * @return mixed
      */
     private function checkDuplicateWarnings(
@@ -187,7 +159,7 @@ class MedicalRecordController extends Controller
         $visitDate = null,
         ?int $excludeRecordId = null
     ) {
-        if (!$patientId) {
+        if (! $patientId) {
             return null;
         }
 

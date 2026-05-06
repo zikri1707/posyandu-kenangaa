@@ -3,15 +3,6 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Database\Seeders\PedukuhanSeeder;
-use Database\Seeders\UserSeeder;
-use Database\Seeders\PosyanduSeeder;
-use Database\Seeders\ScheduleSeeder;
-use Database\Seeders\GallerySeeder;
-use Database\Seeders\ArticleSeeder;
-use Database\Seeders\MedicalRecordSeeder;
-use Database\Seeders\PatientSeeder;
-use Database\Seeders\WhoWeightForAgeSeeder;
 
 class DatabaseSeeder extends Seeder
 {

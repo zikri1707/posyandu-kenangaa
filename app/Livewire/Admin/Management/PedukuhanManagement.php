@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Admin\Management;
 
-use App\Models\Pedukuhan;
 use App\Livewire\Shared\BaseAdminComponent;
+use App\Models\Pedukuhan;
 
 class PedukuhanManagement extends BaseAdminComponent
 {
@@ -16,9 +16,9 @@ class PedukuhanManagement extends BaseAdminComponent
     public function render()
     {
         $query = Pedukuhan::query()
-            ->when($this->search, function($q) {
-                $q->where('name', 'like', '%' . $this->search . '%')
-                  ->orWhere('description', 'like', '%' . $this->search . '%');
+            ->when($this->search, function ($q) {
+                $q->where('name', 'like', '%'.$this->search.'%')
+                    ->orWhere('description', 'like', '%'.$this->search.'%');
             })
             ->latest();
 

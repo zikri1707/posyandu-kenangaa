@@ -1,8 +1,3 @@
-@extends('layouts.admin-layout')
-
-@section('admin-title') Buat Artikel Baru @endsection
-
-@section('admin-content')
 <div class="max-w-[1200px] mx-auto space-y-10 pb-20">
 
     {{-- ── Simplified Header ── --}}
@@ -146,4 +141,3 @@
         </form>
     </div>
 </div>
-@endsection

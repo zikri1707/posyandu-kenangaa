@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\ActivityLog;
 use App\Models\MedicalRecord;
 use App\Models\Patient;
 use App\Models\Posyandu;

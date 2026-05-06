@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use Defuse\Crypto\Key;
+use Illuminate\Console\Command;
 
 class GenerateEncryptionKey extends Command
 {
@@ -33,7 +33,7 @@ class GenerateEncryptionKey extends Command
         $this->line($asciiString);
         $this->newLine();
         $this->warn('Simpan kunci ini di file .env Anda sebagai ENCRYPTION_KEY');
-        $this->comment('Contoh: ENCRYPTION_KEY=' . $asciiString);
+        $this->comment('Contoh: ENCRYPTION_KEY='.$asciiString);
 
         return Command::SUCCESS;
     }

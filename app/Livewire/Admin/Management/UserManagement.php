@@ -2,21 +2,23 @@
 
 namespace App\Livewire\Admin\Management;
 
-use App\Models\User;
-use App\Models\Posyandu;
 use App\Livewire\Shared\BaseAdminComponent;
+use App\Models\Posyandu;
+use App\Models\User;
 use Livewire\Attributes\Layout;
 
 #[Layout('layouts.admin-layout')]
 class UserManagement extends BaseAdminComponent
 {
     public string $search = '';
+
     public string $role = '';
+
     public string $status = '';
-    
+
     protected $queryString = [
         'search' => ['except' => ''],
-        'role'   => ['except' => ''],
+        'role' => ['except' => ''],
         'status' => ['except' => ''],
     ];
 
@@ -24,14 +26,14 @@ class UserManagement extends BaseAdminComponent
     {
         // Scope pengguna berdasarkan level akses (Opsional, di sini kita tampilkan semua untuk SuperAdmin/Admin)
         $query = User::with('posyandu')
-            ->when($this->search, function($q) {
-                $q->where(function($sq) {
-                    $sq->where('name', 'like', '%' . $this->search . '%')
-                       ->orWhere('email', 'like', '%' . $this->search . '%');
+            ->when($this->search, function ($q) {
+                $q->where(function ($sq) {
+                    $sq->where('name', 'like', '%'.$this->search.'%')
+                        ->orWhere('email', 'like', '%'.$this->search.'%');
                 });
             })
-            ->when($this->role,   fn($q) => $q->where('role', $this->role))
-            ->when($this->status, fn($q) => $q->where('is_active', $this->status === 'active'))
+            ->when($this->role, fn ($q) => $q->where('role', $this->role))
+            ->when($this->status, fn ($q) => $q->where('is_active', $this->status === 'active'))
             ->latest();
 
         $stats = User::selectRaw('COUNT(*) as total')
@@ -39,10 +41,10 @@ class UserManagement extends BaseAdminComponent
             ->first();
 
         return view('livewire.admin.user-management.index', [
-            'users'          => $query->paginate(10),
-            'totalUsers'     => $stats->total ?? 0,
-            'totalPosyandu'  => Posyandu::count(),
-            'inactiveUsers'  => $stats->inactive ?? 0,
+            'users' => $query->paginate(10),
+            'totalUsers' => $stats->total ?? 0,
+            'totalPosyandu' => Posyandu::count(),
+            'inactiveUsers' => $stats->inactive ?? 0,
         ]);
     }
 }

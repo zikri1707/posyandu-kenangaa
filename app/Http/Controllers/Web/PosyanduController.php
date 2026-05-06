@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers\Web;
 
-use App\Models\Posyandu;
-use App\Http\Requests\PosyanduRequest;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PosyanduRequest;
+use App\Models\Posyandu;
+use Illuminate\Http\Request;
 
 class PosyanduController extends Controller
 {
     public function index(Request $request)
     {
         $posyandus = Posyandu::with('pedukuhan')
-            ->when($request->search, fn($q, $s) => $q->where(function ($q) use ($s) {
+            ->when($request->search, fn ($q, $s) => $q->where(function ($q) use ($s) {
                 $q->where('name', 'like', "%{$s}%")
-                  ->orWhere('unique_code', 'like', "%{$s}%")
-                  ->orWhere('address', 'like', "%{$s}%");
+                    ->orWhere('unique_code', 'like', "%{$s}%")
+                    ->orWhere('address', 'like', "%{$s}%");
             }))
             ->orderBy('name')
             ->paginate(10)
@@ -27,6 +27,7 @@ class PosyanduController extends Controller
     public function create()
     {
         $pedukuhans = \App\Models\Pedukuhan::orderBy('name')->get();
+
         return view('livewire.admin.posyandu-management.create', compact('pedukuhans'));
     }
 
@@ -41,12 +42,14 @@ class PosyanduController extends Controller
     public function show(Posyandu $posyandu)
     {
         $posyandu->load('pedukuhan');
+
         return view('livewire.admin.posyandu-management.details', compact('posyandu'));
     }
 
     public function edit(Posyandu $posyandu)
     {
         $pedukuhans = \App\Models\Pedukuhan::orderBy('name')->get();
+
         return view('livewire.admin.posyandu-management.update', compact('posyandu', 'pedukuhans'));
     }
 

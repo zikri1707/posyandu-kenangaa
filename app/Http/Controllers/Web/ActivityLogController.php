@@ -52,8 +52,8 @@ class ActivityLogController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('description', 'like', "%{$search}%")
-                  ->orWhere('user_name', 'like', "%{$search}%")
-                  ->orWhere('entity_type', 'like', "%{$search}%");
+                    ->orWhere('user_name', 'like', "%{$search}%")
+                    ->orWhere('entity_type', 'like', "%{$search}%");
             });
         }
 
@@ -61,7 +61,7 @@ class ActivityLogController extends Controller
 
         // Calculate total stats for the whole database (ignoring current filters for general overview)
         $totalStats = [
-            'total'  => ActivityLog::count(),
+            'total' => ActivityLog::count(),
             'create' => ActivityLog::where('action_type', 'create')->count(),
             'update' => ActivityLog::where('action_type', 'update')->count(),
             'delete' => ActivityLog::where('action_type', 'delete')->count(),
@@ -116,7 +116,7 @@ class ActivityLogController extends Controller
         }
 
         $totalLogs = ActivityLog::count();
-        
+
         $logsByAction = ActivityLog::select('action_type', DB::raw('count(*) as count'))
             ->groupBy('action_type')
             ->get();

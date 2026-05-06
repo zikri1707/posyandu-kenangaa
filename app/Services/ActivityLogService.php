@@ -11,13 +11,12 @@ class ActivityLogService
     /**
      * Log an activity action
      *
-     * @param string $actionType Type of action (e.g., 'login', 'logout', 'create_patient', etc.)
-     * @param string $description Human-readable description of the action
-     * @param int|null $entityId ID of the entity affected (optional)
-     * @param string|null $entityType Type of entity affected (e.g., 'Patient', 'MedicalRecord')
-     * @param array|null $oldValues Values before the change (optional)
-     * @param array|null $newValues Values after the change (optional)
-     * @return ActivityLog
+     * @param  string  $actionType  Type of action (e.g., 'login', 'logout', 'create_patient', etc.)
+     * @param  string  $description  Human-readable description of the action
+     * @param  int|null  $entityId  ID of the entity affected (optional)
+     * @param  string|null  $entityType  Type of entity affected (e.g., 'Patient', 'MedicalRecord')
+     * @param  array|null  $oldValues  Values before the change (optional)
+     * @param  array|null  $newValues  Values after the change (optional)
      */
     public function log(
         string $actionType,
@@ -28,7 +27,7 @@ class ActivityLogService
         ?array $newValues = null
     ): ActivityLog {
         $user = Auth::user();
-        
+
         return ActivityLog::create([
             'user_id' => $user->id,
             'user_name' => $user->name,

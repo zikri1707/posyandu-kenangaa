@@ -9,34 +9,29 @@ use Illuminate\Http\Response;
 abstract class Controller
 {
     use AuthorizesRequests;
-    
+
     /**
      * Return a standardized success JSON response.
      *
-     * @param mixed $data
-     * @param string|null $message
-     * @param int $status
-     * @return \Illuminate\Http\JsonResponse
+     * @param  mixed  $data
      */
     protected function successResponse($data = null, ?string $message = null, int $status = Response::HTTP_OK): JsonResponse
     {
         $response = ['success' => true];
-        if (!is_null($message)) {
+        if (! is_null($message)) {
             $response['message'] = $message;
         }
-        if (!is_null($data)) {
+        if (! is_null($data)) {
             $response['data'] = $data;
         }
+
         return response()->json($response, $status);
     }
 
     /**
      * Return a standardized error JSON response.
      *
-     * @param string $message
-     * @param int $status
-     * @param mixed|null $errors
-     * @return \Illuminate\Http\JsonResponse
+     * @param  mixed|null  $errors
      */
     protected function errorResponse(string $message, int $status = Response::HTTP_BAD_REQUEST, $errors = null): JsonResponse
     {
@@ -44,9 +39,10 @@ abstract class Controller
             'success' => false,
             'message' => $message,
         ];
-        if (!is_null($errors)) {
+        if (! is_null($errors)) {
             $response['errors'] = $errors;
         }
+
         return response()->json($response, $status);
     }
 }

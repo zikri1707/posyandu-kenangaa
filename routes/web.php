@@ -1,35 +1,30 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-
-// --- CONTROLLERS UMUM ---
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\Auth\PasswordResetController;
-use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\ConfirmPasswordController;
-
-// --- CONTROLLERS ADMIN (LOKASI DI FOLDER 'Web') ---
-use App\Http\Controllers\Web\PatientController;
-use App\Http\Controllers\Web\PosyanduController;
-use App\Http\Controllers\Web\ScheduleController;
-use App\Http\Controllers\Web\GalleryController;
+// --- CONTROLLERS UMUM ---
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\PasswordResetController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Web\ArticleController;
+// --- CONTROLLERS ADMIN (LOKASI DI FOLDER 'Web') ---
+use App\Http\Controllers\Web\GalleryController;
 use App\Http\Controllers\Web\MedicalRecordController;
-use App\Http\Controllers\Web\UserController;
+use App\Http\Controllers\Web\PatientController;
 use App\Http\Controllers\Web\PedukuhanController;
+use App\Http\Controllers\Web\PosyanduController;
 use App\Http\Controllers\Web\PublicController;
-
+use App\Http\Controllers\Web\ScheduleController;
+use App\Http\Controllers\Web\UserController;
+use App\Livewire\Admin\Management\ArticleManagement;
 // --- LIVEWIRE COMPONENTS ---
-use App\Livewire\Admin\PatientManagement\Index as PatientManagementIndex;
+use App\Livewire\Admin\Management\GalleryManagement;
+use App\Livewire\Admin\Management\MedicalRecordManagement;
+use App\Livewire\Admin\Management\PedukuhanManagement;
 use App\Livewire\Admin\Management\PosyanduManagement;
 use App\Livewire\Admin\Management\ScheduleManagement;
-use App\Livewire\Admin\Management\GalleryManagement;
-use App\Livewire\Admin\Management\ArticleManagement;
-use App\Livewire\Admin\Management\MedicalRecordManagement;
 use App\Livewire\Admin\Management\UserManagement;
-use App\Livewire\Admin\Management\PedukuhanManagement;
+use App\Livewire\Admin\PatientManagement\Index as PatientManagementIndex;
+use Illuminate\Support\Facades\Route;
 
 // Home Page - Public Home
 Route::get('/', [PublicController::class, 'home'])->name('public.home');
@@ -59,7 +54,7 @@ Route::middleware('guest')->group(function () {
 
 // Protected Routes (Require Login)
 Route::middleware(['auth'])->group(function () {
-    
+
     // Dashboard (Admin Dashboard)
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 

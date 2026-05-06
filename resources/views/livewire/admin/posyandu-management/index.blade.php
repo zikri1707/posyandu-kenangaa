@@ -1,115 +1,69 @@
+<div class="max-w-7xl mx-auto space-y-8 pb-20">
 
-
-<div class="max-w-[1280px] mx-auto space-y-6">
-
-    {{-- ── Page Header ── --}}
-    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+    {{-- ── Header ── --}}
+    <div class="flex items-center justify-between px-2">
         <div>
-            <nav class="flex text-xs text-slate-400 mb-1.5 gap-1.5 items-center">
-                <a href="{{ route('dashboard') }}" class="hover:text-teal-600 transition-colors">Beranda</a>
-                <span class="material-symbols-outlined text-[12px]">chevron_right</span>
-                <span class="text-teal-600 font-semibold">Data Posyandu</span>
-            </nav>
-            <h1 class="text-2xl font-bold text-slate-900">Manajemen Unit Posyandu</h1>
-            <p class="text-sm text-slate-500 mt-0.5">Data unit posyandu di Kecamatan Bekasi Timur.</p>
+            <h2 class="text-3xl font-black text-slate-800 tracking-tight">Manajemen Posyandu</h2>
+            <p class="text-sm text-slate-400 font-medium mt-1">Kelola data unit posyandu dan wilayah binaan.</p>
         </div>
-        <a href="{{ route('admin.posyandu.create') }}"
-           class="h-11 px-5 flex items-center gap-2 bg-teal-600 text-white rounded-xl text-sm font-bold hover:bg-teal-700 active:scale-95 transition-all shadow-sm">
-            <span class="material-symbols-outlined text-[18px]">add_home_work</span>
-            Tambah Posyandu Baru
-        </a>
+        <x-button href="{{ route('admin.posyandu.create') }}" variant="secondary" icon="add_home_work">Tambah Unit</x-button>
     </div>
 
-    {{-- Flash Messages --}}
-    @if(session('success'))
-    <div class="flex items-center gap-3 px-4 py-3 bg-green-50 border border-green-200 text-green-800 rounded-xl text-sm font-medium">
-        <span class="material-symbols-outlined text-green-600 text-[20px]" style="font-variation-settings:'FILL' 1;">check_circle</span>
-        {{ session('success') }}
-    </div>
-    @endif
-    @if(session('error'))
-    <div class="flex items-center gap-3 px-4 py-3 bg-red-50 border border-red-200 text-red-800 rounded-xl text-sm font-medium">
-        <span class="material-symbols-outlined text-red-600 text-[20px]">error</span>
-        {{ session('error') }}
-    </div>
-    @endif
-
-    {{-- ── Summary Cards ── --}}
+    {{-- ── Summary Cards (Minimalist) ── --}}
     @php
         $totalPosyandu  = $posyandus->total();
         $totalPedukuhan = \App\Models\Pedukuhan::count();
         $totalWarga     = \App\Models\Patient::count();
     @endphp
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <div class="bg-white border border-slate-200 rounded-2xl p-5 flex items-center gap-4 shadow-sm">
-            <div class="w-14 h-14 bg-teal-50 rounded-2xl flex items-center justify-center text-teal-600 flex-shrink-0">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white border border-slate-100 rounded-[32px] p-7 flex items-center gap-5 transition-all">
+            <div class="w-14 h-14 bg-teal-50 text-teal-600 rounded-2xl flex items-center justify-center flex-shrink-0">
                 <span class="material-symbols-outlined text-[28px]" style="font-variation-settings:'FILL' 1;">home_health</span>
             </div>
             <div>
-                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Posyandu</p>
-                <p class="text-3xl font-black text-slate-900">{{ $totalPosyandu }}</p>
-                <p class="text-xs text-green-600 font-semibold mt-0.5">Aktif Seluruhnya</p>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-2">Total Posyandu</p>
+                <p class="text-3xl font-black text-slate-900 leading-none">{{ $totalPosyandu }}</p>
             </div>
         </div>
-        <div class="bg-white border border-slate-200 rounded-2xl p-5 flex items-center gap-4 shadow-sm">
-            <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 flex-shrink-0">
+        <div class="bg-white border border-slate-100 rounded-[32px] p-7 flex items-center gap-5 transition-all">
+            <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center flex-shrink-0">
                 <span class="material-symbols-outlined text-[28px]" style="font-variation-settings:'FILL' 1;">location_city</span>
             </div>
             <div>
-                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Wilayah Pedukuhan</p>
-                <p class="text-3xl font-black text-slate-900">{{ $totalPedukuhan }}</p>
-                <p class="text-xs text-slate-400 mt-0.5">Rata-rata {{ $totalPedukuhan > 0 ? round($totalPosyandu / $totalPedukuhan, 1) : 0 }} per Pedukuhan</p>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-2">Pedukuhan</p>
+                <p class="text-3xl font-black text-slate-900 leading-none">{{ $totalPedukuhan }}</p>
             </div>
         </div>
-        <div class="bg-white border border-slate-200 rounded-2xl p-5 flex items-center gap-4 shadow-sm">
-            <div class="w-14 h-14 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-600 flex-shrink-0">
+        <div class="bg-white border border-slate-100 rounded-[32px] p-7 flex items-center gap-5 transition-all">
+            <div class="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center flex-shrink-0">
                 <span class="material-symbols-outlined text-[28px]" style="font-variation-settings:'FILL' 1;">groups</span>
             </div>
             <div>
-                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Warga Terdata</p>
-                <p class="text-3xl font-black text-slate-900">{{ number_format($totalWarga) }}</p>
-                <p class="text-xs text-green-600 font-semibold mt-0.5">Total terdaftar</p>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-2">Total Warga</p>
+                <p class="text-3xl font-black text-slate-900 leading-none">{{ number_format($totalWarga) }}</p>
             </div>
         </div>
     </div>
 
-    {{-- ── Table ── --}}
-    <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-
-        {{-- Table Header --}}
-        <div class="px-6 py-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 bg-slate-50/50">
-            <h3 class="text-sm font-bold text-slate-700">Daftar Unit Posyandu</h3>
-            <form method="GET" action="{{ route('admin.posyandu.index') }}" class="flex items-center gap-2">
-                <div class="relative group">
-                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-600 transition-colors pointer-events-none text-[18px]">search</span>
-                    <input type="text" name="search" value="{{ request('search') }}"
-                           placeholder="Cari posyandu..."
-                           class="search-input-premium h-10 pl-11 pr-4">
-                </div>
-                <button type="submit"
-                        class="h-9 px-4 bg-white border border-slate-200 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-colors">
-                    Cari
-                </button>
-                @if(request('search'))
-                <a href="{{ route('admin.posyandu.index') }}"
-                   class="h-9 px-3 flex items-center bg-white border border-slate-200 rounded-lg text-slate-400 hover:text-red-500 transition-colors">
-                    <span class="material-symbols-outlined text-[16px]">restart_alt</span>
-                </a>
-                @endif
-            </form>
+    {{-- ── Search Bar ── --}}
+    <div class="bg-white rounded-[32px] border border-slate-100 p-6 flex flex-col md:flex-row gap-4 items-center">
+        <div class="relative flex-1 w-full group">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-teal-500 transition-colors pointer-events-none" style="font-variation-settings: 'wght' 300;">search</span>
+            <input type="text" wire:model.live.debounce.300ms="search" placeholder="Cari nama posyandu, kode, atau alamat..." 
+                class="w-full h-12 pl-12 pr-4 bg-slate-50 border-transparent rounded-2xl text-sm font-semibold text-slate-700 focus:bg-white focus:ring-0 focus:border-teal-500 transition-all border-2">
         </div>
+    </div>
 
-        {{-- Table Content --}}
+    {{-- ── Data Table (Consistent with Patients) ── --}}
+    <div class="bg-white border border-slate-100 rounded-[40px] overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead class="bg-white border-b border-slate-200">
-                    <tr>
-                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Nama Posyandu</th>
-                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Pedukuhan</th>
-                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Alamat</th>
-                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-center">Kode Unik</th>
-                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-center">Warga</th>
-                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-right">Aksi</th>
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="bg-slate-50/50">
+                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Detail Unit</th>
+                        <th class="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Kode Unik</th>
+                        <th class="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Wilayah</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Tindakan</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-50">
@@ -118,83 +72,65 @@
                         $initial = strtoupper(substr($posyandu->name, 0, 1));
                         $colors  = ['teal','blue','amber','indigo','emerald','rose','violet','orange'];
                         $color   = $colors[($posyandu->id - 1) % count($colors)];
-                        $jumlahWarga = $posyandu->patients()->count();
                     @endphp
-                    <tr class="hover:bg-slate-50 transition-colors">
-                        {{-- Nama --}}
-                        <td class="px-6 py-4">
-                            <div class="flex items-center gap-3">
+                    <tr class="group hover:bg-slate-50/30 transition-all" wire:key="posyandu-{{ $posyandu->id }}">
+                        <td class="px-8 py-5">
+                            <div class="flex items-center gap-4">
                                 @if($posyandu->logo_photo)
-                                    <img src="{{ asset('storage/' . $posyandu->logo_photo) }}"
-                                         class="w-9 h-9 rounded-xl object-cover flex-shrink-0 border border-slate-200">
+                                    <img src="{{ asset('storage/' . $posyandu->logo_photo) }}" class="w-12 h-12 rounded-2xl object-cover flex-shrink-0 border border-slate-100">
                                 @else
-                                    <div class="w-9 h-9 rounded-xl bg-{{ $color }}-100 text-{{ $color }}-700 flex items-center justify-center font-bold text-sm flex-shrink-0">
+                                    <div class="w-12 h-12 rounded-2xl bg-{{ $color }}-50 text-{{ $color }}-600 flex items-center justify-center font-black text-sm flex-shrink-0 border border-{{ $color }}-100/50">
                                         {{ $initial }}
                                     </div>
                                 @endif
                                 <div>
-                                    <p class="font-bold text-slate-800 text-sm">{{ $posyandu->name }}</p>
+                                    <p class="font-black text-slate-800 text-[15px] leading-tight mb-1">{{ $posyandu->name }}</p>
+                                    <p class="text-[11px] text-slate-400 font-bold italic truncate max-w-[200px]">"{{ $posyandu->address ?? 'Alamat belum disetel' }}"</p>
                                 </div>
                             </div>
                         </td>
-                        {{-- Pedukuhan --}}
-                        <td class="px-6 py-4">
-                            <span class="inline-flex items-center gap-1.5 text-sm text-slate-600">
-                                <span class="material-symbols-outlined text-teal-500 text-[15px]">location_city</span>
-                                {{ $posyandu->pedukuhan?->name ?? '—' }}
-                            </span>
-                        </td>
-                        {{-- Alamat --}}
-                        <td class="px-6 py-4 text-sm text-slate-500 max-w-[200px]">
-                            <span class="truncate block">{{ $posyandu->address ?? '—' }}</span>
-                        </td>
-                        {{-- Kode Unik --}}
-                        <td class="px-6 py-4 text-center">
-                            <span class="px-2.5 py-1 bg-slate-100 rounded-lg text-xs font-bold text-slate-700 font-mono">
+                        <td class="px-6 py-5 text-center">
+                            <span class="px-3 py-1 bg-slate-50 border border-slate-100 rounded-xl text-[11px] font-black text-teal-600 font-mono tracking-wider">
                                 {{ $posyandu->unique_code ?? '—' }}
                             </span>
                         </td>
-                        {{-- Warga --}}
-                        <td class="px-6 py-4 text-center text-sm font-semibold text-slate-700">
-                            {{ number_format($jumlahWarga) }}
+                        <td class="px-6 py-5">
+                            <div class="flex flex-col">
+                                <span class="text-sm font-bold text-slate-700">{{ $posyandu->pedukuhan?->name ?? '—' }}</span>
+                                <span class="text-[10px] text-slate-400 font-black uppercase tracking-tighter">Bekasi Timur</span>
+                            </div>
                         </td>
-                        {{-- Aksi --}}
-                        <td class="px-6 py-4 text-right">
-                            <div class="flex items-center justify-end gap-1">
-                                <a href="{{ route('admin.posyandu.show', $posyandu->id) }}"
-                                   class="w-8 h-8 flex items-center justify-center rounded-lg text-teal-600 hover:bg-teal-50 transition-colors"
-                                   title="Detail">
+                        <td class="px-8 py-5 text-right">
+                            <div class="flex items-center justify-end gap-2.5">
+                                {{-- View --}}
+                                <a href="{{ route('admin.posyandu.show', $posyandu->id) }}" 
+                                   class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-50 text-slate-500 hover:bg-teal-500 hover:text-white hover:shadow-lg hover:shadow-teal-500/30 transition-all duration-300"
+                                   title="Lihat Detail">
                                     <span class="material-symbols-outlined text-[18px]">visibility</span>
                                 </a>
-                                <a href="{{ route('admin.posyandu.edit', $posyandu->id) }}"
-                                   class="w-8 h-8 flex items-center justify-center rounded-lg text-blue-600 hover:bg-blue-50 transition-colors"
-                                   title="Edit">
+                                
+                                {{-- Edit --}}
+                                <a href="{{ route('admin.posyandu.edit', $posyandu->id) }}" 
+                                   class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-50 text-slate-500 hover:bg-amber-500 hover:text-white hover:shadow-lg hover:shadow-amber-500/30 transition-all duration-300"
+                                   title="Edit Data">
                                     <span class="material-symbols-outlined text-[18px]">edit</span>
                                 </a>
-                                <form action="{{ route('admin.posyandu.destroy', $posyandu->id) }}" method="POST" class="inline"
-                                      onsubmit="return confirm('Hapus posyandu \'{{ addslashes($posyandu->name) }}\'? Semua data terkait akan terpengaruh.')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
-                                            class="w-8 h-8 flex items-center justify-center rounded-lg text-red-500 hover:bg-red-50 transition-colors"
-                                            title="Hapus">
-                                        <span class="material-symbols-outlined text-[18px]">delete</span>
-                                    </button>
-                                </form>
+
+                                {{-- Delete (EXACTLY like patients) --}}
+                                <button wire:click="confirmDelete({{ $posyandu->id }})" 
+                                        class="w-9 h-9 flex items-center justify-center rounded-xl bg-red-50 text-red-400 hover:bg-red-500 hover:text-white hover:shadow-lg hover:shadow-red-500/30 transition-all duration-300"
+                                        title="Hapus Unit">
+                                    <span class="material-symbols-outlined text-[18px]">delete</span>
+                                </button>
                             </div>
                         </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-16 text-center">
-                            <div class="flex flex-col items-center gap-3 text-slate-400">
-                                <span class="material-symbols-outlined text-[48px] text-slate-200">home_health</span>
-                                <p class="text-sm font-semibold text-slate-500">Belum ada data posyandu</p>
-                                <a href="{{ route('admin.posyandu.create') }}"
-                                   class="text-sm text-teal-600 hover:underline font-medium flex items-center gap-1">
-                                    <span class="material-symbols-outlined text-[16px]">add</span>
-                                    Tambah Posyandu Pertama
-                                </a>
+                        <td colspan="4" class="px-8 py-20 text-center">
+                            <div class="flex flex-col items-center gap-4 text-slate-300">
+                                <span class="material-symbols-outlined text-[64px]" style="font-variation-settings: 'wght' 100;">home_health</span>
+                                <p class="text-sm font-black text-slate-500 uppercase tracking-widest">Tidak ada unit posyandu ditemukan</p>
                             </div>
                         </td>
                     </tr>
@@ -202,63 +138,28 @@
                 </tbody>
             </table>
         </div>
-
         {{-- Pagination --}}
-        <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3">
-            <p class="text-xs font-medium text-slate-500">
-                Menampilkan {{ $posyandus->firstItem() ?? 0 }}–{{ $posyandus->lastItem() ?? 0 }}
-                dari {{ $posyandus->total() }} Posyandu
-            </p>
-            @if($posyandus->hasPages())
-            <div class="flex items-center gap-1">
-                @if($posyandus->onFirstPage())
-                    <span class="w-8 h-8 flex items-center justify-center border border-slate-200 rounded-lg text-slate-300 cursor-not-allowed bg-white">
-                        <span class="material-symbols-outlined text-[16px]">chevron_left</span>
-                    </span>
-                @else
-                    <a href="{{ $posyandus->previousPageUrl() }}"
-                       class="w-8 h-8 flex items-center justify-center border border-slate-200 rounded-lg text-slate-500 hover:bg-white transition-colors bg-white">
-                        <span class="material-symbols-outlined text-[16px]">chevron_left</span>
-                    </a>
-                @endif
-
-                @foreach($posyandus->getUrlRange(max(1, $posyandus->currentPage()-1), min($posyandus->lastPage(), $posyandus->currentPage()+2)) as $page => $url)
-                    <a href="{{ $url }}"
-                       class="w-8 h-8 flex items-center justify-center rounded-lg text-sm font-semibold transition-colors
-                           {{ $page === $posyandus->currentPage()
-                               ? 'bg-teal-600 text-white shadow-sm'
-                               : 'border border-slate-200 text-slate-600 hover:bg-white bg-white' }}">
-                        {{ $page }}
-                    </a>
-                @endforeach
-
-                @if($posyandus->hasMorePages())
-                    <a href="{{ $posyandus->nextPageUrl() }}"
-                       class="w-8 h-8 flex items-center justify-center border border-slate-200 rounded-lg text-slate-500 hover:bg-white transition-colors bg-white">
-                        <span class="material-symbols-outlined text-[16px]">chevron_right</span>
-                    </a>
-                @else
-                    <span class="w-8 h-8 flex items-center justify-center border border-slate-200 rounded-lg text-slate-300 cursor-not-allowed bg-white">
-                        <span class="material-symbols-outlined text-[16px]">chevron_right</span>
-                    </span>
-                @endif
+        <div class="px-8 py-5 bg-white border-t border-slate-50 flex items-center justify-between">
+            <div class="text-[11px] font-black text-slate-400 uppercase tracking-widest">
+                {{ $posyandus->total() }} Total Unit
             </div>
-            @endif
+            {{ $posyandus->links() }}
         </div>
     </div>
 
-    {{-- ── Footer Banner ── --}}
-    <div class="bg-teal-900 rounded-2xl overflow-hidden relative min-h-[140px] flex items-center p-8">
-        <div class="absolute inset-0 bg-gradient-to-r from-teal-800 to-teal-600 opacity-80"></div>
-        <div class="relative z-10">
-            <h4 class="text-white font-bold text-lg mb-1">Visualisasi Wilayah</h4>
-            <p class="text-teal-100 text-sm mb-4">Lihat sebaran unit posyandu dan kepadatan penduduk di seluruh pedukuhan Bekasi Timur.</p>
-            <a href="{{ route('admin.pedukuhans.index') }}"
-               class="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white border border-white/30 px-4 py-2 rounded-lg text-sm font-bold backdrop-blur-sm transition-colors">
-                <span class="material-symbols-outlined text-[16px]">location_city</span>
-                Lihat Data Pedukuhan
-            </a>
-        </div>
+    {{-- ── Delete Confirmation Modal (EXACTLY like patients) ── --}}
+    <div x-data="{ open: @entangle('showDeleteModal') }">
+        <x-modals.confirm-modal
+            title="Hapus Unit Posyandu"
+            message="Apakah Anda yakin ingin menghapus unit posyandu ini?"
+            sub-message="Tindakan ini permanen. Sistem akan memvalidasi data terkait sebelum menghapus."
+            type="danger"
+            confirm-text="Ya, Hapus Unit"
+        >
+            <x-slot:footer>
+                <x-button @click="open = false" variant="outline">Batal</x-button>
+                <x-button wire:click="deletePosyandu" variant="danger" icon="delete">Ya, Hapus</x-button>
+            </x-slot:footer>
+        </x-modals.confirm-modal>
     </div>
-
 </div>

@@ -9,7 +9,9 @@ use Illuminate\View\Component;
 class DataCard extends Component
 {
     public $title;
+
     public $icon;
+
     public $variant;
 
     /**
