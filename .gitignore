@@ -9,7 +9,9 @@ vendor/
 # Environment
 .env
 .env.local
-.env.*
+.env.testing
+.env.production
+!.env.example
 
 # Editors
 .vscode/
