@@ -66,6 +66,8 @@ class MedicalRecordService
             $preparedData = $this->prepareRecordData($data, $patient, $user);
             $medicalRecord = MedicalRecord::create($preparedData);
 
+            $this->saveChildDevelopment($medicalRecord, $data);
+
             $this->logActivity('create_medical_record', $patient, $medicalRecord, null, $preparedData);
 
             return $medicalRecord;
@@ -90,6 +92,8 @@ class MedicalRecordService
 
             $preparedData = $this->prepareUpdateData($data, $patient, $medicalRecord, $oldValues);
             $medicalRecord->update($preparedData);
+
+            $this->saveChildDevelopment($medicalRecord, $data);
 
             $this->logActivity(
                 'update_medical_record',
@@ -406,6 +410,48 @@ class MedicalRecordService
             'MedicalRecord',
             $oldValues,
             $newValues
+        );
+    }
+
+    /**
+     * Simpan data Ceklis Perkembangan (KPSP)
+     */
+    private function saveChildDevelopment(MedicalRecord $medicalRecord, array $data): void
+    {
+        if (! isset($data['kpsp_age_group']) || empty($data['kpsp_age_group'])) {
+            return;
+        }
+
+        $kpspData = [
+            'age_group_months' => $data['kpsp_age_group'],
+            'motor_gross' => $data['kpsp_motor_gross'] ?? false,
+            'motor_fine' => $data['kpsp_motor_fine'] ?? false,
+            'language' => $data['kpsp_language'] ?? false,
+            'social' => $data['kpsp_social'] ?? false,
+            'note' => $data['kpsp_note'] ?? null,
+        ];
+
+        // Hitung status otomatis: Jika ada jawaban "Tidak" (false), maka Meragukan/Penyimpangan.
+        // Asumsi standar: KPSP punya 9-10 pertanyaan. Di sini kita simplifikasi jadi 4 area.
+        // Jika semua true = Sesuai. Jika 1 false = Meragukan. Jika >= 2 false = Penyimpangan.
+        $falseCount = 0;
+        foreach (['motor_gross', 'motor_fine', 'language', 'social'] as $area) {
+            if (! $kpspData[$area]) {
+                $falseCount++;
+            }
+        }
+
+        if ($falseCount === 0) {
+            $kpspData['development_status'] = 'Sesuai';
+        } elseif ($falseCount === 1) {
+            $kpspData['development_status'] = 'Meragukan';
+        } else {
+            $kpspData['development_status'] = 'Penyimpangan';
+        }
+
+        $medicalRecord->childDevelopment()->updateOrCreate(
+            ['medical_record_id' => $medicalRecord->id],
+            $kpspData
         );
     }
 }

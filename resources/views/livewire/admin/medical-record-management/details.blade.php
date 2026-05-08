@@ -34,7 +34,7 @@
                     <h3 class="text-xs font-black text-slate-800 uppercase tracking-widest">Hasil Pengukuran Utama</h3>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div class="p-6 rounded-3xl bg-slate-50/50 border border-slate-100 text-center">
                         <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Berat Badan</div>
                         <div class="text-2xl font-black text-slate-900">{{ $medicalRecord->weight ?? '-' }} <span class="text-sm font-bold text-slate-400">kg</span></div>
@@ -44,8 +44,12 @@
                         <div class="text-2xl font-black text-slate-900">{{ $medicalRecord->height ?? '-' }} <span class="text-sm font-bold text-slate-400">cm</span></div>
                     </div>
                     <div class="p-6 rounded-3xl bg-slate-50/50 border border-slate-100 text-center">
-                        <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Lila</div>
+                        <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Lingkar Kepala</div>
                         <div class="text-2xl font-black text-slate-900">{{ $medicalRecord->head_circumference ?? '-' }} <span class="text-sm font-bold text-slate-400">cm</span></div>
+                    </div>
+                    <div class="p-6 rounded-3xl bg-slate-50/50 border border-slate-100 text-center">
+                        <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">LiLA</div>
+                        <div class="text-2xl font-black text-slate-900">{{ $medicalRecord->upper_arm_circumference ?? '-' }} <span class="text-sm font-bold text-slate-400">cm</span></div>
                     </div>
                 </div>
 
@@ -63,6 +67,62 @@
                         </div>
                     </div>
                 </div>
+
+                {{-- KPSP Results --}}
+                @if($medicalRecord->childDevelopment)
+                <div class="mt-8 pt-8 border-t border-slate-100">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-8 h-8 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center border border-orange-100">
+                            <span class="material-symbols-outlined text-[18px]">child_care</span>
+                        </div>
+                        <h3 class="text-[10px] font-black text-slate-800 uppercase tracking-widest">Evaluasi Perkembangan (KPSP) - {{ $medicalRecord->childDevelopment->age_group_months }} Bulan</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        @foreach([
+                            'motor_gross' => 'Motorik Kasar',
+                            'motor_fine' => 'Motorik Halus',
+                            'language' => 'Bicara / Bahasa',
+                            'social' => 'Sosialisasi & Kemandirian'
+                        ] as $key => $label)
+                        <div class="flex items-center justify-between p-4 rounded-2xl border border-slate-50 bg-slate-50/30">
+                            <span class="text-xs font-bold text-slate-600">{{ $label }}</span>
+                            @if($medicalRecord->childDevelopment->$key)
+                                <span class="flex items-center gap-1 text-[10px] font-black text-teal-600 uppercase">
+                                    <span class="material-symbols-outlined text-[14px]">check_circle</span> Bisa
+                                </span>
+                            @else
+                                <span class="flex items-center gap-1 text-[10px] font-black text-red-500 uppercase">
+                                    <span class="material-symbols-outlined text-[14px]">cancel</span> Belum
+                                </span>
+                            @endif
+                        </div>
+                        @endforeach
+                    </div>
+
+                    <div class="mt-6 p-6 rounded-3xl border-2 {{ 
+                        $medicalRecord->childDevelopment->development_status === 'Sesuai' ? 'border-teal-100 bg-teal-50/20' : 
+                        ($medicalRecord->childDevelopment->development_status === 'Meragukan' ? 'border-orange-100 bg-orange-50/20' : 'border-red-100 bg-red-50/20')
+                    }}">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Kesimpulan KPSP</span>
+                            <span @class([
+                                'px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest',
+                                'bg-teal-500 text-white' => $medicalRecord->childDevelopment->development_status === 'Sesuai',
+                                'bg-orange-500 text-white' => $medicalRecord->childDevelopment->development_status === 'Meragukan',
+                                'bg-red-500 text-white' => $medicalRecord->childDevelopment->development_status === 'Penyimpangan',
+                            ])>
+                                {{ $medicalRecord->childDevelopment->development_status }}
+                            </span>
+                        </div>
+                        @if($medicalRecord->childDevelopment->note)
+                        <p class="text-xs font-semibold text-slate-700 leading-relaxed mt-2">
+                            <span class="text-slate-400 italic">Catatan:</span> {{ $medicalRecord->childDevelopment->note }}
+                        </p>
+                        @endif
+                    </div>
+                </div>
+                @endif
             </div>
         </div>
 
@@ -105,8 +165,13 @@
                     </div>
                     <div class="flex items-center justify-between pt-6 border-t border-slate-50">
                         <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Imunisasi</div>
-                        <div class="text-sm font-bold {{ $medicalRecord->vaccine_name ? 'text-teal-600' : 'text-slate-300' }}">
-                            {{ $medicalRecord->vaccine_name ?: 'Tidak Ada' }}
+                        <div class="text-right">
+                            <div class="text-sm font-bold {{ $medicalRecord->vaccine_name ? 'text-teal-600' : 'text-slate-300' }}">
+                                {{ $medicalRecord->vaccine_name ?: 'Tidak Ada' }}
+                            </div>
+                            @if($medicalRecord->is_basic_immunization_complete)
+                                <div class="text-[9px] font-black text-teal-500 uppercase mt-1">✓ Dasar Lengkap</div>
+                            @endif
                         </div>
                     </div>
                     <div class="flex items-center justify-between pt-6 border-t border-slate-50">
@@ -124,6 +189,12 @@
                         <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Obat Cacing</div>
                         <div class="text-sm font-bold {{ $medicalRecord->deworming_medicine ? 'text-orange-600' : 'text-slate-300' }}">
                             {{ $medicalRecord->deworming_medicine ? 'Sudah Diberikan' : 'Tidak' }}
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between pt-6 border-t border-slate-50">
+                        <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest">MP-ASI</div>
+                        <div class="text-sm font-bold {{ $medicalRecord->mp_asi ? 'text-teal-600' : 'text-slate-300' }}">
+                            {{ $medicalRecord->mp_asi ? 'Sudah Diberikan' : 'Tidak' }}
                         </div>
                     </div>
                 </div>

@@ -44,10 +44,11 @@ class MedicalRecord extends Model
 
     protected $fillable = [
         'patient_id', 'user_id', 'visit_date', 'weight', 'height',
-        'blood_pressure', 'measurement_method', 'head_circumference', 'immunization',
-        'vitamin_a', 'pill_fe', 'is_exclusive_breastfeeding',
+        'blood_pressure', 'measurement_method', 'head_circumference', 'upper_arm_circumference', 'immunization',
+        'vitamin_a', 'pill_fe', 'is_exclusive_breastfeeding', 'mp_asi',
         'complaint', 'diagnosis', 'disease_history', 'health_note',
         'vaccine_name', 'vaccine_dose', 'vitamin_a_color', 'deworming_medicine',
+        'is_basic_immunization_complete',
         // Gizi BB/U
         'nutrition_status', 'z_score', 'nutrition_trend',
         // Gizi TB/U (stunting)
@@ -63,10 +64,13 @@ class MedicalRecord extends Model
         'vitamin_a' => 'boolean',
         'pill_fe' => 'boolean',
         'is_exclusive_breastfeeding' => 'boolean',
+        'mp_asi' => 'boolean',
         'deworming_medicine' => 'boolean',
+        'is_basic_immunization_complete' => 'boolean',
         'weight' => 'decimal:2',
         'height' => 'decimal:2',
         'head_circumference' => 'decimal:2',
+        'upper_arm_circumference' => 'decimal:2',
         // Z-Score semua indeks
         'z_score' => 'decimal:2',  // BB/U
         'z_score_hfa' => 'decimal:2',  // TB/U
@@ -88,6 +92,14 @@ class MedicalRecord extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Relationship with ChildDevelopment (KPSP)
+     */
+    public function childDevelopment()
+    {
+        return $this->hasOne(ChildDevelopment::class);
     }
 
     /**

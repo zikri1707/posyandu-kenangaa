@@ -147,9 +147,11 @@
                         });
                      "
                 >
-                    <canvas id="growthChart" wire:ignore x-show="hasData"></canvas>
+                    <div class="relative w-full h-full z-10" wire:ignore>
+                        <canvas id="growthChart" x-show="hasData"></canvas>
+                    </div>
                     
-                    <div x-show="!hasData" class="absolute inset-0 flex flex-col items-center justify-center p-8 text-center">
+                    <div x-show="!hasData" class="absolute inset-0 flex flex-col items-center justify-center p-8 text-center z-20">
                         <div class="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-300 mb-4">
                             <span class="material-symbols-outlined text-[32px]">query_stats</span>
                         </div>
@@ -157,7 +159,7 @@
                         <p class="text-[10px] text-slate-500 font-bold max-w-[200px]">Data pemeriksaan balita akan muncul di sini setelah ditambahkan.</p>
                     </div>
 
-                    <div wire:loading class="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-10 rounded-2xl">
+                    <div wire:loading wire:target="switchChart" class="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-30 rounded-2xl">
                         <div class="flex flex-col items-center gap-3">
                             <div class="animate-spin rounded-full h-8 w-8 border-3 border-teal-500 border-t-transparent"></div>
                             <p class="text-[9px] font-black text-teal-600 uppercase tracking-widest">Loading...</p>

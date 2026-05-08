@@ -16,16 +16,6 @@ class PedukuhanSeeder extends Seeder
                 'geo_location' => json_encode(['lat' => -7.123456, 'lng' => 110.123456]),
             ],
             [
-                'name' => 'Dukuh B',
-                'postal_code' => '55282',
-                'geo_location' => json_encode(['lat' => -7.223456, 'lng' => 110.223456]),
-            ],
-            [
-                'name' => 'Dukuh C',
-                'postal_code' => '55283',
-                'geo_location' => json_encode(['lat' => -7.323456, 'lng' => 110.323456]),
-            ],
-            [
                 'name' => 'Aren Jaya',
                 'postal_code' => '17111',
                 'geo_location' => json_encode(['lat' => -6.234567, 'lng' => 107.012345]),

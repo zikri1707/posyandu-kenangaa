@@ -83,6 +83,8 @@ class MedicalRecordController extends Controller
     {
         $this->authorize('view', $medicalRecord);
 
+        $medicalRecord->load(['patient', 'user', 'childDevelopment']);
+
         return view('livewire.admin.medical-record-management.details', compact('medicalRecord'));
     }
 
@@ -93,6 +95,8 @@ class MedicalRecordController extends Controller
     {
         $this->authorize('update', $medicalRecord);
 
+        $medicalRecord->load('childDevelopment');
+
         $patients = $this->getAvailablePatients();
         $duplicateWarnings = $this->checkDuplicateWarnings(
             $medicalRecord->patient_id,
@@ -100,7 +104,11 @@ class MedicalRecordController extends Controller
             $medicalRecord->id
         );
 
-        return view('livewire.admin.medical-record-management.update', compact('medicalRecord', 'patients', 'duplicateWarnings'));
+        return view('livewire.admin.medical-record-management.update', [
+            'record' => $medicalRecord,
+            'patients' => $patients,
+            'duplicateWarnings' => $duplicateWarnings
+        ]);
     }
 
     /**

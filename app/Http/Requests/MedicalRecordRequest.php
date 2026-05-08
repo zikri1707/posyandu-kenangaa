@@ -19,11 +19,13 @@ class MedicalRecordRequest extends FormRequest
             'weight' => 'required|numeric|min:0.5|max:200',
             'height' => 'required|numeric|min:30|max:300',
             'head_circumference' => 'nullable|numeric|min:20|max:70',
+            'upper_arm_circumference' => 'nullable|numeric|min:5|max:40',
             'measurement_method' => 'required|in:recumbent,standing',
             'blood_pressure' => 'nullable|string|max:20',
             'vitamin_a' => 'nullable|boolean',
             'pill_fe' => 'nullable|boolean',
             'is_exclusive_breastfeeding' => 'nullable|boolean',
+            'mp_asi' => 'nullable|boolean',
             'diagnosis' => 'required|string',
             'complaint' => 'nullable|string',
             'disease_history' => 'nullable|string',
@@ -31,9 +33,17 @@ class MedicalRecordRequest extends FormRequest
             'immunization' => 'nullable|string',
             'vaccine_name' => 'nullable|string|max:50',
             'vaccine_dose' => 'nullable|integer|min:1|max:10',
+            'is_basic_immunization_complete' => 'nullable|boolean',
             'vitamin_a_color' => 'nullable|in:biru,merah,none',
             'deworming_medicine' => 'nullable|boolean',
-            'nutrition_status' => 'nullable|string',
+            
+            // KPSP (Child Development) fields
+            'kpsp_age_group' => 'nullable|integer',
+            'kpsp_motor_gross' => 'nullable|boolean',
+            'kpsp_motor_fine' => 'nullable|boolean',
+            'kpsp_language' => 'nullable|boolean',
+            'kpsp_social' => 'nullable|boolean',
+            'kpsp_note' => 'nullable|string',
         ];
     }
 
@@ -58,6 +68,9 @@ class MedicalRecordRequest extends FormRequest
             'head_circumference.numeric' => 'Lingkar kepala harus berupa angka.',
             'head_circumference.min' => 'Lingkar kepala minimal 20 cm.',
             'head_circumference.max' => 'Lingkar kepala maksimal 70 cm.',
+            'upper_arm_circumference.numeric' => 'Lingkar lengan atas harus berupa angka.',
+            'upper_arm_circumference.min' => 'Lingkar lengan atas minimal 5 cm.',
+            'upper_arm_circumference.max' => 'Lingkar lengan atas maksimal 40 cm.',
             'diagnosis.required' => 'Diagnosis/Hasil akhir wajib diisi.',
             'vaccine_dose.integer' => 'Dosis vaksin harus berupa angka.',
             'vaccine_dose.min' => 'Dosis vaksin minimal 1.',

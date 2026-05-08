@@ -43,19 +43,7 @@
                                class="w-full h-12 px-4 border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/5 transition-all">
                     </div>
 
-                    {{-- Nutrition Status --}}
-                    <div class="space-y-2">
-                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Kesimpulan Gizi</label>
-                        <select name="nutrition_status"
-                                class="w-full h-12 px-4 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/5 transition-all appearance-none cursor-pointer bg-white">
-                            <option value="Normal">✅ Normal</option>
-                            <option value="Gizi Kurang">⚠️ Kurang</option>
-                            <option value="Gizi Buruk/Stunting">🔴 Buruk</option>
-                            <option value="Gizi Lebih">⬆️ Lebih</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
+                    {{-- Nutrition Status is now auto-calculated in the backend, no need for manual input --}}
 
             {{-- 2. Antropometri --}}
             <div class="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
@@ -80,8 +68,13 @@
                         @error('height') <p class="text-[10px] text-red-500 font-bold ml-1">{{ $message }}</p> @enderror
                     </div>
                     <div class="space-y-2">
-                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Lila (cm)</label>
+                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Lingkar Kepala (cm)</label>
                         <input type="number" step="0.1" name="head_circumference" value="{{ old('head_circumference') }}" placeholder="0.0"
+                               class="w-full h-12 px-4 border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/5 transition-all">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">LiLA (cm)</label>
+                        <input type="number" step="0.1" name="upper_arm_circumference" value="{{ old('upper_arm_circumference') }}" placeholder="0.0"
                                class="w-full h-12 px-4 border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/5 transition-all">
                     </div>
                     <div class="md:col-span-3 space-y-2">
@@ -186,6 +179,15 @@
 
                     <div class="space-y-4 pt-2 border-t border-slate-100">
                         <label class="flex items-center gap-3 p-4 rounded-2xl border border-slate-100 hover:bg-slate-50 transition-all cursor-pointer">
+                            <input type="checkbox" name="is_basic_immunization_complete" value="1" {{ old('is_basic_immunization_complete') ? 'checked' : '' }}
+                                   class="w-5 h-5 rounded-lg border-slate-300 text-teal-600 focus:ring-teal-500/20">
+                            <div class="flex flex-col">
+                                <span class="text-sm font-bold text-slate-800">Imunisasi Dasar Lengkap</span>
+                                <span class="text-[10px] text-slate-400">Sudah lengkap sesuai umur</span>
+                            </div>
+                        </label>
+
+                        <label class="flex items-center gap-3 p-4 rounded-2xl border border-slate-100 hover:bg-slate-50 transition-all cursor-pointer">
                             <input type="checkbox" name="deworming_medicine" value="1" {{ old('deworming_medicine') ? 'checked' : '' }}
                                    class="w-5 h-5 rounded-lg border-slate-300 text-teal-600 focus:ring-teal-500/20">
                             <div class="flex flex-col">
@@ -203,8 +205,89 @@
                         <label class="flex items-center gap-3 p-4 rounded-2xl border border-slate-100 hover:bg-slate-50 transition-all cursor-pointer">
                             <input type="checkbox" name="is_exclusive_breastfeeding" value="1" {{ old('is_exclusive_breastfeeding') ? 'checked' : '' }}
                                    class="w-5 h-5 rounded-lg border-slate-300 text-teal-600 focus:ring-teal-500/20">
-                            <div class="text-sm font-bold text-slate-800">ASI Eksklusif</div>
+                            <div class="flex flex-col">
+                                <span class="text-sm font-bold text-slate-800">ASI Eksklusif</span>
+                                <span class="text-[10px] text-slate-400">0 - 6 bulan</span>
+                            </div>
                         </label>
+
+                        <label class="flex items-center gap-3 p-4 rounded-2xl border border-slate-100 hover:bg-slate-50 transition-all cursor-pointer">
+                            <input type="checkbox" name="mp_asi" value="1" {{ old('mp_asi') ? 'checked' : '' }}
+                                   class="w-5 h-5 rounded-lg border-slate-300 text-teal-600 focus:ring-teal-500/20">
+                            <div class="flex flex-col">
+                                <span class="text-sm font-bold text-slate-800">MP-ASI</span>
+                                <span class="text-[10px] text-slate-400">Makanan Pendamping (> 6 bln)</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            {{-- 4. KPSP (Ceklis Perkembangan) --}}
+            <div class="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center border border-teal-100">
+                        <span class="material-symbols-outlined text-[20px]">child_care</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <h3 class="text-xs font-black text-slate-800 uppercase tracking-widest">Pemantauan Perkembangan</h3>
+                        <span class="text-[10px] text-slate-400">Kuesioner Pra Skrining (KPSP)</span>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="space-y-2">
+                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Target Usia KPSP (Bulan)</label>
+                        <select name="kpsp_age_group"
+                                class="w-full h-12 px-4 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/5 transition-all appearance-none cursor-pointer bg-white">
+                            <option value="">-- Lewati KPSP --</option>
+                            <option value="3" {{ old('kpsp_age_group') == '3' ? 'selected' : '' }}>3 Bulan</option>
+                            <option value="6" {{ old('kpsp_age_group') == '6' ? 'selected' : '' }}>6 Bulan</option>
+                            <option value="9" {{ old('kpsp_age_group') == '9' ? 'selected' : '' }}>9 Bulan</option>
+                            <option value="12" {{ old('kpsp_age_group') == '12' ? 'selected' : '' }}>12 Bulan</option>
+                            <option value="15" {{ old('kpsp_age_group') == '15' ? 'selected' : '' }}>15 Bulan</option>
+                            <option value="18" {{ old('kpsp_age_group') == '18' ? 'selected' : '' }}>18 Bulan</option>
+                            <option value="21" {{ old('kpsp_age_group') == '21' ? 'selected' : '' }}>21 Bulan</option>
+                            <option value="24" {{ old('kpsp_age_group') == '24' ? 'selected' : '' }}>24 Bulan (2 Tahun)</option>
+                            <option value="36" {{ old('kpsp_age_group') == '36' ? 'selected' : '' }}>36 Bulan (3 Tahun)</option>
+                            <option value="48" {{ old('kpsp_age_group') == '48' ? 'selected' : '' }}>48 Bulan (4 Tahun)</option>
+                            <option value="60" {{ old('kpsp_age_group') == '60' ? 'selected' : '' }}>60 Bulan (5 Tahun)</option>
+                            <option value="72" {{ old('kpsp_age_group') == '72' ? 'selected' : '' }}>72 Bulan (6 Tahun)</option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-3 pt-2">
+                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Hasil Evaluasi 4 Aspek (Centang jika BISA/YA)</label>
+                        
+                        <label class="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:bg-slate-50 transition-all cursor-pointer">
+                            <input type="checkbox" name="kpsp_motor_gross" value="1" {{ old('kpsp_motor_gross') ? 'checked' : '' }}
+                                   class="w-4 h-4 rounded-md border-slate-300 text-teal-600 focus:ring-teal-500/20">
+                            <span class="text-xs font-bold text-slate-700">Motorik Kasar</span>
+                        </label>
+                        
+                        <label class="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:bg-slate-50 transition-all cursor-pointer">
+                            <input type="checkbox" name="kpsp_motor_fine" value="1" {{ old('kpsp_motor_fine') ? 'checked' : '' }}
+                                   class="w-4 h-4 rounded-md border-slate-300 text-teal-600 focus:ring-teal-500/20">
+                            <span class="text-xs font-bold text-slate-700">Motorik Halus</span>
+                        </label>
+
+                        <label class="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:bg-slate-50 transition-all cursor-pointer">
+                            <input type="checkbox" name="kpsp_language" value="1" {{ old('kpsp_language') ? 'checked' : '' }}
+                                   class="w-4 h-4 rounded-md border-slate-300 text-teal-600 focus:ring-teal-500/20">
+                            <span class="text-xs font-bold text-slate-700">Bicara / Bahasa</span>
+                        </label>
+
+                        <label class="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:bg-slate-50 transition-all cursor-pointer">
+                            <input type="checkbox" name="kpsp_social" value="1" {{ old('kpsp_social') ? 'checked' : '' }}
+                                   class="w-4 h-4 rounded-md border-slate-300 text-teal-600 focus:ring-teal-500/20">
+                            <span class="text-xs font-bold text-slate-700">Sosialisasi / Kemandirian</span>
+                        </label>
+                    </div>
+
+                    <div class="space-y-2 pt-2">
+                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Catatan Perkembangan</label>
+                        <textarea name="kpsp_note" rows="2" placeholder="Tuliskan kendala perkembangan jika ada..."
+                                  class="w-full p-4 border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/5 transition-all resize-none">{{ old('kpsp_note') }}</textarea>
                     </div>
                 </div>
             </div>

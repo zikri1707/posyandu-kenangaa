@@ -63,51 +63,6 @@ class UserSeeder extends Seeder
 
         // ── Per-posyandu users ────────────────────────────────────────────────
         $posyanduUsers = [
-            // Posyandu Melati
-            [
-                'posyandu_code' => 'PSY001',
-                'name' => 'Admin Melati',
-                'email' => 'admin.melati@posyandu.com',
-                'username' => 'admin_melati',
-                'role' => User::ROLE_ADMIN,
-            ],
-            [
-                'posyandu_code' => 'PSY001',
-                'name' => 'Kader Melati',
-                'email' => 'kader.melati@posyandu.com',
-                'username' => 'kader_melati',
-                'role' => User::ROLE_KADER,
-            ],
-            // Posyandu Mawar
-            [
-                'posyandu_code' => 'PSY002',
-                'name' => 'Admin Mawar',
-                'email' => 'admin.mawar@posyandu.com',
-                'username' => 'admin_mawar',
-                'role' => User::ROLE_ADMIN,
-            ],
-            [
-                'posyandu_code' => 'PSY002',
-                'name' => 'Kader Mawar',
-                'email' => 'kader.mawar@posyandu.com',
-                'username' => 'kader_mawar',
-                'role' => User::ROLE_KADER,
-            ],
-            // Posyandu Anggrek
-            [
-                'posyandu_code' => 'PSY003',
-                'name' => 'Admin Anggrek',
-                'email' => 'admin.anggrek@posyandu.com',
-                'username' => 'admin_anggrek',
-                'role' => User::ROLE_ADMIN,
-            ],
-            [
-                'posyandu_code' => 'PSY003',
-                'name' => 'Kader Anggrek',
-                'email' => 'kader.anggrek@posyandu.com',
-                'username' => 'kader_anggrek',
-                'role' => User::ROLE_KADER,
-            ],
             // KENANGA 1
             [
                 'posyandu_code' => 'KENANGA1',
@@ -121,6 +76,21 @@ class UserSeeder extends Seeder
                 'name' => 'Moderator Kenanga 1',
                 'email' => 'kenanga1@posyandu.com',
                 'username' => 'kenanga1',
+                'role' => User::ROLE_KADER,
+            ],
+            // KENANGA 2
+            [
+                'posyandu_code' => 'KENANGA2',
+                'name' => 'Admin Kenanga 2',
+                'email' => 'admin.kenanga2@posyandu.com',
+                'username' => 'admin_kenanga2',
+                'role' => User::ROLE_ADMIN,
+            ],
+            [
+                'posyandu_code' => 'KENANGA2',
+                'name' => 'Kader Kenanga 2',
+                'email' => 'kader.kenanga2@posyandu.com',
+                'username' => 'kader_kenanga2',
                 'role' => User::ROLE_KADER,
             ],
         ];
