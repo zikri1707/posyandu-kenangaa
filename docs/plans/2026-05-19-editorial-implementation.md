@@ -1,3 +1,69 @@
+# About Page Editorial Implementation Plan
+
+> **For Antigravity:** REQUIRED SUB-SKILL: Load executing-plans to implement this plan task-by-task.
+
+**Goal:** Implement a premium, responsive Bento Editorial Grid layout containing the real Indonesian greeting, slogan, Visi, Misi, and Tujuan of Posyandu ILP Kenanga RW 011 on the About Page (`resources/views/public/about.blade.php`).
+
+**Architecture:** Replace the entire placeholder/generic page content with an asymmetrical bento grid structure consisting of high-contrast, premium styled elements using existing CSS variables, `.hover-lift` cards, and Material Symbols. Implement standard Laravel routing, translation structure, and TDD coverage.
+
+**Tech Stack:** Laravel, Blade, TailwindCSS (v4), Plus Jakarta Sans, Public Sans, Material Symbols Outlined, Font Awesome.
+
+---
+
+### Task 1: Add failing Pest test assertions to PublicPageTest
+
+**Files:**
+- Modify: `tests/Feature/Public/PublicPageTest.php:119-133`
+
+**Step 1: Write the failing test assertions**
+Update `tests/Feature/Public/PublicPageTest.php` to assert that the custom greeting, Slogan, Visi, Misi, and Tujuan of Posyandu ILP Kenanga RW 011 are shown on the `/about` route.
+
+```php
+describe('konten halaman tentang kami', function () {
+    it('menampilkan informasi profil posyandu', function () {
+        $response = $this->get('/about');
+
+        $response->assertOk();
+        $response->assertSee('Selamat Datang di Posyandu ILP Kenanga RW 011');
+        $response->assertSee('RW 011 Aren Jaya');
+    });
+
+    it('menampilkan visi dan misi', function () {
+        $response = $this->get('/about');
+
+        $response->assertOk();
+        // Assert Slogan is present
+        $response->assertSee('Posyandu ILP Kenanga RW 011, Mitra Masyarakat Menuju Hidup Sehat');
+        // Assert Visi is present
+        $response->assertSee('Menjadi Posyandu ILP Kenanga 1 yang aktif, profesional, inovatif, dan terpercaya');
+        // Assert Misi is present
+        $response->assertSee('Meningkatkan pemantauan kesehatan ibu hamil, bayi, balita, remaja, dewasa, dan lansia secara terpadu');
+        // Assert Tujuan is present
+        $response->assertSee('Menurunkan angka stunting, gizi kurang, dan risiko kesehatan ibu serta anak');
+    });
+});
+```
+
+**Step 2: Run test to verify it fails**
+Run: `php artisan test tests/Feature/Public/PublicPageTest.php` or `vendor/bin/pest tests/Feature/Public/PublicPageTest.php`
+Expected: FAIL with missing assertion strings.
+
+---
+
+### Task 2: Implement modern Bento Editorial Grid in about.blade.php
+
+**Files:**
+- Modify: `resources/views/public/about.blade.php`
+
+**Step 1: Replace placeholder about page with the new Bento layout**
+Write the full markup in `resources/views/public/about.blade.php` including:
+1. Header & Slogan Banner: Centered premium badge, Title, and full Slogan ribbon (`bg-premium-gradient`).
+2. Sambutan / Welcome Section: Elegant `.glass-surface` card displaying the welcome paragraphs.
+3. Visi & Misi Bento Grid: Large block quote for Visi, and a 2x3 grid of gorgeous `.bento-card` blocks for Misi with modern Material icons.
+4. Tujuan Section: Dynamic, elegant checked-list displaying the 6 Objectives.
+
+Code content to write inside `about.blade.php`:
+```html
 @extends('layouts.public-layout')
 
 @section('title', 'Tentang Kami - Posyandu ILP Kenanga RW 011')
@@ -204,7 +270,7 @@
                 'Meningkatkan derajat kesehatan masyarakat di lingkungan Posyandu ILP Kenanga 1.',
                 'Menurunkan angka stunting, gizi kurang, dan risiko kesehatan ibu serta anak.',
                 'Meningkatkan cakupan imunisasi, pemantauan tumbuh kembang, dan pemeriksaan kesehatan rutin.',
-                'Meningkatkan kesadaran masyarakat terhadap pentingnya pola hidup sehat and pencegahan penyakit.',
+                'Meningkatkan kesadaran masyarakat terhadap pentingnya pola hidup sehat dan pencegahan penyakit.',
                 'Mewujudkan pelayanan Posyandu yang terintegrasi, berkelanjutan, dan bermanfaat bagi seluruh warga.',
                 'Menjadikan Posyandu ILP Kenanga 1 sebagai pusat layanan kesehatan masyarakat yang nyaman dan terpercaya.'
             ];
@@ -226,3 +292,35 @@
     </section>
 </div>
 @endsection
+```
+
+**Step 2: Run test to verify it passes**
+Run: `php artisan test tests/Feature/Public/PublicPageTest.php` or `vendor/bin/pest tests/Feature/Public/PublicPageTest.php`
+Expected: PASS.
+
+---
+
+### Task 3: Verify the UI layout using the browser agent
+
+**Files:**
+- Test: Live web page rendering on `http://localhost/about` or equivalent dev server.
+
+**Step 1: Start the local development server**
+Run: `php artisan serve` or similar background command if not already running.
+
+**Step 2: Load the browser-agent skill to check page render**
+Frame a request for `browser_subagent` to navigate to the About page and take a screenshot to verify:
+1. Slogan gradient banner rendering.
+2. Visi & Misi bento grid alignment.
+3. No console errors or styling clipping.
+
+---
+
+### Task 4: Git Commit
+
+**Step 1: Commit implementation changes**
+Run:
+```bash
+git add tests/Feature/Public/PublicPageTest.php resources/views/public/about.blade.php docs/plans/2026-05-19-editorial-design.md
+git commit -m "feat: implement premium bento-grid editorial About Page"
+```

@@ -32,7 +32,7 @@ beforeEach(function () {
         'title' => 'Artikel Kesehatan Test',
         'slug' => 'artikel-kesehatan-test',
         'content' => 'Konten artikel kesehatan untuk testing',
-        'is_published' => true,
+        'status' => 'Published',
     ]);
 });
 
@@ -106,7 +106,7 @@ describe('konten halaman beranda', function () {
     it('tidak menampilkan lebih dari 3 artikel terbaru', function () {
         // Create 5 articles
         Article::factory()->count(5)->create([
-            'is_published' => true,
+            'status' => 'Published',
         ]);
 
         $response = $this->get('/');
@@ -121,14 +121,23 @@ describe('konten halaman tentang kami', function () {
         $response = $this->get('/about');
 
         $response->assertOk();
-        $response->assertSee('Tentang');
+        $response->assertSee('Selamat Datang di');
+        $response->assertSee('Posyandu ILP Kenanga RW 011');
+        $response->assertSee('RW 011 Aren Jaya');
     });
 
     it('menampilkan visi dan misi', function () {
         $response = $this->get('/about');
 
         $response->assertOk();
-        // Verify visi misi content is present
+        // Assert Slogan is present
+        $response->assertSee('Posyandu ILP Kenanga RW 011, Mitra Masyarakat Menuju Hidup Sehat');
+        // Assert Visi is present
+        $response->assertSee('Menjadi Posyandu ILP Kenanga 1 yang aktif, profesional, inovatif, dan terpercaya');
+        // Assert Misi is present
+        $response->assertSee('Meningkatkan pemantauan kesehatan ibu hamil, bayi, balita, remaja, dewasa, dan lansia secara terpadu');
+        // Assert Tujuan is present
+        $response->assertSee('Menurunkan angka stunting, gizi kurang, dan risiko kesehatan ibu serta anak');
     });
 });
 
@@ -152,7 +161,7 @@ describe('halaman artikel', function () {
     it('tidak menampilkan artikel yang belum dipublikasikan', function () {
         $unpublishedArticle = Article::factory()->create([
             'title' => 'Unpublished Article',
-            'is_published' => false,
+            'status' => 'Draft',
         ]);
 
         $response = $this->get('/articles');
