@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
 @import "../../vendor/livewire/flux/dist/flux.css";
 
 @source "../views";
@@ -435,5 +436,36 @@ select:focus[data-flux-control] {
     }
     .card-secondary {
         @apply bg-gray-50 rounded-lg shadow-inner border border-gray-100;
+    }
+
+    /* TailAdmin Styles */
+    .font-outfit {
+        font-family: 'Outfit', sans-serif;
+    }
+
+    .tail-card {
+        background-color: #ffffff;
+        border: 1px solid #e4e7ec; /* border-gray-200 */
+        border-radius: 1rem; /* rounded-2xl */
+        padding: 1.25rem; /* p-5 */
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .tail-card:hover {
+        box-shadow: 0px 12px 16px -4px rgba(16, 24, 40, 0.08); /* shadow-theme-lg */
+    }
+
+    /* Badge statuses */
+    .badge-success {
+        background-color: #ecfdf3;
+        color: #12b76a;
+    }
+    .badge-error {
+        background-color: #fef3f2;
+        color: #f04438;
+    }
+    .badge-warning {
+        background-color: #fffaeb;
+        color: #f79009;
     }
 }
