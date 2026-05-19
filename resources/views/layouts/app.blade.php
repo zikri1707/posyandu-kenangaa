@@ -7,10 +7,10 @@
 
     <title>{{ config('app.name', 'Posyandu') }} - @yield('title', 'Dashboard')</title>
 
-    <!-- Fonts (Public Sans) -->
+    <!-- Fonts (Outfit) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -64,7 +64,7 @@
 
     @stack('styles')
 </head>
-<body class="font-sans antialiased bg-slate-50 text-slate-900">
+<body class="font-outfit antialiased bg-slate-50 text-slate-900">
 
     <div class="min-h-screen app-grid bg-dashboard">
         <!-- Sidebar -->
@@ -89,18 +89,33 @@
     <!-- WAJIB: Livewire Scripts -->
     @livewireScripts
     
-    {{-- Session Notifications --}}
-    @if (session('success'))
-        <x-ui.notification type="success" :message="session('success')" />
-    @endif
+    {{-- Session & Dynamic Notifications --}}
+    <div id="toast-container" x-data="{ 
+        notifications: [],
+        add(type, message) {
+            const id = Date.now();
+            this.notifications.push({ id, type, message });
+            setTimeout(() => this.remove(id), 5000);
+        },
+        remove(id) {
+            this.notifications = this.notifications.filter(n => n.id !== id);
+        }
+    }" @notify.window="add($event.detail.type, $event.detail.message)" class="fixed bottom-4 right-4 z-50 flex flex-col gap-3 w-full max-w-sm">
+        
+        {{-- Existing Session Notifications (Initial Load) --}}
+        @if (session('success'))
+            <x-ui.notification type="success" :message="session('success')" />
+        @endif
 
-    @if (session('error'))
-        <x-ui.notification type="error" :message="session('error')" />
-    @endif
+        @if (session('error'))
+            <x-ui.notification type="error" :message="session('error')" />
+        @endif
 
-    @if (session('warning'))
-        <x-ui.notification type="warning" :message="session('warning')" />
-    @endif
+        {{-- Dynamic Notifications from Livewire --}}
+        <template x-for="n in notifications" :key="n.id">
+            <x-ui.notification x-bind:type="n.type" x-bind:message="n.message" />
+        </template>
+    </div>
     
     @stack('scripts')
     
