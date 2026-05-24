@@ -540,7 +540,7 @@
                                         {{-- Conditional Color Selector for Vitamin A --}}
                                         @if($name === 'vitamin_a')
                                             <div x-show="checked" x-transition class="pt-2">
-                                                <x-forms.select-input name="vitamin_a_color" placeholder="-- Pilih Warna Kapsul --" :placeholderDisabled="false" value="{{ old('vitamin_a_color') }}" :disabled="!['bayi', 'baduta', 'balita', 'anak_sekolah', 'balita'].includes(category)">
+                                                <x-forms.select-input name="vitamin_a_color" placeholder="-- Pilih Warna Kapsul --" :placeholderDisabled="false" value="{{ old('vitamin_a_color') }}" ::disabled="!['bayi', 'baduta', 'balita', 'anak_sekolah', 'balita'].includes(category)">
                                                     <option value="biru" {{ old('vitamin_a_color') == 'biru' ? 'selected' : '' }}>🔵 Kapsul Biru (6-11 bln)</option>
                                                     <option value="merah" {{ old('vitamin_a_color') == 'merah' ? 'selected' : '' }}>🔴 Kapsul Merah (1-5 thn)</option>
                                                 </x-forms.select-input>
@@ -613,7 +613,7 @@
                     <div class="space-y-6">
                         <div class="space-y-3">
                             <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Status KPSP</label>
-                            <x-forms.select-input name="kpsp_status" placeholder="-- Pilih Status --" :placeholderDisabled="false" value="{{ old('kpsp_status') }}" :disabled="!['bayi', 'baduta', 'balita', 'anak_sekolah', 'balita'].includes(category)">
+                            <x-forms.select-input name="kpsp_status" placeholder="-- Pilih Status --" :placeholderDisabled="false" value="{{ old('kpsp_status') }}" ::disabled="!['bayi', 'baduta', 'balita', 'anak_sekolah', 'balita'].includes(category)">
                                 <option value="Lengkap" {{ old('kpsp_status') == 'Lengkap' ? 'selected' : '' }}>✅ Lengkap / Sesuai</option>
                                 <option value="Tidak Lengkap" {{ old('kpsp_status') == 'Tidak Lengkap' ? 'selected' : '' }}>⚠️ Ada Keterlambatan</option>
                             </x-forms.select-input>

@@ -10,6 +10,9 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
+    // Seed roles and permissions
+    $this->seed(\Database\Seeders\RolesAndPermissionsSeeder::class);
+
     // Create posyandu and users
     $this->posyandu = Posyandu::factory()->create();
 
@@ -131,14 +134,16 @@ describe('validasi rentang berat badan', function () {
 });
 
 describe('validasi rentang tinggi badan', function () {
-    it('menolak tinggi badan kurang dari 30 cm', function () {
+    it('menolak tinggi badan kurang dari 20 cm', function () {
         $this->actingAs($this->admin);
 
         $response = $this->post('/admin/medical-records', [
             'patient_id' => $this->patient->id,
             'visit_date' => now()->format('Y-m-d'),
             'weight' => 10.0,
-            'height' => 29.0, // Too low
+            'height' => 19.0, // Too low (min: 20)
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
         ]);
 
         $response->assertSessionHasErrors('height');
@@ -151,7 +156,9 @@ describe('validasi rentang tinggi badan', function () {
             'patient_id' => $this->patient->id,
             'visit_date' => now()->format('Y-m-d'),
             'weight' => 10.0,
-            'height' => 301.0, // Too high
+            'height' => 301.0, // Too high (max: 300)
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
         ]);
 
         $response->assertSessionHasErrors('height');
@@ -643,3 +650,99 @@ describe('field opsional', function () {
         $response->assertSessionHasErrors('diagnosis');
     });
 });
+
+describe('fitur pemilihan kategori dan validasi dinamis', function () {
+    it('menampilkan halaman pemilihan kategori jika parameter kategori tidak ada', function () {
+        $this->actingAs($this->admin);
+
+        $response = $this->get('/admin/medical-records/create');
+        $response->assertStatus(200);
+        $response->assertViewIs('livewire.admin.medical-record-management.select-category');
+    });
+
+    it('menampilkan form pembuatan rekam medis jika parameter kategori balita diset', function () {
+        $this->actingAs($this->admin);
+
+        $response = $this->get('/admin/medical-records/create?category=balita');
+        $response->assertStatus(200);
+        $response->assertViewIs('livewire.admin.medical-record-management.create');
+        $response->assertViewHas('patients');
+    });
+
+    it('menyimpan rekam medis ibu hamil tanpa memerlukan cara ukur', function () {
+        $this->actingAs($this->admin);
+
+        $pregnantMother = Patient::factory()->create([
+            'posyandu_id' => $this->posyandu->id,
+            'category' => 'ibu_hamil',
+            'gender' => 'F',
+        ]);
+
+        $response = $this->post('/admin/medical-records', [
+            'patient_id' => $pregnantMother->id,
+            'visit_date' => now()->format('Y-m-d'),
+            'weight' => 60.5,
+            'height' => 155.0,
+            'measurement_method' => null, // Not required for pregnant mothers
+            'pill_fe' => 1,
+            'systolic_bp' => 120,
+            'diastolic_bp' => 80,
+            'diagnosis' => 'Sehat',
+        ]);
+
+        $response->assertSessionDoesntHaveErrors();
+        $this->assertDatabaseHas('medical_records', [
+            'patient_id' => $pregnantMother->id,
+            'pill_fe' => 1,
+            'systolic_bp' => 120,
+            'diastolic_bp' => 80,
+        ]);
+    });
+
+    it('menyimpan rekam medis lansia tanpa memerlukan cara ukur', function () {
+        $this->actingAs($this->admin);
+
+        $elderly = Patient::factory()->create([
+            'posyandu_id' => $this->posyandu->id,
+            'category' => 'lansia',
+        ]);
+
+        $response = $this->post('/admin/medical-records', [
+            'patient_id' => $elderly->id,
+            'visit_date' => now()->format('Y-m-d'),
+            'weight' => 55.0,
+            'height' => 150.0,
+            'measurement_method' => null, // Not required for elderly
+            'blood_sugar' => 110,
+            'uric_acid' => 5.2,
+            'cholesterol' => 190,
+            'current_medication' => 'Mecobalamin 500mcg',
+            'diagnosis' => 'Sehat',
+        ]);
+
+        $response->assertSessionDoesntHaveErrors();
+        $this->assertDatabaseHas('medical_records', [
+            'patient_id' => $elderly->id,
+            'blood_sugar' => 110,
+            'uric_acid' => 5.2,
+            'cholesterol' => 190,
+            'current_medication' => 'Mecobalamin 500mcg',
+        ]);
+    });
+
+    it('menolak rekam medis balita jika cara ukur tidak diisi', function () {
+        $this->actingAs($this->admin);
+
+        $response = $this->post('/admin/medical-records', [
+            'patient_id' => $this->patient->id,
+            'visit_date' => now()->format('Y-m-d'),
+            'weight' => 10.2,
+            'height' => 75.0,
+            'measurement_method' => null, // Required for child
+            'diagnosis' => 'Sehat',
+        ]);
+
+        $response->assertSessionHasErrors('measurement_method');
+    });
+});
+

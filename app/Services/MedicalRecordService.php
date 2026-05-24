@@ -202,6 +202,8 @@ class MedicalRecordService
         $data['tbc_screening_lethargy'] = $data['tbc_screening_lethargy'] ?? false;
         $data['tbc_screening_lumps'] = $data['tbc_screening_lumps'] ?? false;
 
+        $data['measurement_method'] = $data['measurement_method'] ?? 'recumbent';
+
         return $data;
     }
 
@@ -243,6 +245,8 @@ class MedicalRecordService
         $data['tbc_screening_contact'] = $data['tbc_screening_contact'] ?? false;
         $data['tbc_screening_lethargy'] = $data['tbc_screening_lethargy'] ?? false;
         $data['tbc_screening_lumps'] = $data['tbc_screening_lumps'] ?? false;
+
+        $data['measurement_method'] = $data['measurement_method'] ?? $medicalRecord->measurement_method ?? 'recumbent';
 
         return $data;
     }
