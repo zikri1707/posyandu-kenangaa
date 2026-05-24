@@ -19,7 +19,6 @@
         </a>
     @endsection
 
-    @section('admin-content')
     <div class="space-y-6 pb-36">
 
         {{-- ── Step Indicator ── --}}
@@ -384,5 +383,4 @@
         </div>
     </div>
     @endif
-    @endsection
 </div>
