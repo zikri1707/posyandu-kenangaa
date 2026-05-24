@@ -29,6 +29,11 @@ class UserService
             $data['posyandu_id'] = $matches[2] == '1' ? 3 : 2;
         }
 
+        if (isset($data['image']) && $data['image'] instanceof \Illuminate\Http\UploadedFile) {
+            $path = $data['image']->store('kaders', 'public');
+            $data['image'] = basename($path);
+        }
+
         return User::create($data);
     }
 
@@ -51,6 +56,16 @@ class UserService
             $data['role'] = $matches[1];
             $data['posyandu_id'] = $matches[2] == '1' ? 3 : 2;
             $newRole = $data['role'];
+        }
+
+        if (isset($data['image']) && $data['image'] instanceof \Illuminate\Http\UploadedFile) {
+            if ($user->image && !str_starts_with($user->image, 'assets/')) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete('kaders/' . $user->image);
+            }
+            $path = $data['image']->store('kaders', 'public');
+            $data['image'] = basename($path);
+        } else {
+            unset($data['image']);
         }
 
         $user->update($data);
@@ -130,6 +145,28 @@ class UserService
         $this->activityLogService->log(
             'delete_account',
             "Menghapus akun sendiri: {$userName}",
+            $userId,
+            'User'
+        );
+    }
+
+    /**
+     * Delete an existing user.
+     */
+    public function deleteUser(User $user): void
+    {
+        if ($user->image && !str_starts_with($user->image, 'assets/')) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete('kaders/' . $user->image);
+        }
+
+        $userName = $user->name;
+        $userId = $user->id;
+
+        $user->delete();
+
+        $this->activityLogService->log(
+            'delete_user',
+            "Menghapus pengguna: {$userName}",
             $userId,
             'User'
         );
