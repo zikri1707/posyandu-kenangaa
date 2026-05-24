@@ -8,6 +8,9 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
+    // Seed roles and permissions
+    $this->seed(\Database\Seeders\RolesAndPermissionsSeeder::class);
+
     // Create posyandus
     $this->posyandu1 = Posyandu::factory()->create(['name' => 'Posyandu A']);
     $this->posyandu2 = Posyandu::factory()->create(['name' => 'Posyandu B']);
@@ -125,6 +128,24 @@ describe('CRUD pasien - Read', function () {
         $response = $this->get("/admin/patients/{$this->patient1->id}");
 
         $response->assertOk();
+    });
+
+    it('menampilkan halaman pemilihan kategori jika parameter category tidak ada', function () {
+        $this->actingAs($this->admin1);
+
+        $response = $this->get('/admin/patients/create');
+
+        $response->assertOk();
+        $response->assertViewIs('livewire.admin.patient-management.select-category');
+    });
+
+    it('menampilkan form pendaftaran jika parameter category ada', function () {
+        $this->actingAs($this->admin1);
+
+        $response = $this->get('/admin/patients/create?category=balita');
+
+        $response->assertOk();
+        $response->assertViewIs('livewire.admin.patient-management.create');
     });
 });
 
@@ -550,5 +571,108 @@ describe('validasi tanggal lahir', function () {
         ]);
 
         $response->assertSessionDoesntHaveErrors('birth_date');
+    });
+});
+
+describe('Tampilan detail kustom sesuai kategori', function () {
+    it('menampilkan tema warna sesuai kategori pasien', function () {
+        $this->actingAs($this->admin1);
+        
+        // Test Balita
+        $this->patient1->update(['category' => 'balita']);
+        $response = $this->get("/admin/patients/{$this->patient1->id}");
+        $response->assertSee('from-teal-600 to-emerald-500');
+
+        // Test Lansia
+        $this->patient1->update(['category' => 'lansia']);
+        $response = $this->get("/admin/patients/{$this->patient1->id}");
+        $response->assertSee('from-amber-600 to-orange-500');
+
+        // Test Ibu Hamil
+        $this->patient1->update(['category' => 'ibu_hamil']);
+        $response = $this->get("/admin/patients/{$this->patient1->id}");
+        $response->assertSee('from-rose-500 to-pink-500');
+    });
+
+    it('menampilkan detail spesifik balita', function () {
+        $this->actingAs($this->admin1);
+        $this->patient1->update([
+            'category' => 'balita',
+            'father_name' => 'Ayah Antigravity',
+            'mother_name' => 'Ibu Antigravity',
+            'kia_book_ownership' => true
+        ]);
+        
+        $response = $this->get("/admin/patients/{$this->patient1->id}");
+        $response->assertSee('Ayah Antigravity');
+        $response->assertSee('Ibu Antigravity');
+        $response->assertSee('Buku KIA');
+        $response->assertSee('Kartu Imunisasi');
+    });
+
+    it('menampilkan detail spesifik lansia', function () {
+        $this->actingAs($this->admin1);
+        $this->patient1->update([
+            'category' => 'lansia',
+            'historical_diseases' => 'Diabetes Mellitus',
+        ]);
+        $this->patient1->medicalRecords()->create([
+            'user_id' => $this->admin1->id,
+            'visit_date' => now()->format('Y-m-d'),
+            'weight' => 60.0,
+            'height' => 160.0,
+            'complaint' => 'Tidak ada',
+            'diagnosis' => 'Sehat',
+            'systolic_bp' => 120,
+            'diastolic_bp' => 80,
+            'blood_sugar' => 110,
+            'cholesterol' => 190,
+            'uric_acid' => 5.2,
+            'current_medication' => 'Metformin',
+            'measurement_method' => 'recumbent',
+        ]);
+
+        $response = $this->get("/admin/patients/{$this->patient1->id}");
+        $response->assertSee('Diabetes Mellitus');
+        $response->assertSee('Metformin');
+        $response->assertSee('Tekanan Darah');
+        $response->assertSee('Gula Darah');
+    });
+
+    it('menampilkan detail spesifik ibu hamil', function () {
+        $this->actingAs($this->admin1);
+        $this->patient1->update([
+            'category' => 'ibu_hamil',
+            'parent_name' => 'Suami Antigravity',
+            'is_pregnant' => true
+        ]);
+        $this->patient1->medicalRecords()->create([
+            'user_id' => $this->admin1->id,
+            'visit_date' => now()->format('Y-m-d'),
+            'weight' => 60.5,
+            'height' => 155.0,
+            'complaint' => 'Tidak ada',
+            'diagnosis' => 'Sehat',
+            'upper_arm_circumference' => 22.0,
+            'measurement_method' => 'recumbent',
+        ]);
+
+        $response = $this->get("/admin/patients/{$this->patient1->id}");
+        $response->assertSee('Suami Antigravity');
+        $response->assertSee('LILA');
+        $response->assertSee('Risiko KEK');
+    });
+
+    it('menampilkan detail spesifik umum', function () {
+        $this->actingAs($this->admin1);
+        $this->patient1->update([
+            'category' => 'umum',
+            'education' => 'SMA',
+            'job' => 'Wiraswasta',
+        ]);
+
+        $response = $this->get("/admin/patients/{$this->patient1->id}");
+        $response->assertSee('SMA');
+        $response->assertSee('Wiraswasta');
     });
 });
