@@ -499,24 +499,59 @@
                         options: {
                             responsive: true,
                             maintainAspectRatio: false,
-                            animation: { duration: 2000, easing: 'easeOutQuart' },
+                            animation: { duration: 1500, easing: 'easeOutQuart' },
                             interaction: { intersect: false, mode: 'index' },
                             scales: {
                                 x: { 
-                                    grid: { color: 'rgba(255,255,255,0.1)', drawBorder: false }, 
-                                    ticks: { color: '#ffffff', font: { size: 11, weight: '800' } },
-                                    title: { display: true, text: 'UMUR (BULAN)', color: '#ffffff', font: { weight: '900', size: 12, family: 'Inter' } }
+                                    grid: { color: 'rgba(15, 23, 42, 0.05)', drawBorder: false }, 
+                                    ticks: { color: '#475569', font: { size: 10, weight: '700' } },
+                                    title: { display: true, text: 'UMUR (BULAN)', color: '#1e293b', font: { weight: '800', size: 11, family: 'Inter' } }
                                 },
                                 y: { 
-                                    grid: { color: 'rgba(255,255,255,0.1)', drawBorder: false }, 
-                                    ticks: { color: '#ffffff', font: { size: 11, weight: '800' } },
+                                    grid: { color: 'rgba(15, 23, 42, 0.05)', drawBorder: false }, 
+                                    ticks: { color: '#475569', font: { size: 10, weight: '700' } },
                                     suggestedMin: data.datasets.some(d => d.label.includes('Tinggi')) ? 40 : 0,
-                                    title: { display: true, text: data.datasets.some(d => d.label.includes('Tinggi')) ? 'TINGGI (CM)' : 'BERAT (KG)', color: '#ffffff', font: { weight: '900', size: 12, family: 'Inter' } }
+                                    title: { display: true, text: data.datasets.some(d => d.label.includes('Tinggi')) ? 'TINGGI (CM)' : 'BERAT (KG)', color: '#1e293b', font: { weight: '800', size: 11, family: 'Inter' } }
                                 }
                             },
                             plugins: {
-                                legend: { position: 'bottom', labels: { boxWidth: 12, boxHeight: 12, usePointStyle: true, pointStyle: 'circle', color: '#ffffff', padding: 40, font: { weight: '800', size: 11 } } },
-                                tooltip: { backgroundColor: 'rgba(15, 23, 42, 1)', padding: 20, cornerRadius: 20, usePointStyle: true, titleFont: { size: 16, weight: '900' }, bodyFont: { size: 14, weight: '700' } }
+                                legend: { 
+                                    position: 'bottom', 
+                                    labels: { 
+                                        boxWidth: 8, 
+                                        boxHeight: 8, 
+                                        usePointStyle: true, 
+                                        pointStyle: 'circle', 
+                                        color: '#475569', 
+                                        padding: 25, 
+                                        font: { weight: '700', size: 10 } 
+                                    } 
+                                },
+                                tooltip: { 
+                                    backgroundColor: 'rgba(15, 23, 42, 0.95)', 
+                                    padding: 16, 
+                                    cornerRadius: 16, 
+                                    usePointStyle: true, 
+                                    titleFont: { size: 13, weight: '800' }, 
+                                    bodyFont: { size: 12, weight: '600' },
+                                    filter: function(tooltipItem) {
+                                        const label = tooltipItem.dataset.label || '';
+                                        return label.includes('Anak') || label.includes('Badan') || label === 'Median';
+                                    },
+                                    callbacks: {
+                                        label: function(context) {
+                                            let label = context.dataset.label || '';
+                                            if (label) {
+                                                label += ': ';
+                                            }
+                                            if (context.parsed.y !== null) {
+                                                const isHeight = context.chart.options.scales.y.title.text.includes('TINGGI') || context.dataset.label.includes('Tinggi');
+                                                label += context.parsed.y + (isHeight ? ' cm' : ' kg');
+                                            }
+                                            return label;
+                                        }
+                                    }
+                                }
                             }
                         }
                     });
