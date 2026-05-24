@@ -13,6 +13,10 @@ class MedicalRecordRequest extends FormRequest
 
     public function rules()
     {
+        $patientId = $this->input('patient_id');
+        $patient = $patientId ? \App\Models\Patient::find($patientId) : null;
+        $isChild = $patient ? in_array($patient->category, ['bayi', 'baduta', 'balita', 'anak_sekolah']) : true;
+
         return [
             'patient_id' => 'required|exists:patients,id',
             'visit_date' => 'required|date|before_or_equal:today',
@@ -20,7 +24,7 @@ class MedicalRecordRequest extends FormRequest
             'height' => 'required|numeric|min:20|max:300',
             'head_circumference' => 'nullable|numeric|min:20|max:70',
             'upper_arm_circumference' => 'nullable|numeric|min:5|max:40',
-            'measurement_method' => 'required|in:recumbent,standing',
+            'measurement_method' => $isChild ? 'required|in:recumbent,standing' : 'nullable|in:recumbent,standing',
             'blood_pressure' => 'nullable|string|max:20',
             'vitamin_a' => 'nullable|boolean',
             'pill_fe' => 'nullable|boolean',
@@ -63,6 +67,14 @@ class MedicalRecordRequest extends FormRequest
             'kpsp_language' => 'nullable|boolean',
             'kpsp_social' => 'nullable|boolean',
             'kpsp_note' => 'nullable|string',
+
+            // Lansia Metrics
+            'systolic_bp' => 'nullable|integer|min:30|max:300',
+            'diastolic_bp' => 'nullable|integer|min:20|max:200',
+            'blood_sugar' => 'nullable|integer|min:10|max:1000',
+            'uric_acid' => 'nullable|numeric|min:0.1|max:30',
+            'cholesterol' => 'nullable|integer|min:50|max:600',
+            'current_medication' => 'nullable|string',
         ];
     }
 
