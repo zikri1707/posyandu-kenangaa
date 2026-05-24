@@ -20,8 +20,7 @@ class ActivityLogController extends Controller
             abort(403, 'Unauthorized access. Only superadmin can view activity logs.');
         }
 
-        $query = ActivityLog::with('user')
-            ->orderBy('created_at', 'desc');
+        $query = ActivityLog::orderBy('created_at', 'desc');
 
         // Filter by user
         if ($request->filled('user_id')) {
@@ -59,12 +58,18 @@ class ActivityLogController extends Controller
 
         $activityLogs = $query->paginate(20)->withQueryString();
 
-        // Calculate total stats for the whole database (ignoring current filters for general overview)
+        // Calculate total stats efficiently using a single query
+        $counts = DB::table('activity_logs')
+            ->select('action_type', DB::raw('count(*) as count'))
+            ->groupBy('action_type')
+            ->pluck('count', 'action_type')
+            ->toArray();
+
         $totalStats = [
-            'total' => ActivityLog::count(),
-            'create' => ActivityLog::where('action_type', 'create')->count(),
-            'update' => ActivityLog::where('action_type', 'update')->count(),
-            'delete' => ActivityLog::where('action_type', 'delete')->count(),
+            'total' => array_sum($counts),
+            'create' => $counts['create'] ?? 0,
+            'update' => $counts['update'] ?? 0,
+            'delete' => $counts['delete'] ?? 0,
         ];
 
         // Get unique users for filter dropdown
