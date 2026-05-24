@@ -31,6 +31,13 @@ class User extends Authenticatable implements MustVerifyEmail
         'block_expires',
         'email_verified_at',
         'last_notifications_read_at',
+        'cadre_role',
+        'ttl',
+        'nik',
+        'pendidikan',
+        'alamat',
+        'hp',
+        'image',
     ];
 
     /**
@@ -152,7 +159,7 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getDisplayRoleNameAttribute(): string
     {
         if ($this->isSuperAdmin()) {
-            return 'superadmin';
+            return 'admin_rw';
         }
 
         $unitSuffix = '';
@@ -163,6 +170,26 @@ class User extends Authenticatable implements MustVerifyEmail
         }
 
         return $this->role.$unitSuffix;
+    }
+
+    /**
+     * Get the clean label for the role (e.g., Admin RW, Admin 1, Kader 2)
+     */
+    public function getRoleLabelAttribute(): string
+    {
+        $roleName = $this->display_role_name;
+
+        if ($roleName === 'admin_rw') {
+            return 'Admin RW';
+        }
+
+        if (Str::contains($roleName, ['admin', 'kader'])) {
+            $label = ucfirst(substr($roleName, 0, -1));
+            $suffix = substr($roleName, -1);
+            return $label . ' ' . $suffix;
+        }
+
+        return 'Pengguna';
     }
 
     /**
