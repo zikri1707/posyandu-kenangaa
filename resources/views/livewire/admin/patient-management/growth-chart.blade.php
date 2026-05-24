@@ -493,6 +493,90 @@
                     }
 
                     this.hasData = true;
+
+                    // Intercept and style datasets for soft-colored light-mode reference bands
+                    const rawDatasets = data.datasets;
+                    const medianDataset = rawDatasets.find(d => d.label === 'Median');
+                    const plus2Dataset = rawDatasets.find(d => d.label === '+2 SD');
+                    const minus2Dataset = rawDatasets.find(d => d.label === '-2 SD');
+                    const plus3Dataset = rawDatasets.find(d => d.label === '+3 SD');
+                    const minus3Dataset = rawDatasets.find(d => d.label === '-3 SD');
+                    const childDataset = rawDatasets.find(d => d.label.includes('Anak') || d.label.includes('Badan'));
+
+                    const styledDatasets = [];
+
+                    // 1. +3 SD (index 0) - Fills to +2 SD (index 1) with amber warning
+                    if (plus3Dataset) {
+                        plus3Dataset.borderColor = '#f43f5e';
+                        plus3Dataset.borderWidth = 1.5;
+                        plus3Dataset.pointRadius = 0;
+                        plus3Dataset.pointHoverRadius = 0;
+                        plus3Dataset.fill = 1;
+                        plus3Dataset.backgroundColor = 'rgba(245, 158, 11, 0.08)';
+                        styledDatasets.push(plus3Dataset);
+                    }
+
+                    // 2. +2 SD (index 1) - Fills to -2 SD (index 3) with healthy emerald green
+                    if (plus2Dataset) {
+                        plus2Dataset.borderColor = '#f59e0b';
+                        plus2Dataset.borderWidth = 1.5;
+                        plus2Dataset.pointRadius = 0;
+                        plus2Dataset.pointHoverRadius = 0;
+                        plus2Dataset.fill = 3;
+                        plus2Dataset.backgroundColor = 'rgba(16, 185, 129, 0.12)';
+                        styledDatasets.push(plus2Dataset);
+                    }
+
+                    // 3. Median (index 2) - No fill, drawn clearly in the center
+                    if (medianDataset) {
+                        medianDataset.borderColor = '#10b981';
+                        medianDataset.borderWidth = 2.5;
+                        medianDataset.pointRadius = 0;
+                        medianDataset.pointHoverRadius = 0;
+                        medianDataset.fill = false;
+                        styledDatasets.push(medianDataset);
+                    }
+
+                    // 4. -2 SD (index 3) - Fills to -3 SD (index 4) with amber warning
+                    if (minus2Dataset) {
+                        minus2Dataset.borderColor = '#f59e0b';
+                        minus2Dataset.borderWidth = 1.5;
+                        minus2Dataset.pointRadius = 0;
+                        minus2Dataset.pointHoverRadius = 0;
+                        minus2Dataset.fill = 4;
+                        minus2Dataset.backgroundColor = 'rgba(245, 158, 11, 0.08)';
+                        styledDatasets.push(minus2Dataset);
+                    }
+
+                    // 5. -3 SD (index 4) - Fills to origin (bottom) with rose danger
+                    if (minus3Dataset) {
+                        minus3Dataset.borderColor = '#ef4444';
+                        minus3Dataset.borderWidth = 1.5;
+                        minus3Dataset.pointRadius = 0;
+                        minus3Dataset.pointHoverRadius = 0;
+                        minus3Dataset.fill = 'origin';
+                        minus3Dataset.backgroundColor = 'rgba(239, 68, 68, 0.08)';
+                        styledDatasets.push(minus3Dataset);
+                    }
+
+                    // 6. Child dataset (index 5) - High contrast, styled by gender theme
+                    if (childDataset) {
+                        const isMaleGender = {{ $isMale ? 'true' : 'false' }};
+                        const lineCol = isMaleGender ? '#0d9488' : '#be185d';
+                        childDataset.borderColor = lineCol;
+                        childDataset.borderWidth = 4;
+                        childDataset.pointRadius = 6;
+                        childDataset.pointHoverRadius = 9;
+                        childDataset.pointBackgroundColor = lineCol;
+                        childDataset.pointBorderColor = '#ffffff';
+                        childDataset.pointBorderWidth = 2;
+                        childDataset.fill = false;
+                        childDataset.tension = 0.25;
+                        styledDatasets.push(childDataset);
+                    }
+
+                    data.datasets = styledDatasets;
+
                     this.chart = new Chart(ctx, {
                         type: 'line',
                         data: data,
