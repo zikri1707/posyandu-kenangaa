@@ -52,7 +52,21 @@ class MedicalRecordController extends Controller
     {
         $this->authorize('create', MedicalRecord::class);
 
+        if (!request()->has('category')) {
+            return view('livewire.admin.medical-record-management.select-category');
+        }
+
         $patients = $this->getAvailablePatients();
+
+        $category = request('category');
+        if ($category === 'balita') {
+            $patients = $patients->filter(fn ($p) => in_array($p->category, ['bayi', 'baduta', 'balita', 'anak_sekolah']));
+        } elseif ($category === 'ibu_hamil') {
+            $patients = $patients->filter(fn ($p) => $p->category === 'ibu_hamil');
+        } elseif ($category === 'lansia') {
+            $patients = $patients->filter(fn ($p) => $p->category === 'lansia');
+        }
+
         $selectedPatient = request()->has('patient_id') ? Patient::find(request('patient_id')) : null;
         
         $duplicateWarnings = $this->checkDuplicateWarnings(
