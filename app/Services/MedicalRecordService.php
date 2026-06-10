@@ -60,9 +60,36 @@ class MedicalRecordService
     public function createRecord(array $data, User $user): MedicalRecord
     {
         return \Illuminate\Support\Facades\DB::transaction(function () use ($data, $user) {
-            $patient = $this->getPatientOrFail($data['patient_id']);
+            $patient = null;
+            if (!empty($data['patient_id'])) {
+                $patient = $this->getPatientOrFail($data['patient_id']);
+            } elseif (!empty($data['id_number'])) {
+                $hash = Patient::generateBlindIndex($data['id_number']);
+                $patient = Patient::where('id_number_hash', $hash)->first();
+            }
+
+            if (!$patient) {
+                $patientCategory = $data['category'] ?? 'ibu_hamil';
+                $patient = Patient::create([
+                    'posyandu_id' => $user->posyandu_id ?? \App\Models\Posyandu::first()?->id ?? 1,
+                    'category' => $patientCategory,
+                    'full_name' => $data['full_name'] ?? ($patientCategory === 'lansia' ? 'Lansia Baru' : 'Ibu Hamil Baru'),
+                    'id_number' => $data['id_number'] ?? null,
+                    'birth_date' => $data['birth_date'] ?? null,
+                    'phone_number' => $data['phone_number'] ?? null,
+                    'husband_name' => $data['husband_name'] ?? null,
+                    'address' => $data['address'] ?? null,
+                    'dusun_rt_rw' => $data['dusun_rt_rw'] ?? null,
+                    'desa_kelurahan' => $data['desa_kelurahan'] ?? null,
+                    'kecamatan' => $data['kecamatan'] ?? null,
+                    'is_pregnant' => ($patientCategory === 'ibu_hamil'),
+                    'gender' => ($patientCategory === 'lansia') ? ($data['gender'] ?? 'P') : 'P',
+                ]);
+            }
+
             $this->verifyPatientAccess($patient, $user);
 
+            $data['patient_id'] = $patient->id;
             $preparedData = $this->prepareRecordData($data, $patient, $user);
             $medicalRecord = MedicalRecord::create($preparedData);
 
@@ -86,10 +113,37 @@ class MedicalRecordService
     ): MedicalRecord {
         return \Illuminate\Support\Facades\DB::transaction(function () use ($medicalRecord, $data, $user) {
             $oldValues = $medicalRecord->toArray();
-            $patient = $this->getPatientOrFail($data['patient_id']);
+            
+            $patient = null;
+            if (!empty($data['patient_id'])) {
+                $patient = $this->getPatientOrFail($data['patient_id']);
+            } elseif (!empty($data['id_number'])) {
+                $hash = Patient::generateBlindIndex($data['id_number']);
+                $patient = Patient::where('id_number_hash', $hash)->first();
+            }
+
+            if (!$patient) {
+                $patientCategory = $data['category'] ?? 'ibu_hamil';
+                $patient = Patient::create([
+                    'posyandu_id' => $user->posyandu_id ?? \App\Models\Posyandu::first()?->id ?? 1,
+                    'category' => $patientCategory,
+                    'full_name' => $data['full_name'] ?? ($patientCategory === 'lansia' ? 'Lansia Baru' : 'Ibu Hamil Baru'),
+                    'id_number' => $data['id_number'] ?? null,
+                    'birth_date' => $data['birth_date'] ?? null,
+                    'phone_number' => $data['phone_number'] ?? null,
+                    'husband_name' => $data['husband_name'] ?? null,
+                    'address' => $data['address'] ?? null,
+                    'dusun_rt_rw' => $data['dusun_rt_rw'] ?? null,
+                    'desa_kelurahan' => $data['desa_kelurahan'] ?? null,
+                    'kecamatan' => $data['kecamatan'] ?? null,
+                    'is_pregnant' => ($patientCategory === 'ibu_hamil'),
+                    'gender' => ($patientCategory === 'lansia') ? ($data['gender'] ?? 'P') : 'P',
+                ]);
+            }
 
             $this->verifyPatientAccess($patient, $user);
 
+            $data['patient_id'] = $patient->id;
             $preparedData = $this->prepareUpdateData($data, $patient, $medicalRecord, $oldValues);
             $medicalRecord->update($preparedData);
 
@@ -185,6 +239,8 @@ class MedicalRecordService
     {
         $this->updatePatientData($patient, $data);
 
+        $data['height'] = $data['height'] ?? $data['starting_height'] ?? 0;
+
         $data = $this->calculateNutrition($data, $patient);
 
         $data['user_id'] = $user->id;
@@ -201,8 +257,25 @@ class MedicalRecordService
         $data['tbc_screening_contact'] = $data['tbc_screening_contact'] ?? false;
         $data['tbc_screening_lethargy'] = $data['tbc_screening_lethargy'] ?? false;
         $data['tbc_screening_lumps'] = $data['tbc_screening_lumps'] ?? false;
+        $data['tbc_screening_weight_loss'] = $data['tbc_screening_weight_loss'] ?? false;
 
         $data['measurement_method'] = $data['measurement_method'] ?? 'recumbent';
+
+        if (!empty($data['blood_pressure'])) {
+            $bpVal = str_replace(' mmHg', '', $data['blood_pressure']);
+            $bpParts = explode('/', $bpVal);
+            if (count($bpParts) === 2) {
+                $data['systolic_bp'] = (int) trim($bpParts[0]);
+                $data['diastolic_bp'] = (int) trim($bpParts[1]);
+            }
+            unset($data['blood_pressure']);
+        }
+        if (isset($data['family_disease_history']) && is_array($data['family_disease_history'])) {
+            $data['family_disease_history'] = json_encode($data['family_disease_history']);
+        }
+        if (isset($data['risk_behaviors']) && is_array($data['risk_behaviors'])) {
+            $data['risk_behaviors'] = json_encode($data['risk_behaviors']);
+        }
 
         return $data;
     }
@@ -217,6 +290,8 @@ class MedicalRecordService
         array $oldValues
     ): array {
         $this->updatePatientData($patient, $data);
+
+        $data['height'] = $data['height'] ?? $data['starting_height'] ?? $medicalRecord->height ?? 0;
 
         $weightChanged = isset($data['weight']) && $data['weight'] != $oldValues['weight'];
         $heightChanged = isset($data['height']) && $data['height'] != $oldValues['height'];
@@ -245,8 +320,25 @@ class MedicalRecordService
         $data['tbc_screening_contact'] = $data['tbc_screening_contact'] ?? false;
         $data['tbc_screening_lethargy'] = $data['tbc_screening_lethargy'] ?? false;
         $data['tbc_screening_lumps'] = $data['tbc_screening_lumps'] ?? false;
+        $data['tbc_screening_weight_loss'] = $data['tbc_screening_weight_loss'] ?? false;
 
         $data['measurement_method'] = $data['measurement_method'] ?? $medicalRecord->measurement_method ?? 'recumbent';
+
+        if (!empty($data['blood_pressure'])) {
+            $bpVal = str_replace(' mmHg', '', $data['blood_pressure']);
+            $bpParts = explode('/', $bpVal);
+            if (count($bpParts) === 2) {
+                $data['systolic_bp'] = (int) trim($bpParts[0]);
+                $data['diastolic_bp'] = (int) trim($bpParts[1]);
+            }
+            unset($data['blood_pressure']);
+        }
+        if (isset($data['family_disease_history']) && is_array($data['family_disease_history'])) {
+            $data['family_disease_history'] = json_encode($data['family_disease_history']);
+        }
+        if (isset($data['risk_behaviors']) && is_array($data['risk_behaviors'])) {
+            $data['risk_behaviors'] = json_encode($data['risk_behaviors']);
+        }
 
         return $data;
     }
@@ -256,11 +348,31 @@ class MedicalRecordService
      */
     private function updatePatientData(Patient $patient, array $data): void
     {
-        $patientFields = ['father_name', 'mother_name', 'weight_at_birth', 'height_at_birth'];
+        $patientFields = [
+            'father_name', 'mother_name', 'weight_at_birth', 'height_at_birth',
+            'full_name', 'birth_date', 'phone_number', 'husband_name', 'address',
+            'dusun_rt_rw', 'desa_kelurahan', 'kecamatan', 'gender', 'category'
+        ];
         $updateData = [];
 
         foreach ($patientFields as $field) {
             if (isset($data[$field]) && ! empty($data[$field])) {
+                if ($field === 'category') {
+                    $existingCat = $patient->category;
+                    $newCat = $data[$field];
+                    $childCats = ['bayi', 'baduta', 'balita', 'anak_sekolah'];
+                    $isExistingChild = in_array($existingCat, $childCats);
+                    $isNewChild = in_array($newCat, $childCats);
+
+                    if ($existingCat && $existingCat !== $newCat) {
+                        if ($isExistingChild && $isNewChild) {
+                            // child to child category transition is allowed
+                        } else {
+                            // do not update the patient's category to a conflicting one
+                            continue;
+                        }
+                    }
+                }
                 $updateData[$field] = $data[$field];
             }
         }

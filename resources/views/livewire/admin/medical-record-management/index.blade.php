@@ -167,8 +167,29 @@
                                 <div>
                                     <div class="font-black text-slate-900">{{ $record->patient->full_name ?? 'Tidak Diketahui' }}</div>
                                     <div class="flex items-center gap-2 mt-1">
-                                        <span class="text-[10px] font-black text-teal-600 uppercase tracking-widest bg-teal-50 px-2 py-0.5 rounded-md">
-                                            {{ $record->patient->category ?? '-' }}
+                                        @php
+                                            $cat = $record->patient->category ?? 'balita';
+                                            $catLabels = [
+                                                'ibu_hamil' => 'Ibu Hamil',
+                                                'lansia' => 'Lansia',
+                                                'balita' => 'Balita',
+                                                'bayi' => 'Bayi',
+                                                'baduta' => 'Baduta',
+                                                'anak_sekolah' => 'Anak Sekolah'
+                                            ];
+                                            $catColors = [
+                                                'ibu_hamil' => 'text-pink-600 bg-pink-50 border border-pink-100',
+                                                'lansia' => 'text-purple-600 bg-purple-50 border border-purple-100',
+                                                'balita' => 'text-blue-600 bg-blue-50 border border-blue-100',
+                                                'bayi' => 'text-sky-600 bg-sky-50 border border-sky-100',
+                                                'baduta' => 'text-indigo-600 bg-indigo-50 border border-indigo-100',
+                                                'anak_sekolah' => 'text-emerald-600 bg-emerald-50 border border-emerald-100',
+                                            ];
+                                            $label = $catLabels[$cat] ?? ucfirst(str_replace('_', ' ', $cat));
+                                            $colorClass = $catColors[$cat] ?? 'text-teal-600 bg-teal-50 border border-teal-100';
+                                        @endphp
+                                        <span class="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg {{ $colorClass }}">
+                                            {{ $label }}
                                         </span>
                                         <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                                             Age: {{ $record->patient->age ?? '?' }}

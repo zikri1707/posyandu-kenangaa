@@ -63,10 +63,21 @@ class MedicalRecord extends Model
         'z_score_wfh', 'wasting_status',
         // Gizi IMT/U (obesitas)
         'z_score_bfa',
+        // ANC & Postpartum fields
+        'pregnancy_number', 'pregnancy_spacing', 'starting_weight', 'starting_height', 'delivery_date', 'delivery_method',
+        'gestational_age', 'imt_plotting_status', 'lila_plotting_status', 'bp_plotting_status', 'tbc_screening_weight_loss',
+        'nakes_gives_fe_mms', 'consumes_fe_mms_regularly', 'nakes_gives_mt_kek', 'mt_package_details', 'consumes_mt_kek_regularly',
+        'counseling_topic', 'joins_pregnant_class', 'anc_referral',
+        'postpartum_period', 'postpartum_imt_plotting', 'postpartum_bp_plotting', 'nakes_gives_vit_a', 'vit_a_capsule_count',
+        'consumes_vit_a_regularly', 'is_breastfeeding', 'postpartum_kb', 'postpartum_counseling_topic', 'postpartum_referral',
+        // Lansia additional fields
+        'waist_circumference', 'eye_test', 'ear_test', 'puma_screening', 'tbc_screening_status', 'mental_screening',
+        'contraception', 'family_disease_history', 'risk_behaviors', 'imt', 'education',
     ];
 
     protected $casts = [
         'visit_date' => 'date',
+        'delivery_date' => 'date',
         'vitamin_a' => 'boolean',
         'pill_fe' => 'boolean',
         'is_exclusive_breastfeeding' => 'boolean',
@@ -78,11 +89,16 @@ class MedicalRecord extends Model
         'tbc_screening_contact' => 'boolean',
         'tbc_screening_lethargy' => 'boolean',
         'tbc_screening_lumps' => 'boolean',
+        'tbc_screening_weight_loss' => 'boolean',
         'weight' => 'decimal:2',
         'height' => 'decimal:2',
         'head_circumference' => 'decimal:2',
         'upper_arm_circumference' => 'decimal:2',
+        'waist_circumference' => 'decimal:2',
+        'imt' => 'decimal:2',
         'uric_acid' => 'decimal:2',
+        'starting_weight' => 'decimal:2',
+        'starting_height' => 'decimal:2',
         // Z-Score semua indeks
         'z_score' => 'decimal:2',  // BB/U
         'z_score_hfa' => 'decimal:2',  // TB/U

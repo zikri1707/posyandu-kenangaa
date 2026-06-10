@@ -22,7 +22,7 @@ class Patient extends Model
         'job', 'number_of_children', 'is_pregnant', 'living_status',
         'independence_status', 'family_member_count', 'house_condition',
         'water_access', 'has_latrine', 'economic_status', 'rt_domisili',
-        'historical_diseases',
+        'historical_diseases', 'husband_name', 'dusun_rt_rw', 'desa_kelurahan', 'kecamatan',
     ];
 
     protected $casts = [

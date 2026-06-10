@@ -13,15 +13,17 @@ class MedicalRecordRequest extends FormRequest
 
     public function rules()
     {
+        $category = $this->input('category');
         $patientId = $this->input('patient_id');
         $patient = $patientId ? \App\Models\Patient::find($patientId) : null;
-        $isChild = $patient ? in_array($patient->category, ['bayi', 'baduta', 'balita', 'anak_sekolah']) : true;
+        $patientCategory = $patient ? $patient->category : $category;
+        $isChild = in_array($patientCategory ?? 'balita', ['bayi', 'baduta', 'balita', 'anak_sekolah']);
 
         return [
-            'patient_id' => 'required|exists:patients,id',
+            'patient_id' => 'nullable|exists:patients,id',
             'visit_date' => 'required|date|before_or_equal:today',
-            'weight' => 'required|numeric|min:0.5|max:200',
-            'height' => 'required|numeric|min:20|max:300',
+            'weight' => 'nullable|numeric|min:0.5|max:200',
+            'height' => 'nullable|numeric|min:20|max:300',
             'head_circumference' => 'nullable|numeric|min:20|max:70',
             'upper_arm_circumference' => 'nullable|numeric|min:5|max:40',
             'measurement_method' => $isChild ? 'required|in:recumbent,standing' : 'nullable|in:recumbent,standing',
@@ -30,7 +32,7 @@ class MedicalRecordRequest extends FormRequest
             'pill_fe' => 'nullable|boolean',
             'is_exclusive_breastfeeding' => 'nullable|boolean',
             'mp_asi' => 'nullable|boolean',
-            'diagnosis' => 'required|string',
+            'diagnosis' => 'nullable|string',
             'complaint' => 'nullable|string',
             'disease_history' => 'nullable|string',
             'health_note' => 'nullable|string',
@@ -54,11 +56,28 @@ class MedicalRecordRequest extends FormRequest
             'counseling_notes' => 'nullable|string',
             'referral_type' => 'nullable|in:None,Pustu,Puskesmas,RS',
 
-            // Patient Identity Fields (if updated during record creation)
+            // Patient Identity Fields (if updated/created during record creation)
+            'full_name' => 'nullable|string|max:255',
+            'id_number' => 'nullable|string|max:20',
+            'birth_date' => 'nullable|date',
+            'phone_number' => 'nullable|string|max:20',
+            'husband_name' => 'nullable|string|max:255',
+            'address' => 'nullable|string',
+            'dusun_rt_rw' => 'nullable|string|max:255',
+            'desa_kelurahan' => 'nullable|string|max:255',
+            'kecamatan' => 'nullable|string|max:255',
             'father_name' => 'nullable|string|max:255',
             'mother_name' => 'nullable|string|max:255',
             'weight_at_birth' => 'nullable|numeric|min:0.5|max:10',
             'height_at_birth' => 'nullable|numeric|min:30|max:60',
+
+            // Pregnancy details
+            'pregnancy_number' => 'nullable|integer|min:1',
+            'pregnancy_spacing' => 'nullable|string|max:255',
+            'starting_weight' => 'nullable|numeric|min:30|max:200',
+            'starting_height' => 'nullable|numeric|min:100|max:250',
+            'delivery_date' => 'nullable|date',
+            'delivery_method' => 'nullable|string|max:255',
             
             // KPSP (Child Development) fields
             'kpsp_age_group' => 'nullable|integer',
@@ -75,6 +94,46 @@ class MedicalRecordRequest extends FormRequest
             'uric_acid' => 'nullable|numeric|min:0.1|max:30',
             'cholesterol' => 'nullable|integer|min:50|max:600',
             'current_medication' => 'nullable|string',
+            'waist_circumference' => 'nullable|numeric|min:30|max:200',
+            'eye_test' => 'nullable|string|max:255',
+            'ear_test' => 'nullable|string|max:255',
+            'puma_screening' => 'nullable|string|max:255',
+            'tbc_screening_status' => 'nullable|string|max:255',
+            'mental_screening' => 'nullable|string|max:255',
+            'contraception' => 'nullable|string|max:255',
+            'family_disease_history' => 'nullable|array',
+            'risk_behaviors' => 'nullable|array',
+            'imt' => 'nullable|numeric',
+            'education' => 'nullable|string',
+            'gender' => 'nullable|in:L,P',
+            'category' => 'nullable|string|in:ibu_hamil,lansia,balita',
+
+            // Section 2 additions
+            'gestational_age' => 'nullable|string|max:255',
+            'imt_plotting_status' => 'nullable|string|max:255',
+            'lila_plotting_status' => 'nullable|string|max:255',
+            'bp_plotting_status' => 'nullable|string|max:255',
+            'tbc_screening_weight_loss' => 'nullable|boolean',
+            'nakes_gives_fe_mms' => 'nullable|string|max:255',
+            'consumes_fe_mms_regularly' => 'nullable|string|max:255',
+            'nakes_gives_mt_kek' => 'nullable|string|max:255',
+            'mt_package_details' => 'nullable|string|max:255',
+            'consumes_mt_kek_regularly' => 'nullable|string|max:255',
+            'counseling_topic' => 'nullable|string|max:255',
+            'joins_pregnant_class' => 'nullable|string|max:255',
+            'anc_referral' => 'nullable|string',
+
+            // Section 3 additions
+            'postpartum_period' => 'nullable|string|max:255',
+            'postpartum_imt_plotting' => 'nullable|string|max:255',
+            'postpartum_bp_plotting' => 'nullable|string|max:255',
+            'nakes_gives_vit_a' => 'nullable|string|max:255',
+            'vit_a_capsule_count' => 'nullable|string|max:255',
+            'consumes_vit_a_regularly' => 'nullable|string|max:255',
+            'is_breastfeeding' => 'nullable|string|max:255',
+            'postpartum_kb' => 'nullable|string|max:255',
+            'postpartum_counseling_topic' => 'nullable|string|max:255',
+            'postpartum_referral' => 'nullable|string',
         ];
     }
 
@@ -106,6 +165,55 @@ class MedicalRecordRequest extends FormRequest
             'vaccine_dose.integer' => 'Dosis vaksin harus berupa angka.',
             'vaccine_dose.min' => 'Dosis vaksin minimal 1.',
             'vitamin_a_color.in' => 'Warna Vitamin A harus Biru, Merah, atau Tidak Ada.',
+        ];
+    }
+
+    /**
+     * Add after-validation hook.
+     */
+    public function after(): array
+    {
+        return [
+            function ($validator) {
+                $category = $this->input('category');
+                $idNumber = $this->input('id_number');
+                $patientId = $this->input('patient_id');
+
+                if ($idNumber && $category) {
+                    $hash = \App\Models\Patient::generateBlindIndex($idNumber);
+                    $existing = \App\Models\Patient::where('id_number_hash', $hash)
+                        ->when($patientId, function($q) use ($patientId) {
+                            $q->where('id', '!=', $patientId);
+                        })
+                        ->first();
+
+                    if ($existing) {
+                        $existingCat = $existing->category;
+                        $childCategories = ['bayi', 'baduta', 'balita', 'anak_sekolah'];
+                        
+                        $isExistingChild = in_array($existingCat, $childCategories);
+                        $isCurrentChild = in_array($category, $childCategories);
+
+                        if (($isExistingChild && !$isCurrentChild) || (!$isExistingChild && $isCurrentChild) || (!$isExistingChild && !$isCurrentChild && $existingCat !== $category)) {
+                            $catLabels = [
+                                'ibu_hamil' => 'Ibu Hamil',
+                                'lansia' => 'Lansia',
+                                'balita' => 'Balita',
+                                'bayi' => 'Bayi',
+                                'baduta' => 'Baduta',
+                                'anak_sekolah' => 'Anak Sekolah'
+                            ];
+                            $existingLabel = $catLabels[$existingCat] ?? $existingCat;
+                            $currentLabel = $catLabels[$category] ?? $category;
+
+                            $validator->errors()->add(
+                                'id_number',
+                                "NIK ini sudah terdaftar sebagai pasien {$existingLabel}. Tidak bisa mendaftarkannya sebagai {$currentLabel}."
+                            );
+                        }
+                    }
+                }
+            }
         ];
     }
 }
