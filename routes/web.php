@@ -149,6 +149,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('admin/reports', [\App\Http\Controllers\Web\ReportController::class, 'index'])->name('admin.reports.index');
         Route::post('admin/reports/export-excel', [\App\Http\Controllers\Web\ReportController::class, 'exportExcel'])->name('admin.reports.export-excel');
         Route::post('admin/reports/export-pdf', [\App\Http\Controllers\Web\ReportController::class, 'exportPdf'])->name('admin.reports.export-pdf');
+        Route::get('admin/reports/individual/{patient}', [\App\Http\Controllers\Web\ReportController::class, 'showIndividual'])->name('admin.reports.individual');
+        Route::post('admin/reports/individual/{patient}/export-pdf', [\App\Http\Controllers\Web\ReportController::class, 'exportIndividualPdf'])->name('admin.reports.individual.pdf');
+        Route::post('admin/reports/individual/{patient}/export-excel', [\App\Http\Controllers\Web\ReportController::class, 'exportIndividualExcel'])->name('admin.reports.individual.excel');
     });
 
     // 10. PEDUKUHANS

@@ -48,10 +48,10 @@
             </div>
             @endif
 
-            {{-- Pilih Bulan --}}
+            {{-- Tanggal Mulai (Bulan) --}}
             <div class="flex-1 min-w-[160px]">
-                <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1 mb-2">Pilih Bulan</label>
-                <x-forms.select-input wire:model="selectedMonth" placeholder="" value="{{ $selectedMonth }}">
+                <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1 mb-2">Dari Bulan</label>
+                <x-forms.select-input wire:model="startMonth" placeholder="" value="{{ $startMonth }}">
                     <option value="1">Januari</option>
                     <option value="2">Februari</option>
                     <option value="3">Maret</option>
@@ -67,10 +67,39 @@
                 </x-forms.select-input>
             </div>
 
-            {{-- Pilih Tahun --}}
+            {{-- Tanggal Mulai (Tahun) --}}
             <div class="flex-1 min-w-[130px]">
-                <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1 mb-2">Pilih Tahun</label>
-                <x-forms.select-input wire:model="selectedYear" placeholder="" value="{{ $selectedYear }}">
+                <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1 mb-2">Dari Tahun</label>
+                <x-forms.select-input wire:model="startYear" placeholder="" value="{{ $startYear }}">
+                    @for($y = now()->year; $y >= 2020; $y--)
+                        <option value="{{ $y }}">{{ $y }}</option>
+                    @endfor
+                </x-forms.select-input>
+            </div>
+
+            {{-- Tanggal Akhir (Bulan) --}}
+            <div class="flex-1 min-w-[160px]">
+                <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1 mb-2">Sampai Bulan</label>
+                <x-forms.select-input wire:model="endMonth" placeholder="" value="{{ $endMonth }}">
+                    <option value="1">Januari</option>
+                    <option value="2">Februari</option>
+                    <option value="3">Maret</option>
+                    <option value="4">April</option>
+                    <option value="5">Mei</option>
+                    <option value="6">Juni</option>
+                    <option value="7">Juli</option>
+                    <option value="8">Agustus</option>
+                    <option value="9">September</option>
+                    <option value="10">Oktober</option>
+                    <option value="11">November</option>
+                    <option value="12">Desember</option>
+                </x-forms.select-input>
+            </div>
+
+            {{-- Tanggal Akhir (Tahun) --}}
+            <div class="flex-1 min-w-[130px]">
+                <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1 mb-2">Sampai Tahun</label>
+                <x-forms.select-input wire:model="endYear" placeholder="" value="{{ $endYear }}">
                     @for($y = now()->year; $y >= 2020; $y--)
                         <option value="{{ $y }}">{{ $y }}</option>
                     @endfor
@@ -106,7 +135,7 @@
             </div>
             <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Kunjungan</p>
             <h3 class="text-4xl font-black text-slate-900 mt-1 leading-tight">{{ $totalKunjungan }}</h3>
-            <p class="text-xs text-slate-400 mt-2">{{ $monthName }} {{ $selectedYear }}</p>
+            <p class="text-xs text-slate-400 mt-2">{{ $periodLabel }}</p>
         </div>
 
         {{-- Balita Stunting --}}
@@ -157,7 +186,7 @@
         <div class="px-6 py-4 border-b border-slate-200 flex flex-wrap justify-between items-center gap-4">
             <div>
                 <h2 class="text-base font-bold text-slate-900">Data Detail Kunjungan</h2>
-                <p class="text-sm text-slate-500 mt-0.5">{{ $monthName }} {{ $selectedYear }} — {{ $posyanduName }}</p>
+                <p class="text-sm text-slate-500 mt-0.5">{{ $periodLabel }} — {{ $posyanduName }}</p>
             </div>
             <div class="flex gap-3">
                 {{-- Ekspor Excel --}}
@@ -188,6 +217,75 @@
             </div>
         </div>
 
+        {{-- Search & Sort Section --}}
+        <div class="px-6 py-4 border-t border-slate-100 bg-slate-50/50 space-y-3">
+            {{-- Search Input --}}
+            <div class="relative group">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-500 transition-colors text-[18px]">search</span>
+                <input type="text" wire:model.live.debounce.150ms="search" 
+                       placeholder="Cari nama warga atau NIK..."
+                       class="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 text-sm focus:border-teal-400 focus:ring-1 focus:ring-teal-400 focus:ring-opacity-50 transition-all">
+            </div>
+
+            {{-- Sort Options Row --}}
+            <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-2">Urutkan:</span>
+            
+            {{-- Sort by Patient Name --}}
+            <div class="flex gap-1">
+                <button wire:click="$set('sortBy', 'patient_name_asc')"
+                        @class(['px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all', 
+                                'bg-teal-100 text-teal-600 ring-1 ring-teal-200' => $sortBy === 'patient_name_asc',
+                                'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200' => $sortBy !== 'patient_name_asc'])
+                        title="Nama A-Z">
+                    <span class="material-symbols-outlined text-[12px]">sort_by_alpha</span>
+                </button>
+                <button wire:click="$set('sortBy', 'patient_name_desc')"
+                        @class(['px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all', 
+                                'bg-teal-100 text-teal-600 ring-1 ring-teal-200' => $sortBy === 'patient_name_desc',
+                                'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200' => $sortBy !== 'patient_name_desc'])
+                        title="Nama Z-A">
+                    <span class="material-symbols-outlined text-[12px]">sort_by_alpha</span><span class="text-[8px] ml-0.5">↓</span>
+                </button>
+            </div>
+
+            {{-- Sort by Visit Date --}}
+            <div class="flex gap-1">
+                <button wire:click="$set('sortBy', 'visit_date_asc')"
+                        @class(['px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all', 
+                                'bg-teal-100 text-teal-600 ring-1 ring-teal-200' => $sortBy === 'visit_date_asc',
+                                'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200' => $sortBy !== 'visit_date_asc'])
+                        title="Tanggal Lama - Baru">
+                    <span class="material-symbols-outlined text-[12px]">calendar_month</span>
+                </button>
+                <button wire:click="$set('sortBy', 'visit_date_desc')"
+                        @class(['px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all', 
+                                'bg-teal-100 text-teal-600 ring-1 ring-teal-200' => $sortBy === 'visit_date_desc',
+                                'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200' => $sortBy !== 'visit_date_desc'])
+                        title="Tanggal Baru - Lama">
+                    <span class="material-symbols-outlined text-[12px]">calendar_month</span><span class="text-[8px] ml-0.5">↓</span>
+                </button>
+            </div>
+
+            {{-- Sort by Updated Date --}}
+            <div class="flex gap-1">
+                <button wire:click="$set('sortBy', 'updated_at_asc')"
+                        @class(['px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all', 
+                                'bg-teal-100 text-teal-600 ring-1 ring-teal-200' => $sortBy === 'updated_at_asc',
+                                'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200' => $sortBy !== 'updated_at_asc'])
+                        title="Edit Lama - Baru">
+                    <span class="material-symbols-outlined text-[12px]">update</span>
+                </button>
+                <button wire:click="$set('sortBy', 'updated_at_desc')"
+                        @class(['px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all', 
+                                'bg-teal-100 text-teal-600 ring-1 ring-teal-200' => $sortBy === 'updated_at_desc',
+                                'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200' => $sortBy !== 'updated_at_desc'])
+                        title="Edit Baru - Lama">
+                    <span class="material-symbols-outlined text-[12px]">update</span><span class="text-[8px] ml-0.5">↓</span>
+                </button>
+            </div>
+        </div>
+
         {{-- Tabel --}}
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
@@ -202,6 +300,7 @@
                         <th class="px-5 py-3.5 text-xs font-bold text-slate-500 uppercase tracking-wider">Status Gizi</th>
                         <th class="px-5 py-3.5 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Vit. A</th>
                         <th class="px-5 py-3.5 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Pill FE</th>
+                        <th class="px-5 py-3.5 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
@@ -271,14 +370,21 @@
                                 <span class="material-symbols-outlined text-slate-300 text-[20px]">cancel</span>
                             @endif
                         </td>
+                        <td class="px-5 py-4 text-center">
+                            <a href="{{ route('admin.reports.individual', ['patient' => $record->patient_id, 'start_month' => $startMonth, 'start_year' => $startYear, 'end_month' => $endMonth, 'end_year' => $endYear]) }}"
+                               class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-black text-slate-600 hover:bg-teal-600 hover:text-white transition-all">
+                                <span class="material-symbols-outlined text-[16px]">article</span>
+                                <span class="ml-1">Rapor</span>
+                            </a>
+                        </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="9" class="px-5 py-16 text-center">
+                        <td colspan="10" class="px-5 py-16 text-center">
                             <div class="flex flex-col items-center gap-3 text-slate-400">
                                 <span class="material-symbols-outlined text-[48px] text-slate-300">search_off</span>
                                 <p class="text-sm font-medium">Tidak ada data kunjungan</p>
-                                <p class="text-xs">Tidak ditemukan rekam medis untuk periode {{ $monthName }} {{ $selectedYear }}</p>
+                                <p class="text-xs">Tidak ditemukan rekam medis untuk periode {{ $periodLabel }}</p>
                             </div>
                         </td>
                     </tr>

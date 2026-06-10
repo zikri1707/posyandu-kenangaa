@@ -388,4 +388,324 @@ class ReportService
 
         $target[$g]['total']++;
     }
+
+    /**
+     * Generate individual report data for a patient
+     */
+    public function generateIndividualReportData(Patient $patient, int $startMonth, int $startYear, int $endMonth, int $endYear): array
+    {
+        $patient->load(['posyandu']);
+        
+        $startDate = sprintf('%04d-%02d-01', $startYear, $startMonth);
+        $endDate = date('Y-m-t', strtotime(sprintf('%04d-%02d-01', $endYear, $endMonth)));
+
+        // Get months timeline
+        $monthsRange = $this->getMonthsRange($startMonth, $startYear, $endMonth, $endYear);
+
+        // Get medical records within range
+        $records = MedicalRecord::where('patient_id', $patient->id)
+            ->whereBetween('visit_date', [$startDate, $endDate])
+            ->orderBy('visit_date', 'asc')
+            ->get();
+
+        // Get all unique vaccines received by the child overall
+        $immunizationStatus = $patient->getImmunizationStatus();
+
+        // Prepare vaccine records in this specific period
+        $vaccinesGivenInPeriod = [];
+        foreach ($records as $record) {
+            if ($record->vaccine_name) {
+                $vaccinesGivenInPeriod[] = [
+                    'date' => $record->visit_date->format('d M Y'),
+                    'name' => $record->vaccine_name,
+                    'dose' => $record->vaccine_dose ?? '1',
+                ];
+            }
+        }
+
+        // Prepare vitamin details
+        $vitaminGivenInPeriod = [];
+        foreach ($records as $record) {
+            if ($record->vitamin_a || ($record->vitamin_a_color && $record->vitamin_a_color !== 'none')) {
+                $vitaminGivenInPeriod[] = [
+                    'date' => $record->visit_date->format('d M Y'),
+                    'color' => $record->vitamin_a_color ?? 'none',
+                    'note' => $record->vitamin_a_color === 'red' ? 'Kapsul Merah (A) 200.000 IU' : ($record->vitamin_a_color === 'blue' ? 'Kapsul Biru (A) 100.000 IU' : 'Vitamin A'),
+                ];
+            }
+        }
+
+        // Map records to monthly slots
+        $monthlyRecords = [];
+        foreach ($monthsRange as $monthSlot) {
+            $monthKey = $monthSlot['key'];
+            // Find record for this month
+            $recordForMonth = $records->first(function ($r) use ($monthSlot) {
+                return $r->visit_date->format('Y-m') === $monthSlot['key'];
+            });
+            
+            $monthlyRecords[$monthKey] = [
+                'period' => $monthSlot,
+                'record' => $recordForMonth ? [
+                    'id' => $recordForMonth->id,
+                    'visit_date' => $recordForMonth->visit_date->format('d M Y'),
+                    'weight' => $recordForMonth->weight,
+                    'height' => $recordForMonth->height,
+                    'head_circumference' => $recordForMonth->head_circumference,
+                    'upper_arm_circumference' => $recordForMonth->upper_arm_circumference,
+                    'nutrition_status' => $recordForMonth->nutrition_status,
+                    'stunting_status' => $recordForMonth->stunting_status,
+                    'wasting_status' => $recordForMonth->wasting_status,
+                    'nutrition_trend' => $recordForMonth->nutrition_trend,
+                    'vitamin_a' => $recordForMonth->vitamin_a,
+                    'pill_fe' => $recordForMonth->pill_fe,
+                    'vaccine_name' => $recordForMonth->vaccine_name,
+                    'complaint' => $recordForMonth->complaint,
+                    'health_note' => $recordForMonth->health_note,
+                ] : null,
+            ];
+        }
+
+        // Generate SVG Charts for weight and height
+        $svgCharts = $this->generateIndividualSvgCharts($records->toArray(), $monthsRange);
+
+        $periodLabel = $this->getMonthName($startMonth) . ' ' . $startYear;
+        if ($startMonth !== $endMonth || $startYear !== $endYear) {
+            $periodLabel .= ' - ' . $this->getMonthName($endMonth) . ' ' . $endYear;
+        }
+
+        return [
+            'patient' => [
+                'id' => $patient->id,
+                'full_name' => $patient->full_name,
+                'id_number' => $patient->id_number,
+                'category' => $patient->category,
+                'gender' => $patient->gender,
+                'birth_date' => $patient->birth_date ? $patient->birth_date->format('d M Y') : '-',
+                'birth_date_raw' => $patient->birth_date,
+                'age' => $patient->age,
+                'father_name' => $patient->father_name ?? '-',
+                'mother_name' => $patient->mother_name ?? '-',
+                'address' => $patient->address ?? '-',
+                'phone_number' => $patient->phone_number ?? '-',
+                'posyandu_name' => $patient->posyandu->name ?? '-',
+            ],
+            'period' => [
+                'start_month' => $startMonth,
+                'start_year' => $startYear,
+                'end_month' => $endMonth,
+                'end_year' => $endYear,
+            ],
+            'period_label' => $periodLabel,
+            'months_range' => $monthsRange,
+            'monthly_records' => $monthlyRecords,
+            'raw_records' => $records->toArray(),
+            'vaccines_in_period' => $vaccinesGivenInPeriod,
+            'vitamins_in_period' => $vitaminGivenInPeriod,
+            'immunization_status' => $immunizationStatus,
+            'svg_charts' => $svgCharts,
+        ];
+    }
+
+    /**
+     * Generate individual SVG charts for weight and height
+     */
+    public function generateIndividualSvgCharts(array $records, array $monthsRange): array
+    {
+        // Dimensions
+        $width = 540;
+        $height = 200;
+        $paddingLeft = 45;
+        $paddingRight = 20;
+        $paddingTop = 20;
+        $paddingBottom = 35;
+        
+        $chartW = $width - $paddingLeft - $paddingRight;
+        $chartH = $height - $paddingTop - $paddingBottom;
+
+        $totalSlots = count($monthsRange);
+        
+        // 1. Weight Chart
+        // Calculate Y range for Weight (min=0, max=15 or max weight + 2)
+        $maxWeight = 15;
+        foreach ($records as $r) {
+            if ($r['weight'] > $maxWeight) {
+                $maxWeight = (float) $r['weight'];
+            }
+        }
+        $maxYWeight = ceil($maxWeight + 2);
+        $minYWeight = 0;
+
+        // 2. Height Chart
+        // Calculate Y range for Height (min=40, max=100 or max height + 10)
+        $maxHeight = 100;
+        foreach ($records as $r) {
+            if ($r['height'] > $maxHeight) {
+                $maxHeight = (float) $r['height'];
+            }
+        }
+        $maxYHeight = ceil($maxHeight + 10);
+        $minYHeight = 40;
+
+        // Helper to generate SVG string for a metric
+        $generateSvg = function(string $metric, float $minY, float $maxY) use ($records, $monthsRange, $width, $height, $paddingLeft, $paddingRight, $paddingTop, $paddingBottom, $chartW, $chartH, $totalSlots) {
+            $dataPoints = [];
+            
+            // X-axis coordinate calculator
+            $getX = function(int $index) use ($paddingLeft, $chartW, $totalSlots) {
+                if ($totalSlots <= 1) {
+                    return $paddingLeft + $chartW / 2;
+                }
+                return $paddingLeft + ($index / ($totalSlots - 1)) * $chartW;
+            };
+
+            // Y-axis coordinate calculator
+            $getY = function(float $val) use ($paddingTop, $chartH, $minY, $maxY) {
+                if ($maxY == $minY) return $paddingTop + $chartH / 2;
+                return $paddingTop + $chartH - (($val - $minY) / ($maxY - $minY)) * $chartH;
+            };
+
+            // Map records to coordinates
+            foreach ($monthsRange as $i => $slot) {
+                $rec = collect($records)->first(function($r) use ($slot) {
+                    return \Carbon\Carbon::parse($r['visit_date'])->format('Y-m') === $slot['key'];
+                });
+                
+                if ($rec && isset($rec[$metric]) && $rec[$metric] > 0) {
+                    $x = $getX($i);
+                    $y = $getY((float) $rec[$metric]);
+                    $dataPoints[] = [
+                        'x' => $x,
+                        'y' => $y,
+                        'value' => $rec[$metric],
+                        'label' => $slot['short_label'],
+                    ];
+                }
+            }
+
+            // Begin SVG String
+            $svg = '<svg viewBox="0 0 ' . $width . ' ' . $height . '" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff; font-family:sans-serif;">';
+            
+            // Grid lines and ticks for Y-axis (4 levels)
+            $yTicks = 4;
+            for ($k = 0; $k <= $yTicks; $k++) {
+                $tickVal = $minY + ($k / $yTicks) * ($maxY - $minY);
+                $ty = $getY($tickVal);
+                $svg .= '<line x1="' . $paddingLeft . '" y1="' . $ty . '" x2="' . ($width - $paddingRight) . '" y2="' . $ty . '" stroke="#f1f5f9" stroke-width="1" />';
+                $svg .= '<text x="' . ($paddingLeft - 8) . '" y="' . ($ty + 4) . '" fill="#64748b" font-size="9" text-anchor="end">' . round($tickVal, 1) . '</text>';
+            }
+
+            // Grid lines and labels for X-axis
+            foreach ($monthsRange as $i => $slot) {
+                $tx = $getX($i);
+                // Vertical grid line
+                $svg .= '<line x1="' . $tx . '" y1="' . $paddingTop . '" x2="' . $tx . '" y2="' . ($height - $paddingBottom) . '" stroke="#f8fafc" stroke-width="1" />';
+                // X label
+                $svg .= '<text x="' . $tx . '" y="' . ($height - $paddingBottom + 16) . '" fill="#64748b" font-size="9" text-anchor="middle" font-weight="bold">' . $slot['short_label'] . '</text>';
+            }
+
+            // Draw line
+            if (count($dataPoints) > 1) {
+                $polyPoints = [];
+                foreach ($dataPoints as $dp) {
+                    $polyPoints[] = $dp['x'] . ',' . $dp['y'];
+                }
+                $svg .= '<polyline points="' . implode(' ', $polyPoints) . '" fill="none" stroke="#0d9488" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />';
+            }
+
+            // Draw data points and value labels
+            foreach ($dataPoints as $dp) {
+                $svg .= '<circle cx="' . $dp['x'] . '" cy="' . $dp['y'] . '" r="5" fill="#0d9488" stroke="#ffffff" stroke-width="2" />';
+                $svg .= '<text x="' . $dp['x'] . '" y="' . ($dp['y'] - 10) . '" fill="#0f172a" font-size="9" font-weight="black" text-anchor="middle">' . $dp['value'] . '</text>';
+            }
+
+            // Border axis
+            $svg .= '<line x1="' . $paddingLeft . '" y1="' . $paddingTop . '" x2="' . $paddingLeft . '" y2="' . ($height - $paddingBottom) . '" stroke="#cbd5e1" stroke-width="1.5" />';
+            $svg .= '<line x1="' . $paddingLeft . '" y1="' . ($height - $paddingBottom) . '" x2="' . ($width - $paddingRight) . '" y2="' . ($height - $paddingBottom) . '" stroke="#cbd5e1" stroke-width="1.5" />';
+
+            $svg .= '</svg>';
+            return $svg;
+        };
+
+        return [
+            'weight' => $generateSvg('weight', $minYWeight, $maxYWeight),
+            'height' => $generateSvg('height', $minYHeight, $maxYHeight),
+        ];
+    }
+
+    /**
+     * Export individual report data to PDF file
+     */
+    public function exportIndividualToPdf(array $reportData): string
+    {
+        $fileName = sprintf(
+            'Rapor_Perkembangan_%s_%s.pdf',
+            str_replace([' ', '/'], '_', $reportData['patient']['full_name']),
+            str_replace([' ', '/'], '_', $reportData['period_label'])
+        );
+
+        $filePath = 'exports/'.$fileName;
+        $fullPath = storage_path('app/public/'.$filePath);
+
+        $directory = dirname($fullPath);
+        if (! file_exists($directory)) {
+            mkdir($directory, 0755, true);
+        }
+
+        // Generate PDF using dompdf
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('reports.individual-report-pdf', [
+            'reportData' => $reportData,
+        ]);
+
+        $pdf->setPaper('A4', 'portrait');
+        $pdf->save($fullPath);
+
+        return $fullPath;
+    }
+
+    /**
+     * Export individual report data to Excel file
+     */
+    public function exportIndividualToExcel(array $reportData): string
+    {
+        $fileName = sprintf(
+            'Rapor_Perkembangan_%s_%s.xlsx',
+            str_replace([' ', '/'], '_', $reportData['patient']['full_name']),
+            str_replace([' ', '/'], '_', $reportData['period_label'])
+        );
+
+        $directory = storage_path('app/public/exports');
+        if (! file_exists($directory)) {
+            mkdir($directory, 0755, true);
+        }
+
+        $filePath = $directory.'/'.$fileName;
+
+        $export = new \App\Exports\IndividualReportExport($reportData);
+        $export->export($filePath);
+
+        return $filePath;
+    }
+
+    /**
+     * Get months range between start and end month/year
+     */
+    private function getMonthsRange(int $startMonth, int $startYear, int $endMonth, int $endYear): array
+    {
+        $months = [];
+        $current = \Carbon\Carbon::create($startYear, $startMonth, 1);
+        $end = \Carbon\Carbon::create($endYear, $endMonth, 1);
+        
+        while ($current->lte($end)) {
+            $months[] = [
+                'key' => $current->format('Y-m'),
+                'label' => $this->getMonthName($current->month) . ' ' . $current->year,
+                'short_label' => substr($this->getMonthName($current->month), 0, 3) . ' ' . substr($current->year, 2, 2),
+                'month' => $current->month,
+                'year' => $current->year,
+            ];
+            $current->addMonth();
+        }
+        return $months;
+    }
 }

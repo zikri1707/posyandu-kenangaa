@@ -13,13 +13,21 @@ use Illuminate\Support\Facades\Log;
 
 class MonthlyReport extends BaseAdminComponent
 {
-    public int $selectedMonth;
+    public int $startMonth;
 
-    public int $selectedYear;
+    public int $startYear;
+
+    public int $endMonth;
+
+    public int $endYear;
 
     public ?int $selectedPosyanduId = null;
 
     public bool $reportGenerated = false;
+
+    public string $sortBy = 'visit_date_desc';
+
+    public string $search = '';
 
     // Stats
     public int $totalKunjungan = 0;
@@ -32,8 +40,14 @@ class MonthlyReport extends BaseAdminComponent
 
     public function mount(): void
     {
-        $this->selectedMonth = (int) now()->month;
-        $this->selectedYear = (int) now()->year;
+        $now = now();
+        $this->endMonth = (int) $now->month;
+        $this->endYear = (int) $now->year;
+        
+        // Default ke 6 bulan sebelumnya
+        $sixMonthsAgo = $now->subMonths(6);
+        $this->startMonth = (int) $sixMonthsAgo->month;
+        $this->startYear = (int) $sixMonthsAgo->year;
 
         $user = Auth::user();
         if ($user->isSuperAdmin()) {
@@ -61,17 +75,19 @@ class MonthlyReport extends BaseAdminComponent
         $basePatientQuery = Patient::where('posyandu_id', $posyanduId);
         $baseRecordQuery = MedicalRecord::whereHas('patient', fn ($q) => $q->where('posyandu_id', $posyanduId));
 
+        // Get date range
+        $startDate = sprintf('%04d-%02d-01', $this->startYear, $this->startMonth);
+        $endDate = date('Y-m-t', strtotime(sprintf('%04d-%02d-01', $this->endYear, $this->endMonth)));
+
         $this->totalKunjungan = (clone $baseRecordQuery)
-            ->whereMonth('visit_date', $this->selectedMonth)
-            ->whereYear('visit_date', $this->selectedYear)
+            ->whereBetween('visit_date', [$startDate, $endDate])
             ->count();
 
         $this->balitaStunting = (clone $basePatientQuery)
             ->where('category', 'balita')
-            ->whereHas('medicalRecords', function ($q) {
+            ->whereHas('medicalRecords', function ($q) use ($startDate, $endDate) {
                 $q->whereIn('nutrition_status', ['Gizi Buruk', 'Gizi Buruk/Stunting'])
-                    ->whereMonth('visit_date', $this->selectedMonth)
-                    ->whereYear('visit_date', $this->selectedYear);
+                    ->whereBetween('visit_date', [$startDate, $endDate]);
             })
             ->count();
 
@@ -79,14 +95,12 @@ class MonthlyReport extends BaseAdminComponent
 
         $totalBalitaKunjungan = (clone $baseRecordQuery)
             ->whereHas('patient', fn ($q) => $q->where('category', 'balita'))
-            ->whereMonth('visit_date', $this->selectedMonth)
-            ->whereYear('visit_date', $this->selectedYear)
+            ->whereBetween('visit_date', [$startDate, $endDate])
             ->count();
 
         $vitaminADiberikan = (clone $baseRecordQuery)
             ->whereHas('patient', fn ($q) => $q->where('category', 'balita'))
-            ->whereMonth('visit_date', $this->selectedMonth)
-            ->whereYear('visit_date', $this->selectedYear)
+            ->whereBetween('visit_date', [$startDate, $endDate])
             ->where('vitamin_a', true)
             ->count();
 
@@ -104,7 +118,7 @@ class MonthlyReport extends BaseAdminComponent
 
         try {
             $posyandu = Posyandu::findOrFail($posyanduId);
-            $reportData = $reportService->generateMonthlyReport($posyanduId, $this->selectedMonth, $this->selectedYear);
+            $reportData = $reportService->generateMonthlyReport($posyanduId, $this->endMonth, $this->endYear);
             $filePath = $reportService->exportToExcel($reportData, $posyandu->name);
 
             $activityLogService->log(
@@ -131,7 +145,7 @@ class MonthlyReport extends BaseAdminComponent
 
         try {
             $posyandu = Posyandu::findOrFail($posyanduId);
-            $reportData = $reportService->generateMonthlyReport($posyanduId, $this->selectedMonth, $this->selectedYear);
+            $reportData = $reportService->generateMonthlyReport($posyanduId, $this->endMonth, $this->endYear);
             $filePath = $reportService->exportToPdf($reportData, $posyandu->name);
 
             $activityLogService->log(
@@ -158,15 +172,16 @@ class MonthlyReport extends BaseAdminComponent
         return $user->posyandu_id;
     }
 
-    public function getMonthNameProperty(): string
+    public function getMonthNameProperty(int $month = null): string
     {
+        $month = $month ?? $this->endMonth;
         $months = [
             1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
             5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
             9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember',
         ];
 
-        return $months[$this->selectedMonth] ?? '';
+        return $months[$month] ?? '';
     }
 
     public function getPosyanduNameProperty(): string
@@ -183,21 +198,46 @@ class MonthlyReport extends BaseAdminComponent
         $total = 0;
 
         if ($this->reportGenerated && $posyanduId) {
+            $startDate = sprintf('%04d-%02d-01', $this->startYear, $this->startMonth);
+            $endDate = date('Y-m-t', strtotime(sprintf('%04d-%02d-01', $this->endYear, $this->endMonth)));
+            
             $query = MedicalRecord::with(['patient', 'user'])
                 ->whereHas('patient', fn ($q) => $q->where('posyandu_id', $posyanduId))
-                ->whereMonth('visit_date', $this->selectedMonth)
-                ->whereYear('visit_date', $this->selectedYear)
-                ->latest('visit_date');
+                ->whereBetween('visit_date', [$startDate, $endDate]);
+
+            // Apply search filter
+            if ($this->search) {
+                $query->whereHas('patient', fn ($q) => 
+                    $q->where('full_name', 'like', '%' . $this->search . '%')
+                        ->orWhere('id_number', 'like', '%' . $this->search . '%')
+                );
+            }
+
+            // Apply sorting
+            $query = match($this->sortBy) {
+                'patient_name_asc' => $query->join('patients', 'medical_records.patient_id', '=', 'patients.id')->orderBy('patients.full_name', 'asc')->select('medical_records.*'),
+                'patient_name_desc' => $query->join('patients', 'medical_records.patient_id', '=', 'patients.id')->orderBy('patients.full_name', 'desc')->select('medical_records.*'),
+                'visit_date_asc' => $query->orderBy('visit_date', 'asc'),
+                'visit_date_desc' => $query->orderBy('visit_date', 'desc'),
+                'updated_at_asc' => $query->orderBy('updated_at', 'asc'),
+                'updated_at_desc' => $query->orderBy('updated_at', 'desc'),
+                default => $query->latest('visit_date'),
+            };
 
             $total = $query->count();
             $records = $query->paginate(10);
+        }
+
+        $periodLabel = $this->getMonthNameProperty($this->startMonth) . ' ' . $this->startYear;
+        if ($this->startMonth !== $this->endMonth || $this->startYear !== $this->endYear) {
+            $periodLabel .= ' - ' . $this->getMonthNameProperty($this->endMonth) . ' ' . $this->endYear;
         }
 
         return view('livewire.admin.reports.monthly-report', [
             'records' => $records,
             'total' => $total,
             'posyandus' => $this->getAllowedPosyandus(),
-            'monthName' => $this->getMonthNameProperty(),
+            'periodLabel' => $periodLabel,
             'posyanduName' => $this->getPosyanduNameProperty(),
         ]);
     }

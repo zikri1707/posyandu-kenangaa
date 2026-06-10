@@ -75,12 +75,19 @@
             </h1>
         </div>
 
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-3 flex-wrap">
             <x-button href="{{ route('admin.patients.edit', $patient->id) }}" 
                       variant="secondary" 
                       class="rounded-2xl! h-14 px-8! font-black shadow-xl {{ $theme['shadow'] }} hover:-translate-y-0.5 transition-all">
                 <span class="material-symbols-outlined mr-2">edit</span>
                 Edit Profil
+            </x-button>
+
+            <x-button href="{{ route('admin.reports.individual', $patient->id) }}"
+                      variant="primary"
+                      class="rounded-2xl! h-14 px-8! font-black shadow-xl bg-teal-600 text-white hover:bg-teal-700 transition-all">
+                <span class="material-symbols-outlined mr-2">article</span>
+                Lihat Rapor
             </x-button>
             
             <form action="{{ route('admin.patients.destroy', $patient->id) }}" method="POST" onsubmit="return confirm('Hapus data warga ini?')">

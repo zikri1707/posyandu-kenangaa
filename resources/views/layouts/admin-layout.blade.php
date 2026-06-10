@@ -17,7 +17,7 @@
     
     <!-- Admin Content -->
     <div class="w-full">
-        @if(isset($slot))
+        @if(isset($slot) && ! is_array($slot))
             {{ $slot }}
         @else
             @yield('admin-content')

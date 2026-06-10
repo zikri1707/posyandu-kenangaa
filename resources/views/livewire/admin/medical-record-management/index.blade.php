@@ -43,35 +43,96 @@
     </div>
 
     {{-- ── Search & Filter Bento ── --}}
-    <div class="bg-white rounded-[2.5rem] border border-slate-100 p-4 shadow-sm flex flex-wrap items-center justify-between gap-4">
-        <div class="flex flex-wrap items-center gap-3 flex-1">
-            {{-- Search Input --}}
-            <div class="relative min-w-[600px] flex-1 md:flex-none group">
-                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-500 transition-colors pointer-events-none text-[20px]">search</span>
-                <input type="text" wire:model.live.debounce.150ms="search" 
-                       placeholder="Cari nama warga atau NIK..."
-                       class="search-input-premium w-full">
-            </div>
+    <div class="bg-white rounded-[2.5rem] border border-slate-100 p-4 shadow-sm flex flex-col gap-4">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+            <div class="flex flex-wrap items-center gap-3 flex-1">
+                {{-- Search Input --}}
+                <div class="relative min-w-[300px] flex-1 group">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-500 transition-colors pointer-events-none text-[20px]">search</span>
+                    <input type="text" wire:model.live.debounce.150ms="search" 
+                           placeholder="Cari nama warga atau NIK..."
+                           class="search-input-premium w-full">
+                </div>
 
-            {{-- Posyandu Filter --}}
-            @if(auth()->user()->isSuperAdmin())
-            <div class="w-48">
-                <x-forms.select-input wire:model.live="posyandu_id" placeholder="Seluruh Unit" :placeholderDisabled="false" value="{{ $posyandu_id }}" class="!h-12 !rounded-2xl !bg-slate-50/50 !border-slate-100 !text-xs !font-black !uppercase !tracking-widest !text-slate-700 focus:!border-primary pr-10">
-                    @foreach(\App\Models\Posyandu::all() as $p)
-                        <option value="{{ $p->id }}">{{ $p->name }}</option>
-                    @endforeach
-                </x-forms.select-input>
+                {{-- Posyandu Filter --}}
+                @if(auth()->user()->isSuperAdmin())
+                <div class="w-48">
+                    <x-forms.select-input wire:model.live="posyandu_id" placeholder="Seluruh Unit" :placeholderDisabled="false" value="{{ $posyandu_id }}" class="!h-12 !rounded-2xl !bg-slate-50/50 !border-slate-100 !text-xs !font-black !uppercase !tracking-widest !text-slate-700 focus:!border-primary pr-10">
+                        @foreach(\App\Models\Posyandu::all() as $p)
+                            <option value="{{ $p->id }}">{{ $p->name }}</option>
+                        @endforeach
+                    </x-forms.select-input>
+                </div>
+                @endif
             </div>
+            
+            @if($search || $posyandu_id)
+                <button wire:click="$set('search', ''); $set('posyandu_id', '');"
+                        class="text-[10px] font-black text-red-500 uppercase tracking-[0.2em] hover:text-red-600 transition-colors px-4 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[16px]">restart_alt</span>
+                    Reset Filter
+                </button>
             @endif
         </div>
-        
-        @if($search || $posyandu_id)
-            <button wire:click="$set('search', ''); $set('posyandu_id', '');"
-                    class="text-[10px] font-black text-red-500 uppercase tracking-[0.2em] hover:text-red-600 transition-colors px-4 flex items-center gap-2">
-                <span class="material-symbols-outlined text-[16px]">restart_alt</span>
-                Reset Filter
-            </button>
-        @endif
+
+        {{-- Sort Options Row --}}
+        <div class="flex items-center gap-2 flex-wrap pb-2 border-t border-slate-50 pt-4">
+            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-2">Urutkan:</span>
+            
+            {{-- Sort by Patient Name --}}
+            <div class="flex gap-1">
+                <button wire:click="$set('sortBy', 'patient_name_asc')"
+                        @class(['px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all', 
+                                'bg-teal-100 text-teal-600 ring-1 ring-teal-200' => $sortBy === 'patient_name_asc',
+                                'bg-slate-50 text-slate-600 hover:bg-slate-100' => $sortBy !== 'patient_name_asc'])
+                        title="Nama A-Z">
+                    <span class="material-symbols-outlined text-[12px]">sort_by_alpha</span>
+                </button>
+                <button wire:click="$set('sortBy', 'patient_name_desc')"
+                        @class(['px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all', 
+                                'bg-teal-100 text-teal-600 ring-1 ring-teal-200' => $sortBy === 'patient_name_desc',
+                                'bg-slate-50 text-slate-600 hover:bg-slate-100' => $sortBy !== 'patient_name_desc'])
+                        title="Nama Z-A">
+                    <span class="material-symbols-outlined text-[12px]">sort_by_alpha</span><span class="text-[8px] ml-0.5">↓</span>
+                </button>
+            </div>
+
+            {{-- Sort by Visit Date --}}
+            <div class="flex gap-1">
+                <button wire:click="$set('sortBy', 'visit_date_asc')"
+                        @class(['px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all', 
+                                'bg-teal-100 text-teal-600 ring-1 ring-teal-200' => $sortBy === 'visit_date_asc',
+                                'bg-slate-50 text-slate-600 hover:bg-slate-100' => $sortBy !== 'visit_date_asc'])
+                        title="Tanggal Lama - Baru">
+                    <span class="material-symbols-outlined text-[12px]">calendar_month</span>
+                </button>
+                <button wire:click="$set('sortBy', 'visit_date_desc')"
+                        @class(['px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all', 
+                                'bg-teal-100 text-teal-600 ring-1 ring-teal-200' => $sortBy === 'visit_date_desc',
+                                'bg-slate-50 text-slate-600 hover:bg-slate-100' => $sortBy !== 'visit_date_desc'])
+                        title="Tanggal Baru - Lama">
+                    <span class="material-symbols-outlined text-[12px]">calendar_month</span><span class="text-[8px] ml-0.5">↓</span>
+                </button>
+            </div>
+
+            {{-- Sort by Updated Date --}}
+            <div class="flex gap-1">
+                <button wire:click="$set('sortBy', 'updated_at_asc')"
+                        @class(['px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all', 
+                                'bg-teal-100 text-teal-600 ring-1 ring-teal-200' => $sortBy === 'updated_at_asc',
+                                'bg-slate-50 text-slate-600 hover:bg-slate-100' => $sortBy !== 'updated_at_asc'])
+                        title="Edit Lama - Baru">
+                    <span class="material-symbols-outlined text-[12px]">update</span>
+                </button>
+                <button wire:click="$set('sortBy', 'updated_at_desc')"
+                        @class(['px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all', 
+                                'bg-teal-100 text-teal-600 ring-1 ring-teal-200' => $sortBy === 'updated_at_desc',
+                                'bg-slate-50 text-slate-600 hover:bg-slate-100' => $sortBy !== 'updated_at_desc'])
+                        title="Edit Baru - Lama">
+                    <span class="material-symbols-outlined text-[12px]">update</span><span class="text-[8px] ml-0.5">↓</span>
+                </button>
+            </div>
+        </div>
     </div>
 
     {{-- ── Data Table ── --}}
