@@ -70,13 +70,7 @@ class Patient extends Model
         return $this->birth_date ? $this->birth_date->diff(now())->format('%y thn, %m bln') : '-';
     }
 
-    /**
-     * Ensure id_number is always a string.
-     */
-    public function getIdNumberAttribute($value): string
-    {
-        return (string) $value;
-    }
+
 
     public function getAgeInMonthsAttribute(): int
     {
