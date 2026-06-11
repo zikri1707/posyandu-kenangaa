@@ -15,7 +15,8 @@
             'text' => 'text-teal-600',
             'text-hover' => 'hover:text-teal-600',
             'border-hover' => 'hover:border-teal-200',
-            'partial' => 'balita'
+            'partial' => 'balita',
+            'avatar_icon' => 'child_care'
         ],
         'lansia' => [
             'name' => 'Lansia',
@@ -26,7 +27,8 @@
             'text' => 'text-amber-600',
             'text-hover' => 'hover:text-amber-600',
             'border-hover' => 'hover:border-amber-200',
-            'partial' => 'lansia'
+            'partial' => 'lansia',
+            'avatar_icon' => 'elderly'
         ],
         'ibu_hamil' => [
             'name' => 'Ibu Hamil',
@@ -37,7 +39,8 @@
             'text' => 'text-rose-600',
             'text-hover' => 'hover:text-rose-600',
             'border-hover' => 'hover:border-rose-200',
-            'partial' => 'ibu_hamil'
+            'partial' => 'ibu_hamil',
+            'avatar_icon' => 'pregnant_woman'
         ],
         default => [
             'name' => str_replace('_', ' ', ucfirst($cat)),
@@ -48,7 +51,8 @@
             'text' => 'text-indigo-600',
             'text-hover' => 'hover:text-indigo-600',
             'border-hover' => 'hover:border-indigo-200',
-            'partial' => 'umum'
+            'partial' => 'umum',
+            'avatar_icon' => 'account_circle'
         ]
     };
 @endphp
@@ -100,113 +104,81 @@
         </div>
     </div>
 
-    {{-- ── Bento Grid Detail ── --}}
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    {{-- ── Horizontal Profile Banner (Premium) ── --}}
+    <div class="bg-white rounded-[3rem] border border-slate-100 p-8 md:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.02)] relative overflow-hidden group">
+        {{-- Decorative Background --}}
+        <div class="absolute -right-10 -top-10 w-32 h-32 bg-teal-500/5 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
         
-        {{-- Card 1: Identitas Visual (Premium) --}}
-        <div class="lg:col-span-4 space-y-6">
-            <div class="bg-white rounded-[3rem] border border-slate-100 p-10 flex flex-col items-center text-center relative overflow-hidden group shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
-                {{-- Decorative Background --}}
-                <div class="absolute -right-10 -top-10 w-32 h-32 bg-teal-500/5 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
-                
-                <div class="relative mb-8">
-                    <div class="w-48 h-48 rounded-[3rem] border-4 border-white bg-slate-50 shadow-xl overflow-hidden relative z-10">
-                        @if($patient->profile_photo)
-                            <img src="{{ asset('storage/' . $patient->profile_photo) }}" class="w-full h-full object-cover">
-                        @else
-                            <div class="w-full h-full bg-linear-to-br from-slate-50 to-slate-100 flex items-center justify-center">
-                                <span class="material-symbols-outlined text-slate-300 text-[96px]" style="font-variation-settings: 'wght' 100;">account_circle</span>
-                            </div>
-                        @endif
-                    </div>
-                    <div class="absolute -bottom-3 left-1/2 -translate-x-1/2 px-5 py-2 bg-slate-900 text-white text-[10px] font-black rounded-2xl uppercase tracking-[0.2em] shadow-xl z-20 whitespace-nowrap">
-                        {{ str_replace('_', ' ', $patient->category) }}
-                    </div>
+        <div class="flex flex-col md:flex-row items-center md:items-start gap-8">
+            {{-- Profile Photo --}}
+            <div class="relative shrink-0">
+                <div class="w-36 h-36 rounded-[2.5rem] border-4 border-white bg-slate-50 shadow-xl overflow-hidden relative z-10">
+                    @if($patient->profile_photo)
+                        <img src="{{ asset('storage/' . $patient->profile_photo) }}" class="w-full h-full object-cover">
+                    @else
+                        <div class="w-full h-full bg-linear-to-br from-slate-50 to-slate-100 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-slate-300 text-[80px]" style="font-variation-settings: 'wght' 100;">{{ $theme['avatar_icon'] }}</span>
+                        </div>
+                    @endif
                 </div>
-
-                <h2 class="text-3xl font-black text-slate-900 leading-tight mb-2 tracking-tight">{{ $patient->full_name }}</h2>
-                <div class="flex items-center gap-2 mb-8">
+                <div class="absolute -bottom-3 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-slate-900 text-white text-[9px] font-black rounded-xl uppercase tracking-[0.2em] shadow-xl z-20 whitespace-nowrap">
+                    {{ str_replace('_', ' ', $theme['name']) }}
+                </div>
+            </div>
+            
+            {{-- Info Details (Horizontal Layout) --}}
+            <div class="flex-1 w-full space-y-6">
+                <div class="text-center md:text-left">
+                    <h2 class="text-3xl font-black text-slate-900 leading-tight mb-2 tracking-tight">{{ $patient->full_name }}</h2>
                     <span @class([
-                        'text-[11px] font-black px-4 py-1 rounded-full uppercase tracking-widest border',
+                        'inline-block text-[11px] font-black px-4 py-1 rounded-full uppercase tracking-widest border',
                         'text-sky-600 bg-sky-50 border-sky-100' => $patient->gender == 'L' || $patient->gender == 'M',
                         'text-pink-600 bg-pink-50 border-pink-100' => $patient->gender == 'F' || $patient->gender == 'P',
                     ])>NIK: {{ $patient->id_number }}</span>
                 </div>
-
-                <div class="w-full grid grid-cols-2 gap-4 pt-8 border-t border-slate-50">
-                    <div @class([
-                        'p-4 rounded-3xl border text-center group transition-all duration-500',
-                        'bg-sky-50 border-sky-100 hover:bg-white hover:shadow-sky-100/50 hover:shadow-xl' => $patient->gender == 'L' || $patient->gender == 'M',
-                        'bg-pink-50 border-pink-100 hover:bg-white hover:shadow-pink-100/50 hover:shadow-xl' => $patient->gender == 'F' || $patient->gender == 'P',
-                    ])>
-                        <p @class([
-                            'text-[9px] font-black uppercase tracking-widest mb-1',
-                            'text-sky-400' => $patient->gender == 'L' || $patient->gender == 'M',
-                            'text-pink-400' => $patient->gender == 'F' || $patient->gender == 'P',
-                        ])>Gender</p>
-                        <p @class([
-                            'text-[11px] font-black',
-                            'text-sky-700' => $patient->gender == 'L' || $patient->gender == 'M',
-                            'text-pink-700' => $patient->gender == 'F' || $patient->gender == 'P',
-                        ])>{{ ($patient->gender == 'L' || $patient->gender == 'M') ? 'Laki-laki' : 'Perempuan' }}</p>
+                
+                {{-- Quick Fields Row --}}
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-6 border-t border-slate-100">
+                    <div>
+                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Jenis Kelamin</p>
+                        <div class="flex items-center gap-2">
+                            <span @class([
+                                'w-2 h-2 rounded-full',
+                                'bg-sky-500' => $patient->gender == 'L' || $patient->gender == 'M',
+                                'bg-pink-500' => $patient->gender == 'F' || $patient->gender == 'P',
+                            ])></span>
+                            <span class="text-sm font-black text-slate-800">{{ ($patient->gender == 'L' || $patient->gender == 'M') ? 'Laki-laki' : 'Perempuan' }}</span>
+                        </div>
                     </div>
-                    
-                    <div class="p-4 bg-linear-to-br {{ $theme['gradient'] }} rounded-4xl text-center group hover:scale-105 transition-all duration-500 shadow-lg {{ $theme['shadow'] }} relative overflow-hidden">
-                        <div class="absolute -right-4 -top-4 w-12 h-12 bg-white/10 rounded-full blur-lg"></div>
-                        <p class="text-[9px] font-black text-white/70 uppercase tracking-widest mb-1 relative z-10">Usia</p>
-                        <p class="text-[11px] font-black text-white relative z-10">{{ $patient->age }}</p>
+                    <div>
+                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Usia</p>
+                        <p class="text-sm font-black text-slate-800">{{ $patient->age }}</p>
                     </div>
-                </div>
-            </div>
-
-            {{-- Kontak --}}
-            <div class="bg-white rounded-[3rem] border border-slate-100 p-8 space-y-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-xl {{ $theme['bg-light'] }} {{ $theme['text'] }} flex items-center justify-center">
-                        <span class="material-symbols-outlined text-[20px]">contact_phone</span>
+                    <div>
+                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Nomor Telepon</p>
+                        <p class="text-sm font-black text-slate-800">{{ $patient->phone_number ?? '-' }}</p>
                     </div>
-                    <h4 class="text-sm font-black text-slate-800 uppercase tracking-widest">Kontak & Domisili</h4>
+                    <div>
+                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Lokasi Layanan</p>
+                        <p class="text-sm font-black text-slate-800">{{ str_contains($patient->posyandu->name, 'Posyandu') ? $patient->posyandu->name : 'Posyandu ' . $patient->posyandu->name }}</p>
+                    </div>
                 </div>
                 
-                <div class="space-y-5">
-                    <div class="flex items-start gap-4">
-                        <div class="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center shrink-0 text-slate-400">
-                            <span class="material-symbols-outlined text-[18px]">phone_iphone</span>
-                        </div>
-                        <div>
-                            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Nomor Telepon</p>
-                            <p class="text-sm font-black text-slate-700">{{ $patient->phone_number }}</p>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-start gap-4">
-                        <div class="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center shrink-0 text-slate-400">
-                            <span class="material-symbols-outlined text-[18px]">location_on</span>
-                        </div>
-                        <div>
-                            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Alamat</p>
-                            <p class="text-sm font-bold text-slate-600 leading-relaxed">{{ $patient->address }}</p>
-                        </div>
-                    </div>
-
-                    <div class="flex items-start gap-4">
-                        <div class="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center shrink-0 text-slate-400">
-                            <span class="material-symbols-outlined text-[18px]">home_work</span>
-                        </div>
-                        <div>
-                            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Lokasi Layanan</p>
-                            <p class="text-sm font-black text-slate-700">{{ str_contains($patient->posyandu->name, 'Posyandu') ? $patient->posyandu->name : 'Posyandu ' . $patient->posyandu->name }}</p>
-                        </div>
+                {{-- Address Box --}}
+                <div class="bg-slate-50 rounded-2xl p-4 flex items-start gap-3 border border-slate-100">
+                    <span class="material-symbols-outlined text-[20px] text-slate-400 shrink-0">location_on</span>
+                    <div>
+                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Alamat Domisili</p>
+                        <p class="text-xs font-bold text-slate-600 leading-relaxed">{{ $patient->address }}</p>
                     </div>
                 </div>
             </div>
         </div>
-
-        {{-- Card 2: Data Medis & Sosial --}}
-        <div class="lg:col-span-8 space-y-8">
-            
-            @include('livewire.admin.patient-management.details.' . $theme['partial'])
-        </div>
+    </div>
+    
+    {{-- ── Section 2: Data Medis & Sosial (Full Width) ── --}}
+    <div class="w-full">
+        @include('livewire.admin.patient-management.details.' . $theme['partial'])
     </div>
 
     @if(in_array($patient->category, ['bayi', 'baduta', 'balita']))

@@ -2,6 +2,25 @@
     $isBalitaGrowthCategory = in_array($patient->category, ['bayi', 'baduta', 'balita']);
     $isMale = strtoupper($patient->gender) === 'L' || strtoupper($patient->gender) === 'M';
     $latestRecord = $patient->medicalRecords()->latest()->first();
+
+    $receivedCount = 0;
+    $totalCount = 0;
+    if ($isBalitaGrowthCategory) {
+        $immunizationStatus = $patient->getImmunizationStatus();
+        foreach ($immunizationStatus as $group) {
+            foreach ($group['vaccines'] as $vax) {
+                if ($vax['is_due']) {
+                    $totalCount++;
+                }
+                if ($vax['received']) {
+                    $receivedCount++;
+                }
+            }
+        }
+        if ($totalCount === 0) {
+            $totalCount = 12;
+        }
+    }
 @endphp
 
 <div wire:key="growth-chart-root" class="w-full max-w-none space-y-12">
@@ -79,7 +98,7 @@
             </div>
             <div>
                 <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Capaian Imunisasi</p>
-                <p class="text-2xl font-black text-slate-800">8 <span class="text-sm text-slate-400">/ 12</span></p>
+                <p class="text-2xl font-black text-slate-800">{{ $receivedCount }} <span class="text-sm text-slate-400">/ {{ $totalCount }}</span></p>
             </div>
         </div>
 
@@ -121,8 +140,23 @@
             hasData: true,
             initChart(chartData) {
                 const ctx = document.getElementById('growthChartBottom');
-                if (!ctx || !window.Chart) return;
-                if (this.chart) this.chart.destroy();
+                if (!ctx) return;
+                
+                if (!window.Chart) {
+                    setTimeout(() => this.initChart(chartData), 50);
+                    return;
+                }
+                
+                // Destroy existing chart on canvas using Chart.getChart to prevent canvas reuse error
+                const existingChart = window.Chart.getChart(ctx);
+                if (existingChart) {
+                    existingChart.destroy();
+                }
+                
+                if (this.chart) {
+                    this.chart.destroy();
+                    this.chart = null;
+                }
                 
                 const data = chartData || null;
                 if (!data || !data.datasets || data.datasets.length === 0) {
@@ -215,7 +249,7 @@
 
                 data.datasets = styledDatasets;
 
-                this.chart = new Chart(ctx, {
+                this.chart = new window.Chart(ctx, {
                     type: 'line',
                     data: data,
                     options: {
@@ -280,7 +314,15 @@
             }
          }"
          x-init="
-            setTimeout(() => { if (typeof initialGrowthData !== 'undefined') initChart(initialGrowthData); }, 300);
+            const init = () => {
+                if (window.Chart) {
+                    initChart($wire.chartData);
+                } else {
+                    setTimeout(init, 50);
+                }
+            };
+            setTimeout(init, 100);
+            
             $wire.on('chart-updated', (data) => {
                 const rawData = Array.isArray(data) ? data[0] : data;
                 initChart(rawData);
@@ -331,8 +373,6 @@
                 </button>
             </div>
         </div>
-
-        <script>var initialGrowthData = @json($chartData);</script>
         
         <div class="relative z-10 min-h-162.5 h-[75vh] w-full" wire:ignore>
             <canvas id="growthChartBottom" class="h-full! w-full!" x-show="hasData"></canvas>
