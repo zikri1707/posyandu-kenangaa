@@ -9,61 +9,58 @@ use App\Services\ArticleService;
 use Illuminate\View\View;
 use Livewire\WithFileUploads;
 
-/**
- * Komponen untuk memperbarui artikel (OOP & Clean Code).
- */
 class ArticleUpdate extends BaseAdminComponent
 {
     use WithFileUploads;
 
     public Article $article;
 
-    public string $title = '';
+    public string $title      = '';
+    public string $content    = '';   // JSON string dari Alpine editor
+    public string $status     = '';
+    public ?int   $category_id = null;
+    public $cover;
+    public $existingCover;
 
-    public string $content = '';
-
-    public string $status = '';
-
-    public ?int $category_id = null;
-
-    public $thumbnail;
-
-    public $oldThumbnail;
-
-    /**
-     * Inisialisasi data.
-     */
     public function mount(Article $article): void
     {
-        $this->article = $article;
-        $this->title = $article->title;
-        $this->content = $article->content;
-        $this->status = $article->status;
-        $this->category_id = $article->category_id;
-        $this->oldThumbnail = $article->thumbnail;
+        $this->article       = $article;
+        $this->title         = $article->title;
+        $this->content       = $article->content ?? '';
+        $this->status        = $article->status;
+        $this->category_id   = $article->category_id;
+        $this->existingCover = $article->thumbnail;
     }
 
-    /**
-     * Aturan validasi.
-     */
     protected function rules(): array
     {
         return [
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'status' => 'required|in:published,draft',
+            'title'       => 'required|string|max:255',
+            'content'     => 'required|string|min:2',
+            'status'      => 'required|in:published,draft',
             'category_id' => 'required|exists:categories,id',
-            'thumbnail' => 'nullable|image|max:2048',
+            'cover'       => 'nullable|image|max:4096',
         ];
     }
 
-    /**
-     * Simpan perubahan artikel.
-     */
+    protected function messages(): array
+    {
+        return [
+            'title.required'       => 'Judul artikel wajib diisi.',
+            'content.required'     => 'Isi artikel tidak boleh kosong.',
+            'category_id.required' => 'Kategori artikel wajib dipilih.',
+        ];
+    }
+
     public function save(ArticleService $service)
     {
         $this->authorize('update', $this->article);
         $validated = $this->validate();
+
+        if (isset($validated['cover']) && $validated['cover']) {
+            $validated['thumbnail'] = $validated['cover'];
+        }
+        unset($validated['cover']);
 
         $service->updateArticle($this->article, $validated);
 
@@ -72,13 +69,11 @@ class ArticleUpdate extends BaseAdminComponent
         return redirect()->route('admin.articles.index');
     }
 
-    /**
-     * Render view.
-     */
     public function render(): View
     {
         return view('livewire.admin.article-management.update', [
-            'categories' => Category::orderBy('name')->get(),
+            'categories'    => Category::orderBy('name')->get(),
+            'existingCover' => $this->existingCover,
         ]);
     }
 }

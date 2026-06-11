@@ -8,72 +8,86 @@ use App\Models\Category;
 use App\Services\ArticleService;
 use Illuminate\View\View;
 use Livewire\Attributes\Layout;
-use Livewire\Attributes\Url;
 use Livewire\WithFileUploads;
 
-/**
- * Komponen untuk membuat artikel baru (OOP & Clean Code).
- */
 #[Layout('layouts.admin-layout')]
 class ArticleCreate extends BaseAdminComponent
 {
     use WithFileUploads;
 
-    public string $title = '';
+    public string $title      = '';
+    public string $content    = '';   // JSON string dari Alpine editor
+    public string $status     = 'draft';
+    public ?int   $category_id = null;
+    public $cover = null;
 
-    public string $content = '';
-
-    #[Url]
-    public string $status = 'draft';
-
-    public ?int $category_id = null;
-
-    public $thumbnail;
-
-    /**
-     * Inisialisasi komponen.
-     */
-    public function mount(): void
-    {
-        // status is auto-captured by #[Url]
-    }
-
-    /**
-     * Aturan validasi.
-     */
     protected function rules(): array
     {
         return [
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'status' => 'required|in:published,draft',
+            'title'       => 'required|string|max:255',
+            'content'     => 'required|string|min:2',
+            'status'      => 'required|in:draft,published',
             'category_id' => 'required|exists:categories,id',
-            'thumbnail' => 'nullable|image|max:2048', // Max 2MB
+            'cover'       => 'required|image|max:4096',
         ];
     }
 
-    /**
-     * Simpan artikel baru.
-     */
+    protected function messages(): array
+    {
+        return [
+            'title.required'       => 'Judul artikel wajib diisi.',
+            'content.required'     => 'Isi artikel tidak boleh kosong.',
+            'category_id.required' => 'Kategori artikel wajib dipilih.',
+            'cover.required'       => 'Foto sampul wajib diunggah.',
+        ];
+    }
+
+    public function saveFromAlpine(string $title, string $content, string $status, int $categoryId, ArticleService $service)
+    {
+        logger()->info('SAVE FROM ALPINE', [
+            'title' => $title,
+            'content' => $content,
+            'status' => $status,
+            'category' => $categoryId
+        ]);
+        
+        $this->title       = $title;
+        $this->content     = $content;
+        $this->status      = $status;
+        $this->category_id = $categoryId;
+
+        $this->authorize('create', Article::class);
+        $validated = $this->validate([
+            'title'       => 'required|string|max:255',
+            'content'     => 'required|string|min:2',
+            'status'      => 'required|in:draft,published',
+            'category_id' => 'required|exists:categories,id',
+            'cover'       => 'required|image|max:4096',
+        ]);
+
+        $validated['thumbnail'] = $validated['cover'];
+        unset($validated['cover']);
+
+        $service->createArticle($validated, auth()->user());
+        $this->notify('Artikel berhasil disimpan.');
+        return redirect()->route('admin.articles.index');
+    }
     public function save(ArticleService $service)
     {
         $this->authorize('create', Article::class);
         $validated = $this->validate();
 
+        // Rename cover → thumbnail untuk ArticleService
+        $validated['thumbnail'] = $validated['cover'];
+        unset($validated['cover']);
+
         $service->createArticle($validated, auth()->user());
 
-        $message = $this->status === 'published'
-            ? 'Artikel baru berhasil diterbitkan.'
-            : 'Artikel berhasil disimpan sebagai draf.';
-
-        $this->notify($message);
+        $this->notify('Artikel berhasil disimpan.');
 
         return redirect()->route('admin.articles.index');
     }
 
-    /**
-     * Render view.
-     */
     public function render(): View
     {
         return view('livewire.admin.article-management.create', [
