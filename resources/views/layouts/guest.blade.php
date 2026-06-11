@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
+    @livewireStyles
 </head>
 <body class="antialiased text-slate-800">
     <div class="min-h-screen grid grid-cols-1 lg:grid-cols-2">
@@ -91,5 +91,6 @@
         </div>
 
     </div>
+    @livewireScripts
 </body>
 </html>

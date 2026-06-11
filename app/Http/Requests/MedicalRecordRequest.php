@@ -20,10 +20,10 @@ class MedicalRecordRequest extends FormRequest
         $isChild = in_array($patientCategory ?? 'balita', ['bayi', 'baduta', 'balita', 'anak_sekolah']);
 
         return [
-            'patient_id' => 'nullable|exists:patients,id',
+            'patient_id' => 'required_without:full_name|exists:patients,id',
             'visit_date' => 'required|date|before_or_equal:today',
-            'weight' => 'nullable|numeric|min:0.5|max:200',
-            'height' => 'nullable|numeric|min:20|max:300',
+            'weight' => 'required|numeric|min:0.5|max:200',
+            'height' => 'required|numeric|min:20|max:300',
             'head_circumference' => 'nullable|numeric|min:20|max:70',
             'upper_arm_circumference' => 'nullable|numeric|min:5|max:40',
             'measurement_method' => $isChild ? 'required|in:recumbent,standing' : 'nullable|in:recumbent,standing',
@@ -32,7 +32,7 @@ class MedicalRecordRequest extends FormRequest
             'pill_fe' => 'nullable|boolean',
             'is_exclusive_breastfeeding' => 'nullable|boolean',
             'mp_asi' => 'nullable|boolean',
-            'diagnosis' => 'nullable|string',
+            'diagnosis' => 'required|string',
             'complaint' => 'nullable|string',
             'disease_history' => 'nullable|string',
             'health_note' => 'nullable|string',
