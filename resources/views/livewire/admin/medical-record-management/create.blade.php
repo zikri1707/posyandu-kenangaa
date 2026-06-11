@@ -3,7 +3,6 @@
 @section('admin-title') @endsection
 
 @push('styles')
-@if(request('category') !== 'ibu_hamil')
 <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
 <style>
     /* TomSelect Premium Customization */
@@ -48,6 +47,59 @@
         font-weight: 700 !important;
     }
     
+    /* Lansia & Ibu Hamil custom TomSelect heights to match standard inputs */
+    #lansia-select + .ts-wrapper {
+        border: none !important;
+        background: transparent !important;
+        height: auto !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+    }
+    #lansia-select + .ts-wrapper .ts-control {
+        min-height: 44px !important;
+        height: 44px !important;
+        border-radius: 0.75rem !important;
+        padding: 0.375rem 1rem !important;
+        font-weight: 600 !important;
+        font-size: 0.875rem !important;
+        border: 1px solid #D9D9D9 !important;
+        background-color: #ffffff !important;
+    }
+    #lansia-select + .ts-wrapper.focus .ts-control {
+        border-color: #006C49 !important;
+        box-shadow: 0 0 0 4px rgba(0, 108, 73, 0.05) !important;
+    }
+    #lansia-select.border-rose-500 + .ts-wrapper .ts-control {
+        border-color: #f43f5e !important;
+        background-color: #fff1f2 !important;
+    }
+
+    #ibu-hamil-select + .ts-wrapper {
+        border: none !important;
+        background: transparent !important;
+        height: auto !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+    }
+    #ibu-hamil-select + .ts-wrapper .ts-control {
+        min-height: 48px !important;
+        height: 48px !important;
+        border-radius: 0.75rem !important;
+        padding: 0.5rem 1rem !important;
+        font-weight: 600 !important;
+        font-size: 0.875rem !important;
+        border: 1px solid #e2e8f0 !important;
+        background-color: #ffffff !important;
+    }
+    #ibu-hamil-select + .ts-wrapper.focus .ts-control {
+        border-color: #14b8a6 !important;
+        box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.05) !important;
+    }
+    #ibu-hamil-select.border-rose-500 + .ts-wrapper .ts-control {
+        border-color: #f43f5e !important;
+        background-color: #fff1f2 !important;
+    }
+    
     /* Layout Fix for Squashed UI */
     #mainContent, main {
         width: 100% !important;
@@ -55,7 +107,6 @@
         flex: 1 1 0% !important;
     }
 </style>
-@endif
 @endpush
 
 @section('admin-content')
@@ -119,9 +170,25 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="space-y-2">
                         <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Nama Lengkap Ibu *</label>
-                        <input type="text" name="full_name" required placeholder="Masukkan nama lengkap sesuai KTP" value="{{ old('full_name') }}"
-                               class="w-full h-12 px-4 border @error('full_name') border-rose-500 bg-rose-50/20 @else border-slate-200 @enderror rounded-xl text-sm font-semibold text-slate-700 focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/5 transition-all">
-                        @error('full_name')
+                        <select name="patient_id" id="ibu-hamil-select" required placeholder="Cari nama atau NIK ibu hamil..."
+                                class="w-full h-12 border @error('patient_id') border-rose-500 bg-rose-50/20 @else border-slate-200 @enderror rounded-xl text-sm font-semibold text-slate-700 focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/5 transition-all">
+                            <option value="">Cari nama atau NIK ibu hamil...</option>
+                            @foreach($patients as $patient)
+                                <option value="{{ $patient->id }}"
+                                        data-nik="{{ $patient->id_number }}"
+                                        data-birth-date="{{ $patient->birth_date?->format('Y-m-d') }}"
+                                        data-phone="{{ $patient->phone_number }}"
+                                        data-husband="{{ $patient->husband_name }}"
+                                        data-address="{{ $patient->address }}"
+                                        data-dusun="{{ $patient->dusun_rt_rw }}"
+                                        data-desa="{{ $patient->desa_kelurahan }}"
+                                        data-kecamatan="{{ $patient->kecamatan }}"
+                                        {{ old('patient_id', request('patient_id')) == $patient->id ? 'selected' : '' }}>
+                                    {{ $patient->full_name }} — NIK: {{ $patient->id_number }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('patient_id')
                             <p class="text-xs text-rose-500 mt-1 font-semibold">{{ $message }}</p>
                         @enderror
                     </div>
@@ -701,9 +768,24 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="space-y-2">
                         <label class="text-xs font-bold text-slate-600">Nama Lengkap</label>
-                        <input type="text" name="full_name" placeholder="Masukkan nama sesuai KTP" value="{{ old('full_name') }}" required
-                               class="w-full h-[44px] px-4 border @error('full_name') border-rose-500 bg-rose-50/20 @else border-[#D9D9D9] @enderror rounded-xl text-sm font-semibold text-slate-700 focus:outline-none focus:border-[#006C49] focus:ring-4 focus:ring-[#006C49]/5 transition-all bg-white">
-                        @error('full_name')
+                        <select name="patient_id" id="lansia-select" required placeholder="Cari nama atau NIK lansia..."
+                                class="w-full h-[44px] px-4 border @error('patient_id') border-rose-500 bg-rose-50/20 @else border-[#D9D9D9] @enderror rounded-xl text-sm font-semibold text-slate-700 focus:outline-none focus:border-[#006C49] focus:ring-4 focus:ring-[#006C49]/5 transition-all bg-white">
+                            <option value="">Cari nama atau NIK lansia...</option>
+                            @foreach($patients as $patient)
+                                <option value="{{ $patient->id }}"
+                                        data-nik="{{ $patient->id_number }}"
+                                        data-birth-date="{{ $patient->birth_date?->format('Y-m-d') }}"
+                                        data-gender="{{ $patient->gender }}"
+                                        data-phone="{{ $patient->phone_number }}"
+                                        data-father="{{ $patient->father_name }}"
+                                        data-mother="{{ $patient->mother_name }}"
+                                        data-address="{{ $patient->address }}"
+                                        {{ old('patient_id', request('patient_id')) == $patient->id ? 'selected' : '' }}>
+                                    {{ $patient->full_name }} — NIK: {{ $patient->id_number }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('patient_id')
                             <p class="text-xs text-rose-500 mt-1 font-semibold">{{ $message }}</p>
                         @enderror
                     </div>
@@ -1665,8 +1747,8 @@
 @endsection
 
 @push('scripts')
-@if(request('category') === 'balita')
 <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+@if(request('category') === 'balita')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const patientSelect = document.getElementById('patient-select');
@@ -1853,6 +1935,88 @@ document.addEventListener('DOMContentLoaded', function() {
         calculateIMT();
     }
 
+    // TomSelect Integration for Lansia
+    const patientSelect = document.getElementById('lansia-select');
+    
+    function fillLansiaData(value) {
+        if (!value) {
+            // Clear fields if no patient selected
+            ['id_number', 'birth_date', 'phone_number', 'father_name', 'mother_name', 'address'].forEach(name => {
+                const el = document.querySelector(`input[name="${name}"], textarea[name="${name}"]`);
+                if (el) el.value = '';
+            });
+            const genderRadios = document.querySelectorAll('input[name="gender"]');
+            genderRadios.forEach(radio => radio.checked = false);
+            return;
+        }
+        
+        const options = Array.from(patientSelect.options);
+        const selectedOption = options.find(opt => opt.value == value);
+        
+        if (selectedOption) {
+            const data = selectedOption.dataset;
+            
+            const mapping = {
+                'id_number': data.nik,
+                'birth_date': data.birthDate,
+                'phone_number': data.phone,
+                'father_name': data.father,
+                'mother_name': data.mother,
+                'address': data.address
+            };
+
+            Object.entries(mapping).forEach(([name, val]) => {
+                const el = document.querySelector(`input[name="${name}"], textarea[name="${name}"]`);
+                if (el) {
+                    el.value = val || '';
+                    el.classList.add('ring-4', 'ring-[#006C49]/20', 'border-[#006C49]', 'bg-[#006C49]/5');
+                    setTimeout(() => el.classList.remove('ring-4', 'ring-[#006C49]/20', 'border-[#006C49]', 'bg-[#006C49]/5'), 1500);
+                }
+            });
+
+            if (data.gender) {
+                const genderRadio = document.querySelector(`input[name="gender"][value="${data.gender}"]`);
+                if (genderRadio) {
+                    genderRadio.checked = true;
+                }
+            }
+        }
+    }
+
+    if (patientSelect) {
+        const tsLansia = new TomSelect('#lansia-select', {
+            create: false,
+            sortField: {
+                field: "text",
+                direction: "asc"
+            },
+            maxOptions: 50,
+            placeholder: "Cari nama atau NIK lansia...",
+            render: {
+                option: function(data, escape) {
+                    const parts = data.text.split(' — ');
+                    return `
+                        <div class="flex flex-col py-1">
+                            <span class="font-bold text-slate-900 text-sm">${escape(parts[0])}</span>
+                            <span class="text-[10px] text-slate-500 font-semibold tracking-wider mt-0.5">${escape(parts[1] || '')}</span>
+                        </div>
+                    `;
+                },
+                item: function(data, escape) {
+                    return `<div class="font-semibold text-slate-700 text-sm">${escape(data.text)}</div>`;
+                }
+            }
+        });
+
+        tsLansia.on('change', function(value) {
+            fillLansiaData(value);
+        });
+
+        if (tsLansia.getValue()) {
+            fillLansiaData(tsLansia.getValue());
+        }
+    }
+
     const resetBtn = document.getElementById('btn-lansia-reset');
     if (resetBtn) {
         resetBtn.addEventListener('click', function(e) {
@@ -1861,6 +2025,8 @@ document.addEventListener('DOMContentLoaded', function() {
             if (form) {
                 form.reset();
                 if (imtInput) imtInput.value = '';
+                const genderRadios = document.querySelectorAll('input[name="gender"]');
+                genderRadios.forEach(radio => radio.checked = false);
             }
         });
     }
@@ -1916,28 +2082,115 @@ document.addEventListener('DOMContentLoaded', function() {
         return `${birthYear}-01-01`;
     }
 
-    birthDateInput.addEventListener('change', function() {
-        const calculated = calculateAge(this.value);
-        if (calculated !== '') {
-            ageDisplay.value = calculated;
-        }
-    });
-
-    ageDisplay.addEventListener('input', function() {
-        const ageVal = this.value;
-        if (ageVal) {
-            const calculatedDate = calculateBirthDate(ageVal);
-            if (calculatedDate) {
-                birthDateInput.value = calculatedDate;
+    if (birthDateInput) {
+        birthDateInput.addEventListener('change', function() {
+            const calculated = calculateAge(this.value);
+            if (calculated !== '') {
+                ageDisplay.value = calculated;
             }
-        } else {
-            birthDateInput.value = '';
-        }
-    });
+        });
+    }
+
+    if (ageDisplay) {
+        ageDisplay.addEventListener('input', function() {
+            const ageVal = this.value;
+            if (ageVal) {
+                const calculatedDate = calculateBirthDate(ageVal);
+                if (calculatedDate && birthDateInput) {
+                    birthDateInput.value = calculatedDate;
+                }
+            } else {
+                if (birthDateInput) birthDateInput.value = '';
+            }
+        });
+    }
 
     // Check if initial value is set (e.g. from session or old input)
-    if (birthDateInput.value) {
+    if (birthDateInput && birthDateInput.value) {
         ageDisplay.value = calculateAge(birthDateInput.value);
+    }
+
+    // TomSelect Integration for Ibu Hamil
+    const patientSelect = document.getElementById('ibu-hamil-select');
+    
+    function fillIbuHamilData(value) {
+        if (!value) {
+            // Clear fields if no patient selected
+            ['id_number', 'birth_date', 'phone_number', 'husband_name', 'address', 'dusun_rt_rw', 'desa_kelurahan', 'kecamatan'].forEach(name => {
+                const el = document.querySelector(`input[name="${name}"], textarea[name="${name}"]`);
+                if (el) el.value = '';
+            });
+            if (ageDisplay) ageDisplay.value = '';
+            return;
+        }
+        
+        const options = Array.from(patientSelect.options);
+        const selectedOption = options.find(opt => opt.value == value);
+        
+        if (selectedOption) {
+            const data = selectedOption.dataset;
+            
+            const mapping = {
+                'id_number': data.nik,
+                'birth_date': data.birthDate,
+                'phone_number': data.phone,
+                'husband_name': data.husband,
+                'address': data.address,
+                'dusun_rt_rw': data.dusun,
+                'desa_kelurahan': data.desa,
+                'kecamatan': data.kecamatan
+            };
+
+            Object.entries(mapping).forEach(([name, val]) => {
+                const el = document.querySelector(`input[name="${name}"], textarea[name="${name}"]`);
+                if (el) {
+                    el.value = val || '';
+                    el.classList.add('ring-4', 'ring-teal-500/20', 'border-teal-500', 'bg-teal-50/5');
+                    setTimeout(() => el.classList.remove('ring-4', 'ring-teal-500/20', 'border-teal-500', 'bg-teal-50/5'), 1500);
+                }
+            });
+
+            if (data.birthDate) {
+                const calculatedAge = calculateAge(data.birthDate);
+                if (calculatedAge !== '') {
+                    ageDisplay.value = calculatedAge;
+                }
+            }
+        }
+    }
+
+    if (patientSelect) {
+        const tsIbuHamil = new TomSelect('#ibu-hamil-select', {
+            create: false,
+            sortField: {
+                field: "text",
+                direction: "asc"
+            },
+            maxOptions: 50,
+            placeholder: "Cari nama atau NIK ibu hamil...",
+            render: {
+                option: function(data, escape) {
+                    const parts = data.text.split(' — ');
+                    return `
+                        <div class="flex flex-col py-1">
+                            <span class="font-bold text-slate-900 text-sm">${escape(parts[0])}</span>
+                            <span class="text-[10px] text-slate-500 font-semibold tracking-wider mt-0.5">${escape(parts[1] || '')}</span>
+                        </div>
+                    `;
+                },
+                item: function(data, escape) {
+                    return `<div class="font-semibold text-slate-700 text-sm">${escape(data.text)}</div>`;
+                }
+            }
+        });
+
+        tsIbuHamil.on('change', function(value) {
+            fillIbuHamilData(value);
+        });
+
+        if (tsIbuHamil.getValue()) {
+            fillIbuHamilData(tsIbuHamil.getValue());
+        }
     }
 
     // Handle Reset Button
