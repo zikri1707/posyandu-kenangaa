@@ -101,9 +101,18 @@
                     <div class="relative overflow-hidden group rounded-[2.5rem] bg-white border border-slate-100 shadow-sm hover:border-teal-200 transition-all {{ $index === 0 ? 'md:col-span-7' : 'md:col-span-5' }}">
                         <div class="p-10 flex flex-col h-full">
                             <div class="flex items-center justify-between mb-10">
-                                <span class="px-3 py-1 bg-slate-900 text-white text-[9px] font-black rounded-lg uppercase tracking-widest italic">
-                                    Segera Hadir
+                                <span @class([
+                                    'px-3 py-1 text-[9px] font-black rounded-lg uppercase tracking-widest italic text-white',
+                                    'bg-teal-600' => $schedule->status === 'ongoing',
+                                    'bg-slate-900' => $schedule->status !== 'ongoing',
+                                ])>
+                                    {{ $schedule->status === 'ongoing' ? 'Sedang Berlangsung' : 'Segera Hadir' }}
                                 </span>
+                                @if($schedule->posyandu)
+                                    <span class="text-[9px] font-black text-slate-450 uppercase tracking-widest">
+                                        {{ $schedule->posyandu->name }}
+                                    </span>
+                                @endif
                             </div>
 
                             <div class="mt-auto">

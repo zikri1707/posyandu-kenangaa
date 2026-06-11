@@ -92,12 +92,46 @@
             $ageMonths = $patient->age_in_months;
             $missingVaccines = $patient->getMissingVaccines();
             $currentMonth = now()->month;
+            $currentYear = now()->year;
             $isVitaminAMonth = in_array($currentMonth, [2, 8]);
-            $hasVitaminAThisPeriod = $patient->medicalRecords()
-                ->whereMonth('visit_date', $currentMonth)
-                ->whereYear('visit_date', now()->year)
-                ->where('vitamin_a', true)
-                ->exists();
+            
+            // Determine if patient has received Vitamin A in the active semester period
+            if ($currentMonth >= 2 && $currentMonth <= 7) {
+                $periodMonths = [2, 3, 4, 5, 6, 7];
+                $hasVitaminAThisPeriod = $patient->medicalRecords()
+                    ->whereYear('visit_date', $currentYear)
+                    ->where(function($q) use ($periodMonths) {
+                        foreach ($periodMonths as $m) {
+                            $q->orWhereMonth('visit_date', $m);
+                        }
+                    })
+                    ->where(function($q) {
+                        $q->where('vitamin_a', true)
+                          ->orWhereIn('vitamin_a_color', ['biru', 'merah']);
+                    })
+                    ->exists();
+            } else {
+                $refYear = ($currentMonth == 1) ? $currentYear - 1 : $currentYear;
+                $hasVitaminAThisPeriod = $patient->medicalRecords()
+                    ->where(function($q) use ($refYear) {
+                        $q->where(function($sub) use ($refYear) {
+                            $sub->whereYear('visit_date', $refYear)
+                                ->where(function($inner) {
+                                    foreach ([8, 9, 10, 11, 12] as $m) {
+                                        $inner->orWhereMonth('visit_date', $m);
+                                    }
+                                });
+                        })->orWhere(function($sub) use ($refYear) {
+                            $sub->whereYear('visit_date', $refYear + 1)
+                                ->whereMonth('visit_date', 1);
+                        });
+                    })
+                    ->where(function($q) {
+                        $q->where('vitamin_a', true)
+                          ->orWhereIn('vitamin_a_color', ['biru', 'merah']);
+                    })
+                    ->exists();
+            }
             
             $isEligibleVitaminA = $ageMonths >= 6 && $ageMonths <= 59;
         @endphp
@@ -105,15 +139,15 @@
         <div class="space-y-3">
             {{-- Vitamin A logic --}}
             @if($isEligibleVitaminA)
-                @if($isVitaminAMonth && !$hasVitaminAThisPeriod)
-                    <div class="flex items-center gap-3 p-3 bg-white/60 rounded-2xl border border-rose-100">
-                        <div class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></div>
-                        <p class="text-[11px] font-bold text-rose-900">Perlu vitamin A bulan ini</p>
-                    </div>
-                @elseif($hasVitaminAThisPeriod)
+                @if($hasVitaminAThisPeriod)
                     <div class="flex items-center gap-3 p-3 bg-white/60 rounded-2xl border border-emerald-100 opacity-80">
                         <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
                         <p class="text-[11px] font-bold text-emerald-800">Vitamin A sudah diberikan</p>
+                    </div>
+                @elseif($isVitaminAMonth)
+                    <div class="flex items-center gap-3 p-3 bg-white/60 rounded-2xl border border-rose-100">
+                        <div class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></div>
+                        <p class="text-[11px] font-bold text-rose-900">Perlu vitamin A bulan ini</p>
                     </div>
                 @else
                     <div class="flex items-center gap-3 p-3 bg-white/40 rounded-2xl border border-slate-100">

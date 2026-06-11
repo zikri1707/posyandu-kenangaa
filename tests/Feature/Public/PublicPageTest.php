@@ -26,6 +26,7 @@ beforeEach(function () {
         'posyandu_id' => $this->posyandu->id,
         'title' => 'Posyandu Rutin',
         'start_time' => now()->addDays(7),
+        'status' => 'upcoming',
     ]);
 
     $this->article = Article::factory()->create([
@@ -95,6 +96,7 @@ describe('konten halaman beranda', function () {
         Schedule::factory()->count(5)->create([
             'posyandu_id' => $this->posyandu->id,
             'start_time' => now()->addDays(1),
+            'status' => 'upcoming',
         ]);
 
         $response = $this->get('/');

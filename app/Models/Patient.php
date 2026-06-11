@@ -83,7 +83,8 @@ class Patient extends Model
     public function getImmunizationStatus(): array
     {
         $ageMonths = $this->age_in_months;
-        $receivedVaccines = $this->medicalRecords()
+        
+        $receivedFromVaccineName = $this->medicalRecords()
             ->whereNotNull('vaccine_name')
             ->get()
             ->flatMap(function ($record) {
@@ -91,6 +92,54 @@ class Patient extends Model
             })
             ->unique()
             ->toArray();
+
+        $receivedFromImmunization = $this->medicalRecords()
+            ->whereNotNull('immunization')
+            ->where('immunization', '!=', '')
+            ->where('immunization', '!=', 'Tidak ada')
+            ->get()
+            ->flatMap(function ($record) {
+                $parts = preg_split('/[,;]+/', $record->immunization);
+                $mapped = [];
+                foreach ($parts as $part) {
+                    $trimmed = trim($part);
+                    if ($trimmed === '' || strtolower($trimmed) === 'tidak ada') {
+                        continue;
+                    }
+                    
+                    // Normalize standard immunization name
+                    $normalized = match(strtolower($trimmed)) {
+                        'campak', 'campak mr', 'mr' => 'MR',
+                        'hepatitis b', 'hb0', 'hb 0', 'hb-0' => 'HB-0',
+                        'bcg' => 'BCG',
+                        'polio 0', 'polio0' => 'Polio 0',
+                        'polio 1', 'polio1' => 'Polio 1',
+                        'polio 2', 'polio2' => 'Polio 2',
+                        'polio 3', 'polio3' => 'Polio 3',
+                        'polio 4', 'polio4' => 'Polio 4',
+                        'dpt', 'dpt 1', 'dpt-hb-hib 1', 'dpt-hb-hib1' => 'DPT-HB-Hib 1',
+                        'dpt 2', 'dpt-hb-hib 2', 'dpt-hb-hib2' => 'DPT-HB-Hib 2',
+                        'dpt 3', 'dpt-hb-hib 3', 'dpt-hb-hib3' => 'DPT-HB-Hib 3',
+                        'pcv 1', 'pcv1' => 'PCV 1',
+                        'pcv 2', 'pcv2' => 'PCV 2',
+                        'pcv 3', 'pcv3' => 'PCV 3',
+                        'rv 1', 'rv1' => 'RV 1',
+                        'rv 2', 'rv2' => 'RV 2',
+                        'rv 3', 'rv3' => 'RV 3',
+                        'ipv', 'ipv 1', 'ipv1' => 'IPV 1',
+                        'ipv 2', 'ipv2' => 'IPV 2',
+                        'dpt lanjutan', 'dpt-hb-hib lanjutan', 'dpt booster' => 'DPT-HB-Hib Lanjutan',
+                        'campak lanjutan', 'mr lanjutan', 'campak booster', 'mr booster' => 'MR Lanjutan',
+                        default => $trimmed
+                    };
+                    $mapped[] = $normalized;
+                }
+                return $mapped;
+            })
+            ->unique()
+            ->toArray();
+
+        $receivedVaccines = array_unique(array_merge($receivedFromVaccineName, $receivedFromImmunization));
 
         $schedule = [
             ['age' => 0, 'label' => '0 Bulan', 'vaccines' => [

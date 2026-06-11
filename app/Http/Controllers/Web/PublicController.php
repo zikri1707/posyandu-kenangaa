@@ -14,9 +14,10 @@ class PublicController extends Controller
      */
     public function home()
     {
-        // Get 3 upcoming schedules (future dates, ordered by start_time)
+        // Get 3 upcoming or ongoing schedules (not ended yet and not completed/cancelled)
         $schedules = Schedule::with('posyandu')
-            ->where('start_time', '>=', now())
+            ->where('end_time', '>=', now())
+            ->whereNotIn('status', ['completed', 'cancelled', 'Completed', 'Cancelled'])
             ->orderBy('start_time', 'asc')
             ->limit(3)
             ->get();

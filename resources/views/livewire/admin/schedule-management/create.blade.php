@@ -41,7 +41,7 @@
                             <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Unit Pelaksana <span class="text-red-500">*</span></label>
                             <x-forms.select-input wire:model="posyandu_id" placeholder="Pilih Posyandu" :placeholderDisabled="true" value="{{ $posyandu_id }}" :error="$errors->has('posyandu_id')">
                                 @foreach($posyandus as $p)
-                                    <option value="{{ $p->id }}">{{ $p->name }}</option>
+                                    <option value="{{ $p->id }}" {{ $posyandu_id == $p->id ? 'selected' : '' }}>{{ $p->name }}</option>
                                 @endforeach
                             </x-forms.select-input>
                             @error('posyandu_id') <p class="text-[10px] text-red-500 font-bold ml-1 uppercase tracking-wider">{{ $message }}</p> @enderror
@@ -78,9 +78,9 @@
                         <div class="space-y-3">
                             <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Status Awal</label>
                             <x-forms.select-input wire:model="status" placeholder="" value="{{ $status }}">
-                                <option value="upcoming">Mendatang (Upcoming)</option>
-                                <option value="ongoing">Sedang Berlangsung (Ongoing)</option>
-                                <option value="completed">Telah Selesai (Completed)</option>
+                                <option value="upcoming" {{ $status === 'upcoming' ? 'selected' : '' }}>Mendatang (Upcoming)</option>
+                                <option value="ongoing" {{ $status === 'ongoing' ? 'selected' : '' }}>Sedang Berlangsung (Ongoing)</option>
+                                <option value="completed" {{ $status === 'completed' ? 'selected' : '' }}>Telah Selesai (Completed)</option>
                             </x-forms.select-input>
                         </div>
                     </div>
