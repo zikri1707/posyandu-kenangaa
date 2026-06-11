@@ -7,8 +7,13 @@
      x-data="{ 
         category: '{{ old('category', $patient->category) }}',
         nikCount: {{ strlen(old('id_number', $patient->id_number)) }},
+        gender: '{{ old('gender', $patient->gender) }}',
         init() {
-            // Initial logic if needed
+            this.$watch('category', value => {
+                if (value === 'ibu_hamil') {
+                    this.gender = 'F';
+                }
+            });
         }
      }">
  
@@ -49,6 +54,7 @@
         @csrf
         @method('PUT')
         <input type="hidden" name="category" x-model="category">
+        <input type="hidden" name="is_pregnant" value="1" x-bind:disabled="category !== 'ibu_hamil'">
  
         {{-- Main Form Columns --}}
         <div class="flex-1 space-y-8">
@@ -115,6 +121,31 @@
                                    placeholder="Nama sesuai KTP/KIA..."
                                    class="w-full h-16 px-6 border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/5 transition-all bg-slate-50/30">
                         </div>
+
+                        <!-- Nama Suami (Hanya untuk Ibu Hamil) -->
+                        <div class="space-y-3" x-show="category === 'ibu_hamil'">
+                            <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Nama Suami <span class="text-teal-500">*</span></label>
+                            <input type="text" name="husband_name" value="{{ old('husband_name', $patient->husband_name) }}" x-bind:required="category === 'ibu_hamil'"
+                                   placeholder="Nama suami..."
+                                   class="w-full h-16 px-6 border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/5 transition-all bg-slate-50/30">
+                        </div>
+
+                        <!-- Nama Ayah & Ibu Kandung (Hanya untuk Lansia) -->
+                        <div class="space-y-3" x-show="category === 'lansia'">
+                            <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Nama Ayah Kandung</label>
+                            <input type="text" name="father_name" value="{{ old('father_name', $patient->father_name) }}"
+                                   placeholder="Nama ayah kandung..."
+                                   class="w-full h-16 px-6 border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/5 transition-all bg-slate-50/30"
+                                   x-bind:disabled="category !== 'lansia'">
+                        </div>
+
+                        <div class="space-y-3" x-show="category === 'lansia'">
+                            <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Nama Ibu Kandung</label>
+                            <input type="text" name="mother_name" value="{{ old('mother_name', $patient->mother_name) }}"
+                                   placeholder="Nama ibu kandung..."
+                                   class="w-full h-16 px-6 border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/5 transition-all bg-slate-50/30"
+                                   x-bind:disabled="category !== 'lansia'">
+                        </div>
  
                         <div class="space-y-3">
                             <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Tempat Lahir</label>
@@ -131,10 +162,22 @@
  
                         <div class="space-y-3">
                             <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Jenis Kelamin <span class="text-teal-500">*</span></label>
-                                <x-forms.select-input name="gender" placeholder="Pilih Jenis Kelamin" :placeholderDisabled="true" value="{{ old('gender', $patient->gender) }}" required>
+                            
+                            <!-- Tampilan statis jika Ibu Hamil -->
+                            <div x-show="category === 'ibu_hamil'" class="relative">
+                                <div class="w-full h-16 px-6 bg-slate-100 border border-slate-200 rounded-2xl flex items-center text-sm font-bold text-slate-500">
+                                    Perempuan
+                                </div>
+                                <input type="hidden" name="gender" value="F" x-bind:disabled="category !== 'ibu_hamil'">
+                            </div>
+                            
+                            <!-- Dropdown pilihan jenis kelamin untuk kategori lain -->
+                            <div x-show="category !== 'ibu_hamil'">
+                                <x-forms.select-input name="gender" placeholder="Pilih Jenis Kelamin" :placeholderDisabled="true" value="{{ old('gender', $patient->gender) }}" required x-model="gender" x-bind:disabled="category === 'ibu_hamil'">
                                     <option value="M" {{ old('gender', $patient->gender) == 'M' ? 'selected' : '' }}>Laki-laki</option>
                                     <option value="F" {{ old('gender', $patient->gender) == 'F' ? 'selected' : '' }}>Perempuan</option>
                                 </x-forms.select-input>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -163,12 +206,14 @@
                     <div class="space-y-3">
                         <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Nama Ayah</label>
                         <input type="text" name="father_name" value="{{ old('father_name', $patient->father_name) }}" placeholder="Nama ayah..."
-                               class="w-full h-14 px-5 border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/5 transition-all bg-slate-50/30">
+                               class="w-full h-14 px-5 border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/5 transition-all bg-slate-50/30"
+                               x-bind:disabled="!['bayi', 'baduta', 'balita', 'anak_sekolah'].includes(category)">
                     </div>
                     <div class="space-y-3">
                         <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Nama Ibu</label>
                         <input type="text" name="mother_name" value="{{ old('mother_name', $patient->mother_name) }}" placeholder="Nama ibu..."
-                               class="w-full h-14 px-5 border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/5 transition-all bg-slate-50/30">
+                               class="w-full h-14 px-5 border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/5 transition-all bg-slate-50/30"
+                               x-bind:disabled="!['bayi', 'baduta', 'balita', 'anak_sekolah'].includes(category)">
                     </div>
                     <div class="space-y-3">
                         <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">BB Lahir (kg)</label>
@@ -205,7 +250,7 @@
  
             {{-- Dewasa --}}
             <div class="bg-white rounded-[3rem] border border-slate-100 p-10 shadow-[0_8px_30px_rgb(0,0,0,0.02)] transition-all duration-500"
-                 x-show="['ibu_hamil', 'remaja', 'umum'].includes(category)"
+                 x-show="['remaja', 'umum'].includes(category)"
                  x-transition:enter="transition ease-out duration-500"
                  x-transition:enter-start="opacity-0 transform translate-y-8"
                  x-transition:enter-end="opacity-100 transform translate-y-0">
@@ -227,7 +272,8 @@
                                 <label class="cursor-pointer">
                                     <input type="radio" name="education" value="{{ $edu }}" 
                                            {{ old('education', $patient->education) == $edu ? 'checked' : '' }} 
-                                           class="hidden peer">
+                                           class="hidden peer"
+                                           x-bind:disabled="category === 'ibu_hamil'">
                                     <div class="py-3 px-2 text-center border border-slate-200 rounded-2xl peer-checked:border-primary peer-checked:bg-primary/5 peer-checked:text-primary font-bold text-xs hover:border-slate-300 hover:bg-slate-50 transition-all">
                                         {{ $edu }}
                                     </div>
@@ -240,7 +286,8 @@
                     <div class="space-y-3" x-data="{ currentJob: '{{ old('job', $patient->job) }}' }">
                         <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Pekerjaan</label>
                         <input type="text" name="job" x-model="currentJob" placeholder="Contoh: PNS, IRT..."
-                               class="w-full h-14 px-5 border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all bg-slate-50/30">
+                               class="w-full h-14 px-5 border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all bg-slate-50/30"
+                               x-bind:disabled="category === 'ibu_hamil'">
                         <div class="flex flex-wrap gap-1.5 mt-2">
                             @foreach(['IRT', 'PNS', 'Karyawan', 'Wiraswasta', 'Buruh', 'Tidak Bekerja'] as $jobChip)
                                 <button type="button" @click="currentJob = '{{ $jobChip }}'" 
@@ -255,13 +302,14 @@
                     <div class="space-y-3">
                         <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Jumlah Anak</label>
                         <input type="number" name="number_of_children" value="{{ old('number_of_children', $patient->number_of_children) }}"
-                               class="w-full h-14 px-5 border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all bg-slate-50/30">
+                               class="w-full h-14 px-5 border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all bg-slate-50/30"
+                               x-bind:disabled="category === 'ibu_hamil'">
                     </div>
 
                     {{-- Status Kehamilan --}}
                     <div class="space-y-3">
                         <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Status Kehamilan</label>
-                        <x-forms.select-input name="is_pregnant" placeholder="" value="{{ old('is_pregnant', $patient->is_pregnant) }}">
+                        <x-forms.select-input name="is_pregnant" placeholder="" value="{{ old('is_pregnant', $patient->is_pregnant) }}" x-bind:disabled="category === 'ibu_hamil'">
                             <option value="0" {{ old('is_pregnant', $patient->is_pregnant) == '0' ? 'selected' : '' }}>Tidak Hamil</option>
                             <option value="1" {{ old('is_pregnant', $patient->is_pregnant) == '1' ? 'selected' : '' }}>Sedang Hamil</option>
                         </x-forms.select-input>
@@ -269,44 +317,7 @@
                 </div>
             </div>
  
-            {{-- Lansia --}}
-            <div class="bg-white rounded-[3rem] border border-slate-100 p-10 shadow-[0_8px_30px_rgb(0,0,0,0.02)] transition-all duration-500"
-                 x-show="category == 'lansia'"
-                 x-transition:enter="transition ease-out duration-500"
-                 x-transition:enter-start="opacity-0 transform translate-y-8"
-                 x-transition:enter-end="opacity-100 transform translate-y-0">
-                <div class="flex items-center gap-4 mb-10">
-                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-orange-700 text-white flex items-center justify-center shadow-lg shadow-orange-200">
-                        <span class="material-symbols-outlined text-[24px]">elderly</span>
-                    </div>
-                    <div>
-                        <h3 class="text-sm font-black text-slate-800 uppercase tracking-[0.2em]">Kemandirian Lansia</h3>
-                        <p class="text-xs font-bold text-slate-400 mt-0.5">Status kemandirian dan tempat tinggal</p>
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div class="space-y-3">
-                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Status Tinggal</label>
-                        <x-forms.select-input name="living_status" placeholder="" value="{{ old('living_status', $patient->living_status) }}">
-                            <option value="Sendiri" {{ old('living_status', $patient->living_status) == 'Sendiri' ? 'selected' : '' }}>Tinggal Sendiri</option>
-                            <option value="Keluarga" {{ old('living_status', $patient->living_status) == 'Keluarga' ? 'selected' : '' }}>Bersama Keluarga</option>
-                        </x-forms.select-input>
-                    </div>
-                    <div class="space-y-3">
-                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Status Kemandirian</label>
-                        <x-forms.select-input name="independence_status" placeholder="" value="{{ old('independence_status', $patient->independence_status) }}">
-                            <option value="Mandiri" {{ old('independence_status', $patient->independence_status) == 'Mandiri' ? 'selected' : '' }}>Mandiri (A)</option>
-                            <option value="Bantuan" {{ old('independence_status', $patient->independence_status) == 'Bantuan' ? 'selected' : '' }}>Bantuan (B/C)</option>
-                        </x-forms.select-input>
-                    </div>
-                    <div class="md:col-span-2 space-y-3 pt-4">
-                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Penyakit yang Pernah Diderita</label>
-                        <textarea name="historical_diseases" rows="2"
-                                  placeholder="Contoh: Hipertensi, Diabetes Mellitus, Asam Urat, Penyakit Jantung..."
-                                  class="w-full p-6 border border-slate-200 rounded-[2rem] text-sm font-bold text-slate-700 focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/5 transition-all bg-slate-50/30 resize-none">{{ old('historical_diseases', $patient->historical_diseases) }}</textarea>
-                    </div>
-                </div>
-            </div>
+
  
             {{-- 3. Kontak & Alamat --}}
             <div class="bg-white rounded-[3rem] border border-slate-100 p-10 shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
@@ -352,7 +363,26 @@
                                placeholder="Contoh: 004 atau 011..."
                                class="w-full h-16 px-6 border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/5 transition-all bg-slate-50/30">
                     </div>
-                    <div class="space-y-3">
+                    <div class="space-y-3" x-show="['ibu_hamil', 'lansia'].includes(category)">
+                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">RW Domisili <span class="text-teal-500">*</span></label>
+                        <input type="text" name="dusun_rt_rw" value="{{ old('dusun_rt_rw', $patient->dusun_rt_rw) }}" x-bind:required="['ibu_hamil', 'lansia'].includes(category)"
+                               placeholder="Contoh: 011..."
+                               class="w-full h-16 px-6 border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/5 transition-all bg-slate-50/30"
+                               x-bind:disabled="!['ibu_hamil', 'lansia'].includes(category)">
+                    </div>
+                    <div class="space-y-3" x-show="category === 'ibu_hamil'">
+                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Kelurahan / Desa <span class="text-teal-500">*</span></label>
+                        <input type="text" name="desa_kelurahan" value="{{ old('desa_kelurahan', $patient->desa_kelurahan) }}" x-bind:required="category === 'ibu_hamil'"
+                               placeholder="Nama kelurahan/desa..."
+                               class="w-full h-16 px-6 border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/5 transition-all bg-slate-50/30">
+                    </div>
+                    <div class="space-y-3" x-show="category === 'ibu_hamil'">
+                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Kecamatan <span class="text-teal-500">*</span></label>
+                        <input type="text" name="kecamatan" value="{{ old('kecamatan', $patient->kecamatan) }}" x-bind:required="category === 'ibu_hamil'"
+                               placeholder="Nama kecamatan..."
+                               class="w-full h-16 px-6 border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/5 transition-all bg-slate-50/30">
+                    </div>
+                    <div class="space-y-3" x-show="!['ibu_hamil', 'lansia'].includes(category)">
                         {{-- Empty element to balance the grid --}}
                     </div>
                     <div class="md:col-span-2 space-y-3">

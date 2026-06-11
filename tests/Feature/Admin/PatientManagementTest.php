@@ -192,6 +192,44 @@ describe('CRUD pasien - Update', function () {
             'entity_id' => $this->patient1->id,
         ]);
     });
+
+    it('admin dapat mengubah data lansia dengan nama ayah kandung, nama ibu kandung, dan rw domisili', function () {
+        $this->actingAs($this->admin1);
+
+        $patient = Patient::factory()->create([
+            'posyandu_id' => $this->posyandu1->id,
+            'category' => 'lansia',
+            'id_number' => '8888777766665555',
+            'full_name' => 'Lansia Awal',
+            'birth_date' => '1955-05-05',
+            'gender' => 'F',
+            'address' => 'Alamat Awal',
+            'phone_number' => '081234567890',
+        ]);
+
+        $response = $this->put("/admin/patients/{$patient->id}", [
+            'posyandu_id' => $this->posyandu1->id,
+            'category' => 'lansia',
+            'id_number' => '8888777766665555',
+            'full_name' => 'Lansia Update',
+            'birth_date' => '1955-05-05',
+            'gender' => 'F',
+            'address' => 'Alamat Update',
+            'phone_number' => '081234567890',
+            'father_name' => 'Ayah Lansia Baru',
+            'mother_name' => 'Ibu Lansia Baru',
+            'dusun_rt_rw' => 'RW 07',
+        ]);
+
+        $response->assertSessionDoesntHaveErrors();
+        $this->assertDatabaseHas('patients', [
+            'id' => $patient->id,
+            'full_name' => 'Lansia Update',
+            'father_name' => 'Ayah Lansia Baru',
+            'mother_name' => 'Ibu Lansia Baru',
+            'dusun_rt_rw' => 'RW 07',
+        ]);
+    });
 });
 
 describe('CRUD pasien - Delete', function () {
@@ -329,6 +367,79 @@ describe('validasi NIK duplikat', function () {
         $response->assertSessionHasErrors('id_number');
         $errors = session('errors');
         expect($errors->get('id_number')[0])->toContain('sudah terdaftar');
+    });
+});
+
+describe('validasi kategori dan jenis kelamin', function () {
+    it('menolak pendaftaran ibu hamil dengan jenis kelamin laki-laki', function () {
+        $this->actingAs($this->admin1);
+
+        $response = $this->post('/admin/patients', [
+            'posyandu_id' => $this->posyandu1->id,
+            'category' => 'ibu_hamil',
+            'id_number' => '9999888877776666',
+            'full_name' => 'Bumil Laki Laki',
+            'birth_date' => '1995-01-01',
+            'gender' => 'M',
+            'address' => 'Test Address',
+            'phone_number' => '081234567890',
+        ]);
+
+        $response->assertSessionHasErrors('gender');
+    });
+
+    it('menerima pendaftaran ibu hamil dengan jenis kelamin perempuan', function () {
+        $this->actingAs($this->admin1);
+
+        $response = $this->post('/admin/patients', [
+            'posyandu_id' => $this->posyandu1->id,
+            'category' => 'ibu_hamil',
+            'id_number' => '9999888877776666',
+            'full_name' => 'Bumil Perempuan',
+            'birth_date' => '1995-01-01',
+            'gender' => 'F',
+            'address' => 'Test Address',
+            'phone_number' => '081234567890',
+            'husband_name' => 'Suami Test',
+            'dusun_rt_rw' => 'RW 05',
+            'desa_kelurahan' => 'Kelurahan Test',
+            'kecamatan' => 'Kecamatan Test',
+        ]);
+
+        $response->assertSessionDoesntHaveErrors('gender');
+        $this->assertDatabaseHas('patients', [
+            'id_number' => '9999888877776666',
+            'husband_name' => 'Suami Test',
+            'dusun_rt_rw' => 'RW 05',
+            'desa_kelurahan' => 'Kelurahan Test',
+            'kecamatan' => 'Kecamatan Test',
+        ]);
+    });
+
+    it('menerima pendaftaran lansia dengan nama ayah kandung, nama ibu kandung, dan rw domisili', function () {
+        $this->actingAs($this->admin1);
+
+        $response = $this->post('/admin/patients', [
+            'posyandu_id' => $this->posyandu1->id,
+            'category' => 'lansia',
+            'id_number' => '1111999922228888',
+            'full_name' => 'Lansia Test',
+            'birth_date' => '1950-01-01',
+            'gender' => 'M',
+            'address' => 'Test Lansia Address',
+            'phone_number' => '081234567899',
+            'father_name' => 'Ayah Lansia',
+            'mother_name' => 'Ibu Lansia',
+            'dusun_rt_rw' => 'RW 06',
+        ]);
+
+        $response->assertSessionDoesntHaveErrors();
+        $this->assertDatabaseHas('patients', [
+            'id_number' => '1111999922228888',
+            'father_name' => 'Ayah Lansia',
+            'mother_name' => 'Ibu Lansia',
+            'dusun_rt_rw' => 'RW 06',
+        ]);
     });
 });
 
@@ -615,6 +726,9 @@ describe('Tampilan detail kustom sesuai kategori', function () {
         $this->patient1->update([
             'category' => 'lansia',
             'historical_diseases' => 'Diabetes Mellitus',
+            'father_name' => 'Ayah Lansia Kandung',
+            'mother_name' => 'Ibu Lansia Kandung',
+            'dusun_rt_rw' => 'RW 08',
         ]);
         $this->patient1->medicalRecords()->create([
             'user_id' => $this->admin1->id,
@@ -637,6 +751,9 @@ describe('Tampilan detail kustom sesuai kategori', function () {
         $response->assertSee('Metformin');
         $response->assertSee('Tekanan Darah');
         $response->assertSee('Gula Darah');
+        $response->assertSee('Ayah Lansia Kandung');
+        $response->assertSee('Ibu Lansia Kandung');
+        $response->assertSee('RW 08');
     });
 
     it('menampilkan detail spesifik ibu hamil', function () {

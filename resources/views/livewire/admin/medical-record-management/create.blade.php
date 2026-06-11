@@ -1975,7 +1975,11 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             if (data.gender) {
-                const genderRadio = document.querySelector(`input[name="gender"][value="${data.gender}"]`);
+                let genderVal = data.gender;
+                if (genderVal === 'M') genderVal = 'L';
+                if (genderVal === 'F') genderVal = 'P';
+
+                const genderRadio = document.querySelector(`input[name="gender"][value="${genderVal}"]`);
                 if (genderRadio) {
                     genderRadio.checked = true;
                 }

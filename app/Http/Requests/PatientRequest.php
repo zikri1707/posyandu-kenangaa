@@ -32,6 +32,9 @@ class PatientRequest extends FormRequest
             if ($validator->errors()->has('id_number_hash')) {
                 $validator->errors()->add('id_number', 'NIK sudah terdaftar dalam sistem.');
             }
+            if ($this->input('category') === 'ibu_hamil' && $this->input('gender') !== 'F') {
+                $validator->errors()->add('gender', 'Kategori Ibu Hamil harus berjenis kelamin Perempuan.');
+            }
         });
     }
 
@@ -57,6 +60,12 @@ class PatientRequest extends FormRequest
             'profile_photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
 
             // New Detail Fields
+            'husband_name' => 'nullable|string|max:255',
+            'dusun_rt_rw' => 'nullable|string|max:255',
+            'desa_kelurahan' => 'nullable|string|max:255',
+            'kecamatan' => 'nullable|string|max:255',
+            'father_name' => 'nullable|string|max:255',
+            'mother_name' => 'nullable|string|max:255',
             'guardian_status' => 'nullable|string|max:100',
             'education' => 'nullable|string|max:100',
             'job' => 'nullable|string|max:100',

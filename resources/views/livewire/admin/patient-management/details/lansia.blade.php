@@ -14,6 +14,10 @@
                 <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">RT Domisili</span>
                 <span class="text-sm font-black text-slate-700">RT {{ $patient->rt_domisili ?? '-' }}</span>
             </div>
+            <div class="flex justify-between items-center py-3 border-b border-slate-50">
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">RW Domisili</span>
+                <span class="text-sm font-black text-slate-700">RW {{ $patient->dusun_rt_rw ?? '-' }}</span>
+            </div>
             <div class="flex flex-col py-3">
                 <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Riwayat Penyakit Dahulu</span>
                 <span class="text-sm font-bold text-slate-700 bg-slate-50 p-4 rounded-2xl border border-slate-100 min-h-[60px] block leading-relaxed">
@@ -38,6 +42,27 @@
                 <span class="text-sm font-bold text-slate-700 bg-slate-50 p-4 rounded-2xl border border-slate-100 min-h-[60px] block leading-relaxed">
                     {{ $lastRecord->current_medication ?? 'Tidak sedang mengonsumsi obat khusus' }}
                 </span>
+            </div>
+        </div>
+    </div>
+
+    {{-- Informasi Orang Tua Kandung --}}
+    <div class="bg-white rounded-[3rem] border border-slate-100 p-10 shadow-[0_8px_30px_rgb(0,0,0,0.02)] md:col-span-2">
+        <div class="flex items-center gap-4 mb-8">
+            <div class="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center">
+                <span class="material-symbols-outlined text-[20px]">family_restroom</span>
+            </div>
+            <h4 class="text-sm font-black text-slate-800 uppercase tracking-widest">Informasi Orang Tua Kandung</h4>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="flex justify-between items-center py-4 border-b border-slate-50">
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nama Ayah Kandung</span>
+                <span class="text-sm font-black text-slate-700">{{ $patient->father_name ?? '-' }}</span>
+            </div>
+            <div class="flex justify-between items-center py-4 border-b border-slate-50">
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nama Ibu Kandung</span>
+                <span class="text-sm font-black text-slate-700">{{ $patient->mother_name ?? '-' }}</span>
             </div>
         </div>
     </div>

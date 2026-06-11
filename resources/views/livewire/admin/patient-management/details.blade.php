@@ -185,7 +185,15 @@
                         </div>
                         <div>
                             <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Alamat</p>
-                            <p class="text-sm font-bold text-slate-600 leading-relaxed">{{ $patient->address }}</p>
+                            <p class="text-sm font-bold text-slate-600 leading-relaxed">
+                                {{ $patient->address }}
+                                @if($patient->rt_domisili || $patient->dusun_rt_rw)
+                                    <br><span class="text-xs text-slate-400">RT {{ $patient->rt_domisili ?? '-' }} / RW {{ $patient->dusun_rt_rw ?? '-' }}</span>
+                                @endif
+                                @if($patient->desa_kelurahan || $patient->kecamatan)
+                                    <br><span class="text-xs text-slate-400">Desa/Kel. {{ $patient->desa_kelurahan ?? '-' }}, Kec. {{ $patient->kecamatan ?? '-' }}</span>
+                                @endif
+                            </p>
                         </div>
                     </div>
 
