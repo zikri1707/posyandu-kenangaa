@@ -1,6 +1,6 @@
 {{-- Sidebar Component --}}
 <aside id="sidebar"
-    class="flex-shrink-0 flex flex-col h-screen fixed lg:sticky top-0 left-0 z-30 overflow-hidden transition-all duration-300 ease-in-out"
+    class="flex-shrink-0 flex flex-col h-screen fixed lg:sticky top-0 left-0 z-50 overflow-hidden transition-all duration-300 ease-in-out"
     style="width:260px; background:#ffffff; border-right:1px solid rgba(0,0,0,0.07); box-shadow:1px 0 12px rgba(0,0,0,0.04);">
 
     {{-- ── Logo & Toggle ── --}}
@@ -168,7 +168,7 @@
 </aside>
 
 {{-- Mobile Overlay --}}
-<div id="sidebarOverlay" class="fixed inset-0 bg-black/30 z-20 hidden lg:hidden backdrop-blur-[2px]"></div>
+<div id="sidebarOverlay" class="fixed inset-0 bg-black/30 z-40 hidden lg:hidden backdrop-blur-[2px]"></div>
 
 <script>
 (function () {

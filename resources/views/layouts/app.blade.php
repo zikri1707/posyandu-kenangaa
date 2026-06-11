@@ -72,7 +72,7 @@
         @include('components.layouts.app.sidebar')
         
         <!-- Main Content Wrapper -->
-        <div id="mainContent" class="flex-1 flex-shrink-0 flex flex-col min-h-screen transition-all duration-300 ease-in-out relative overflow-y-auto">
+        <div id="mainContent" class="flex-1 flex-shrink-0 flex flex-col min-h-screen transition-all duration-300 ease-in-out relative">
             
             <!-- Navbar (Now part of the right-side flow) -->
             <x-layouts.app.navbar />

@@ -1168,7 +1168,7 @@
                                 / Sasaran <span class="text-primary">*</span>
                             </label>
                             <div class="relative group/select">
-                                <select name="patient_id" id="patient-select" required placeholder="{{ request('category') === 'ibu_hamil' ? 'Cari nama atau NIK ibu hamil...' : (request('category') === 'lansia' ? 'Cari nama atau NIK lansia...' : 'Cari nama atau NIK balita...') }}"
+                                <select name="patient_id" id="patient-select" placeholder="{{ request('category') === 'ibu_hamil' ? 'Cari nama atau NIK ibu hamil...' : (request('category') === 'lansia' ? 'Cari nama atau NIK lansia...' : 'Cari nama atau NIK balita...') }}"
                                         class="w-full h-16 border border-slate-200 rounded-[1.25rem] text-sm font-bold text-slate-700 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all appearance-none cursor-pointer bg-slate-50/30">
                                     <option value="">{{ request('category') === 'ibu_hamil' ? 'Cari nama atau NIK ibu hamil...' : (request('category') === 'lansia' ? 'Cari nama atau NIK lansia...' : 'Cari nama atau NIK balita...') }}</option>
                                     @foreach($patients as $patient)
@@ -1697,13 +1697,16 @@
                         </div>
                         <div class="space-y-3">
                             <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Hasil Pemeriksaan / Diagnosis <span class="text-rose-500">*</span></label>
-                            <x-forms.select-input name="diagnosis" placeholder="" required :error="$errors->has('diagnosis')" value="{{ old('diagnosis', 'Sehat') }}">
-                                @if(request('category') === 'ibu_hamil')
+                            <template x-if="category === 'ibu_hamil'">
+                                <x-forms.select-input name="diagnosis" placeholder="" required :error="$errors->has('diagnosis')" value="{{ old('diagnosis', 'Sehat') }}">
                                     <option value="Sehat" {{ old('diagnosis', 'Sehat') == 'Sehat' ? 'selected' : '' }}>🟢 Sehat</option>
                                     <option value="Beresiko" {{ old('diagnosis') == 'Beresiko' ? 'selected' : '' }}>🟡 Berisiko Tinggi</option>
                                     <option value="Sakit" {{ old('diagnosis') == 'Sakit' ? 'selected' : '' }}>🤒 Sakit (Demam/Batuk/Pilek)</option>
                                     <option value="Lainnya" {{ old('diagnosis') == 'Lainnya' ? 'selected' : '' }}>Lainnya...</option>
-                                @elseif(request('category') === 'lansia')
+                                </x-forms.select-input>
+                            </template>
+                            <template x-if="category === 'lansia'">
+                                <x-forms.select-input name="diagnosis" placeholder="" required :error="$errors->has('diagnosis')" value="{{ old('diagnosis', 'Sehat') }}">
                                     <option value="Sehat" {{ old('diagnosis', 'Sehat') == 'Sehat' ? 'selected' : '' }}>🟢 Sehat</option>
                                     <option value="Hipertensi" {{ old('diagnosis') == 'Hipertensi' ? 'selected' : '' }}>🟡 Hipertensi</option>
                                     <option value="Diabetes" {{ old('diagnosis') == 'Diabetes' ? 'selected' : '' }}>🟡 Diabetes</option>
@@ -1711,14 +1714,17 @@
                                     <option value="Kolesterol" {{ old('diagnosis') == 'Kolesterol' ? 'selected' : '' }}>🟡 Kolesterol Tinggi</option>
                                     <option value="Sakit" {{ old('diagnosis') == 'Sakit' ? 'selected' : '' }}>🤒 Sakit (Demam/Batuk/Pilek)</option>
                                     <option value="Lainnya" {{ old('diagnosis') == 'Lainnya' ? 'selected' : '' }}>Lainnya...</option>
-                                @else
+                                </x-forms.select-input>
+                            </template>
+                            <template x-if="['bayi', 'baduta', 'balita', 'anak_sekolah', 'balita'].includes(category)">
+                                <x-forms.select-input name="diagnosis" placeholder="" required :error="$errors->has('diagnosis')" value="{{ old('diagnosis', 'Sehat') }}">
                                     <option value="Sehat" {{ old('diagnosis', 'Sehat') == 'Sehat' ? 'selected' : '' }}>🟢 Sehat</option>
                                     <option value="Kurang Gizi" {{ old('diagnosis') == 'Kurang Gizi' ? 'selected' : '' }}>🟡 Perlu Pemantauan Gizi</option>
                                     <option value="Indikasi Stunting" {{ old('diagnosis') == 'Indikasi Stunting' ? 'selected' : '' }}>🔴 Indikasi Stunting</option>
                                     <option value="Sakit" {{ old('diagnosis') == 'Sakit' ? 'selected' : '' }}>🤒 Sakit (Demam/Batuk/Pilek)</option>
                                     <option value="Lainnya" {{ old('diagnosis') == 'Lainnya' ? 'selected' : '' }}>Lainnya...</option>
-                                @endif
-                            </x-forms.select-input>
+                                </x-forms.select-input>
+                            </template>
                             @error('diagnosis') <p class="text-[10px] text-rose-500 font-bold ml-1">{{ $message }}</p> @enderror
                         </div>
                         <div class="space-y-3">

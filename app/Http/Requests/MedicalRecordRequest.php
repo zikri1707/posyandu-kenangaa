@@ -140,6 +140,7 @@ class MedicalRecordRequest extends FormRequest
     public function messages()
     {
         return [
+            'patient_id.required_without' => 'Pasien (Balita/Ibu Hamil/Lansia) wajib dipilih.',
             'patient_id.required' => 'ID pasien wajib diisi.',
             'patient_id.exists' => 'Pasien yang dipilih tidak ditemukan.',
             'visit_date.required' => 'Tanggal kunjungan wajib diisi.',

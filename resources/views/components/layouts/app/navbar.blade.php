@@ -1,6 +1,6 @@
 {{-- ── Navbar Shell ── --}}
 <header id="topNavbar"
-    class="glass-header sticky top-0 z-40 flex items-center justify-between h-16 px-4 md:px-6 transition-shadow duration-200"
+    class="glass-header sticky top-0 z-30 flex items-center justify-between h-16 px-4 md:px-6 transition-transform duration-300"
     style="font-family:'Public Sans','Inter',sans-serif;">
 
     {{-- ── LEFT: Mobile toggle + Search ── --}}
@@ -164,6 +164,23 @@
             mobileSearchBar.classList.toggle('hidden', !isHidden);
             if (isHidden) mobileSearchBar.querySelector('input')?.focus();
         });
+    }
+
+    // Smart sticky navbar - bind to window since layout overflow has been fixed
+    const navbar = document.getElementById('topNavbar');
+    if (navbar) {
+        let lastScroll = window.scrollY || document.documentElement.scrollTop;
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.scrollY || document.documentElement.scrollTop;
+            if (currentScroll > lastScroll && currentScroll > 64) {
+                // Scrolling down -> hide navbar
+                navbar.classList.add('-translate-y-full');
+            } else {
+                // Scrolling up -> show navbar
+                navbar.classList.remove('-translate-y-full');
+            }
+            lastScroll = currentScroll <= 0 ? 0 : currentScroll;
+        }, { passive: true });
     }
 })();
 </script>
