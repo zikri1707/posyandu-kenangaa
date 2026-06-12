@@ -361,7 +361,7 @@
                             </div>
                         </td>
                         <td class="px-8 py-5 text-center">
-                            <a href="{{ route('admin.reports.individual', ['patient' => $record->patient_id, 'start_month' => $startMonth, 'start_year' => $startYear, 'end_month' => $endMonth, 'end_year' => $endYear]) }}"
+                            <a href="{{ route('admin.reports.individual', ['patient' => $record->patient_id, 'start_month' => $selectedMonth, 'start_year' => $selectedYear, 'end_month' => $selectedMonth, 'end_year' => $selectedYear]) }}"
                                class="inline-flex items-center justify-center rounded-xl bg-white border border-slate-200 shadow-sm px-4 py-2.5 text-xs font-black text-slate-700 hover:bg-teal-50 hover:text-teal-700 hover:border-teal-200 active:scale-95 transition-all">
                                 <span class="material-symbols-outlined text-[18px]">assignment_ind</span>
                                 <span class="ml-1.5">Rapor</span>
