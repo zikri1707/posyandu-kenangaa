@@ -111,12 +111,12 @@
         
         <div class="flex flex-col md:flex-row items-center md:items-start gap-8">
             {{-- Profile Photo --}}
-            <div class="relative shrink-0">
-                <div class="w-36 h-36 rounded-[2.5rem] border-4 border-white bg-slate-50 shadow-xl overflow-hidden relative z-10">
+            <div class="relative shrink-0" style="width: 144px; height: 144px; flex-shrink: 0;">
+                <div class="rounded-[2.5rem] border-4 border-white bg-slate-50 shadow-xl overflow-hidden relative z-10" style="width: 144px; height: 144px;">
                     @if($patient->profile_photo)
-                        <img src="{{ asset('storage/' . $patient->profile_photo) }}" class="w-full h-full object-cover">
+                        <img src="{{ asset('storage/' . $patient->profile_photo) }}" style="width: 100%; height: 100%; object-fit: cover;">
                     @else
-                        <div class="w-full h-full bg-linear-to-br from-slate-50 to-slate-100 flex items-center justify-center">
+                        <div class="w-full h-full bg-linear-to-br from-slate-50 to-slate-100 flex items-center justify-center" style="width: 100%; height: 100%;">
                             <span class="material-symbols-outlined text-slate-300 text-[80px]" style="font-variation-settings: 'wght' 100;">{{ $theme['avatar_icon'] }}</span>
                         </div>
                     @endif
@@ -136,82 +136,6 @@
                         'text-pink-600 bg-pink-50 border-pink-100' => $patient->gender == 'F' || $patient->gender == 'P',
                     ])>NIK: {{ $patient->id_number }}</span>
                 </div>
-                
-                {{-- Quick Fields Row --}}
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-6 border-t border-slate-100">
-                    <div>
-                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Jenis Kelamin</p>
-                        <div class="flex items-center gap-2">
-                            <span @class([
-                                'w-2 h-2 rounded-full',
-                                'bg-sky-500' => $patient->gender == 'L' || $patient->gender == 'M',
-                                'bg-pink-500' => $patient->gender == 'F' || $patient->gender == 'P',
-                            ])></span>
-                            <span class="text-sm font-black text-slate-800">{{ ($patient->gender == 'L' || $patient->gender == 'M') ? 'Laki-laki' : 'Perempuan' }}</span>
-                        </div>
-                    </div>
-                    <div>
-                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Usia</p>
-                        <p class="text-sm font-black text-slate-800">{{ $patient->age }}</p>
-                    </div>
-                    <div>
-                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Nomor Telepon</p>
-                        <p class="text-sm font-black text-slate-800">{{ $patient->phone_number ?? '-' }}</p>
-                    </div>
-                    <div>
-                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Lokasi Layanan</p>
-                        <p class="text-sm font-black text-slate-800">{{ str_contains($patient->posyandu->name, 'Posyandu') ? $patient->posyandu->name : 'Posyandu ' . $patient->posyandu->name }}</p>
-                    </div>
-                </div>
-                
-<<<<<<< HEAD
-                <div class="space-y-5">
-                    <div class="flex items-start gap-4">
-                        <div class="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center shrink-0 text-slate-400">
-                            <span class="material-symbols-outlined text-[18px]">phone_iphone</span>
-                        </div>
-                        <div>
-                            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Nomor Telepon</p>
-                            <p class="text-sm font-black text-slate-700">{{ $patient->phone_number }}</p>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-start gap-4">
-                        <div class="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center shrink-0 text-slate-400">
-                            <span class="material-symbols-outlined text-[18px]">location_on</span>
-                        </div>
-                        <div>
-                            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Alamat</p>
-                            <p class="text-sm font-bold text-slate-600 leading-relaxed">
-                                {{ $patient->address }}
-                                @if($patient->rt_domisili || $patient->dusun_rt_rw)
-                                    <br><span class="text-xs text-slate-400">RT {{ $patient->rt_domisili ?? '-' }} / RW {{ $patient->dusun_rt_rw ?? '-' }}</span>
-                                @endif
-                                @if($patient->desa_kelurahan || $patient->kecamatan)
-                                    <br><span class="text-xs text-slate-400">Desa/Kel. {{ $patient->desa_kelurahan ?? '-' }}, Kec. {{ $patient->kecamatan ?? '-' }}</span>
-                                @endif
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="flex items-start gap-4">
-                        <div class="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center shrink-0 text-slate-400">
-                            <span class="material-symbols-outlined text-[18px]">home_work</span>
-                        </div>
-                        <div>
-                            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Lokasi Layanan</p>
-                            <p class="text-sm font-black text-slate-700">{{ str_contains($patient->posyandu->name, 'Posyandu') ? $patient->posyandu->name : 'Posyandu ' . $patient->posyandu->name }}</p>
-                        </div>
-=======
-                {{-- Address Box --}}
-                <div class="bg-slate-50 rounded-2xl p-4 flex items-start gap-3 border border-slate-100">
-                    <span class="material-symbols-outlined text-[20px] text-slate-400 shrink-0">location_on</span>
-                    <div>
-                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Alamat Domisili</p>
-                        <p class="text-xs font-bold text-slate-600 leading-relaxed">{{ $patient->address }}</p>
->>>>>>> 6a3e48d4a0f6d2b460a630505ab3c3352829fe0f
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -227,6 +151,7 @@
             @livewire('admin.patient-management.growth-chart', ['patient' => $patient, 'isEmbedded' => true])
         </div>
     @endif
+
 </div>
 
 @endsection

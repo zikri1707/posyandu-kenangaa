@@ -28,6 +28,16 @@ class HeaderResolver
         'lingkar_kepala' => ['lk', 'head_circumference', 'lingkarkepala'],
         'vitamin' => ['vitamin_a', 'vita', 'vit_a'],
         'imunisasi' => ['immunization', 'vaksin'],
+        'category' => ['category', 'kategori', 'tipe', 'type', 'golongan', 'status_warga'],
+        'husband_name' => ['husband_name', 'nama_suami', 'suami', 'nm_suami'],
+        'father_name' => ['father_name', 'nama_ayah', 'ayah', 'nama_ayah_kandung', 'nm_ayah'],
+        'mother_name' => ['mother_name', 'nama_ibu', 'ibu', 'nama_ibu_kandung', 'nm_ibu'],
+        'place_of_birth' => ['place_of_birth', 'tempat_lahir', 'tmp_lahir', 'kota_lahir'],
+        'phone_number' => ['phone_number', 'no_telp', 'no_hp', 'whatsapp', 'telepon', 'telp'],
+        'rt_domisili' => ['rt_domisili', 'rt', 'rt_dom'],
+        'dusun_rt_rw' => ['dusun_rt_rw', 'rw', 'dusun', 'rw_domisili', 'rw_dom'],
+        'historical_diseases' => ['historical_diseases', 'riwayat_penyakit', 'penyakit', 'riwayat_kesehatan'],
+        'is_pregnant' => ['is_pregnant', 'apakah_hamil', 'hamil', 'status_kehamilan'],
     ];
 
     /** Keywords used to detect which row is the header. */

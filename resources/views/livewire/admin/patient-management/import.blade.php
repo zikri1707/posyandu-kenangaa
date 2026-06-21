@@ -145,12 +145,24 @@
                 <div class="absolute right-0 top-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700"></div>
                 <div class="relative z-10">
                     <h3 class="text-2xl font-black mb-3">Langkah 1: Unduh Contoh</h3>
-                    <p class="text-blue-100 text-base mb-8 leading-relaxed">Gunakan file contoh ini sebagai acuan agar data warga tidak tertukar atau salah masuk.</p>
-                    <a href="{{ route('admin.patients.template') }}"
-                       class="inline-flex items-center gap-4 px-8 py-5 bg-white text-blue-700 rounded-[1.5rem] font-black hover:bg-blue-50 transition-all active:scale-95 shadow-xl w-full justify-center text-lg">
-                        <span class="material-symbols-outlined text-[24px]">download</span>
-                        Download Contoh
-                    </a>
+                    <p class="text-blue-100 text-base mb-8 leading-relaxed">Pilih kategori warga untuk mengunduh template contoh yang sesuai agar format data cocok.</p>
+                    <div class="space-y-4">
+                        <a href="{{ route('admin.patients.template', ['category' => 'balita']) }}"
+                           class="inline-flex items-center gap-4 px-8 py-4 bg-white text-blue-700 rounded-[1.5rem] font-black hover:bg-blue-50 transition-all active:scale-95 shadow-xl w-full justify-center text-sm">
+                            <span class="material-symbols-outlined text-[20px]">child_care</span>
+                            Download Template Balita
+                        </a>
+                        <a href="{{ route('admin.patients.template', ['category' => 'ibu_hamil']) }}"
+                           class="inline-flex items-center gap-4 px-8 py-4 bg-white text-blue-700 rounded-[1.5rem] font-black hover:bg-blue-50 transition-all active:scale-95 shadow-xl w-full justify-center text-sm">
+                            <span class="material-symbols-outlined text-[20px]">pregnant_woman</span>
+                            Download Template Ibu Hamil
+                        </a>
+                        <a href="{{ route('admin.patients.template', ['category' => 'lansia']) }}"
+                           class="inline-flex items-center gap-4 px-8 py-4 bg-white text-blue-700 rounded-[1.5rem] font-black hover:bg-blue-50 transition-all active:scale-95 shadow-xl w-full justify-center text-sm">
+                            <span class="material-symbols-outlined text-[20px]">elderly</span>
+                            Download Template Lansia
+                        </a>
+                    </div>
                 </div>
             </div>
 
@@ -159,27 +171,56 @@
                 <h3 class="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-8">Panduan Isi Kolom</h3>
                 
                 <div class="space-y-8">
+                    {{-- Balita --}}
                     <div class="flex gap-5">
-                        <div class="w-12 h-12 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center flex-shrink-0 font-black text-xl">!</div>
+                        <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
+                            <span class="material-symbols-outlined text-[24px]">child_care</span>
+                        </div>
                         <div>
-                            <p class="text-lg font-black text-slate-800">Data Wajib</p>
-                            <p class="text-sm text-slate-500 mt-1 leading-relaxed">Nama Anak, Tanggal Lahir, dan Jenis Kelamin (L/P).</p>
+                            <p class="text-base font-black text-slate-800">Kategori Balita</p>
+                            <p class="text-xs font-bold text-slate-500 mt-1 leading-relaxed">
+                                Wajib mengisi **Nama Anak**, **Tanggal Lahir**, **Jenis Kelamin** (L/P), dan **Nama Orang Tua** (nm_ortu/ayah/ibu). Bisa mengimpor hasil timbangan langsung: **Berat**, **Tinggi**, **LILA**, **Lingkar Kepala**, dan **Imunisasi**.
+                            </p>
                         </div>
                     </div>
 
+                    {{-- Ibu Hamil --}}
                     <div class="flex gap-5">
-                        <div class="w-12 h-12 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center flex-shrink-0 font-black text-xl">✓</div>
+                        <div class="w-12 h-12 rounded-2xl bg-pink-50 text-pink-600 flex items-center justify-center flex-shrink-0">
+                            <span class="material-symbols-outlined text-[24px]">pregnant_woman</span>
+                        </div>
                         <div>
-                            <p class="text-lg font-black text-slate-800">Hasil Timbangan</p>
-                            <p class="text-sm text-slate-500 mt-1 leading-relaxed">Bisa langsung mengisi Berat, Tinggi, dan Imunisasi.</p>
+                            <p class="text-base font-black text-slate-800">Kategori Ibu Hamil</p>
+                            <p class="text-xs font-bold text-slate-500 mt-1 leading-relaxed">
+                                Wajib mengisi **Nama**, **Tanggal Lahir**, **Jenis Kelamin** (P), **Nama Suami**, dan **Apakah Hamil** (Ya/Tidak). Bisa mencatat pemeriksaan klinis: **Berat**, **Tinggi**, dan **LILA**.
+                            </p>
                         </div>
                     </div>
 
+                    {{-- Lansia --}}
                     <div class="flex gap-5">
-                        <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0 font-black text-xl italic">i</div>
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
+                            <span class="material-symbols-outlined text-[24px]">elderly</span>
+                        </div>
                         <div>
-                            <p class="text-lg font-black text-slate-800">Format Tanggal</p>
-                            <p class="text-sm text-slate-500 mt-1 leading-relaxed">Gunakan format Tahun-Bulan-Hari (misal: 2022-08-06).</p>
+                            <p class="text-base font-black text-slate-800">Kategori Lansia</p>
+                            <p class="text-xs font-bold text-slate-500 mt-1 leading-relaxed">
+                                Wajib mengisi **Nama**, **Tanggal Lahir**, dan **Jenis Kelamin** (L/P). Silakan isi kolom **Riwayat Penyakit** (misal: Hipertensi, Diabetes) jika ada, serta hasil pemeriksaan fisik: **Berat** dan **Tinggi**.
+                            </p>
+                        </div>
+                    </div>
+
+                    {{-- Format Tanggal --}}
+                    <div class="flex gap-5 border-t border-slate-100 pt-6">
+                        <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0">
+                            <span class="material-symbols-outlined text-[24px]">info</span>
+                        </div>
+                        <div>
+                            <p class="text-base font-black text-slate-800">Format Tanggal & NIK</p>
+                            <p class="text-xs font-bold text-slate-500 mt-1 leading-relaxed">
+                                - **Tanggal Lahir/Ukur**: Gunakan format `YYYY-MM-DD` (misal: 2022-08-06). Jika format tanggal tidak sesuai, baris data akan dilewati dengan peringatan.<br>
+                                - **NIK**: Harus berupa 16 digit angka. Jika tidak sesuai atau kosong, akan muncul peringatan.
+                            </p>
                         </div>
                     </div>
                 </div>

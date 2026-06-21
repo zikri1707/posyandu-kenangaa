@@ -1,5 +1,5 @@
-<div class="relative" x-data="{ notifOpen: false }" wire:poll.30s="calculateUnread">
-    <button @click="notifOpen = !notifOpen; if(notifOpen) $wire.markAsRead()" 
+<div class="relative" x-data="{ notifOpen: false }" @close-dropdowns.window="if ($event.detail !== 'notif') notifOpen = false" wire:poll.30s="calculateUnread">
+    <button @click="notifOpen = !notifOpen; if(notifOpen) { $dispatch('close-dropdowns', 'notif'); $wire.markAsRead(); }" 
         class="w-10 h-10 flex items-center justify-center rounded-xl
                text-slate-500 border border-slate-200 hover:bg-slate-100 hover:text-teal-600
                active:scale-95 transition-all duration-150 relative shadow-sm bg-white">
@@ -9,7 +9,7 @@
         <span class="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-red-500 border-2 border-white animate-pulse"></span>
         @endif
     </button>
-
+ 
     {{-- Notification dropdown --}}
     <div x-show="notifOpen" 
         @click.away="notifOpen = false"
@@ -17,7 +17,8 @@
         x-transition:enter-start="opacity-0 translate-y-1"
         x-transition:enter-end="opacity-100 translate-y-0"
         class="absolute right-0 mt-3 w-80 md:w-96 bg-white rounded-3xl shadow-2xl
-               border border-slate-100 overflow-hidden z-50 py-2">
+               border border-slate-100 overflow-hidden z-50 py-2"
+        x-cloak>
 
         {{-- Header --}}
         <div class="flex items-center justify-between px-5 py-4 border-b border-slate-50">

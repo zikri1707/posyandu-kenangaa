@@ -64,7 +64,7 @@ class ArticleUpdate extends BaseAdminComponent
 
         $service->updateArticle($this->article, $validated);
 
-        $this->notify('Artikel berhasil diperbarui.');
+        $this->notify('Artikel berhasil diperbarui.', 'success', true);
 
         return redirect()->route('admin.articles.index');
     }

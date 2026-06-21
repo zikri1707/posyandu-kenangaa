@@ -18,14 +18,16 @@ abstract class BaseAdminComponent extends Component
     /**
      * Dispatch browser event untuk notifikasi (Toast).
      */
-    protected function notify(string $message, string $type = 'success'): void
+    protected function notify(string $message, string $type = 'success', bool $flash = false): void
     {
         $this->dispatch('notify', [
             'message' => $message,
             'type' => $type,
         ]);
 
-        session()->flash($type, $message);
+        if ($flash) {
+            session()->flash($type, $message);
+        }
     }
 
     /**

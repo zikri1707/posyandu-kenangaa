@@ -3,6 +3,9 @@
 @section('admin-title') @endsection
  
 @section('admin-content')
+@php
+    $currentCategory = old('category', request('category', 'balita'));
+@endphp
 <div class="w-full space-y-10 pb-24" 
      x-data="{ 
         category: '{{ old('category', request('category', 'balita')) }}',
@@ -74,8 +77,8 @@
                     {{-- Foto Profil --}}
                     <div class="lg:col-span-3 flex flex-col items-center">
                         <div class="relative group">
-                            <div class="w-48 h-48 rounded-[3rem] border-2 border-dashed border-slate-200 bg-slate-50/50 flex items-center justify-center overflow-hidden transition-all duration-500 group-hover:border-primary group-hover:bg-primary/5 shadow-inner">
-                                <img id="photo-preview" src="" class="w-full h-full object-cover hidden">
+                            <div class="rounded-[3rem] border-2 border-dashed border-slate-200 bg-slate-50/50 flex items-center justify-center overflow-hidden transition-all duration-500 group-hover:border-primary group-hover:bg-primary/5 shadow-inner" style="width: 192px; height: 192px; flex-shrink: 0;">
+                                <img id="photo-preview" src="" style="width: 100%; height: 100%; object-fit: cover;" class="hidden">
                                 <div id="photo-placeholder" class="text-center">
                                     <span class="material-symbols-outlined text-slate-300 text-[64px]" style="font-variation-settings: 'wght' 200;">account_circle</span>
                                     <p class="text-[9px] font-black text-slate-300 uppercase tracking-widest mt-2">Belum Ada Foto</p>
@@ -109,7 +112,7 @@
                         <div class="space-y-3">
                             <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Nama Lengkap <span class="text-primary">*</span></label>
                             <input type="text" name="full_name" value="{{ old('full_name') }}" required
-                                   placeholder="Nama sesuai KTP/KIA..."
+                                   :placeholder="['ibu_hamil', 'lansia'].includes(category) ? 'Nama sesuai KTP...' : 'Nama sesuai KTP/KIA...'"
                                    class="w-full h-16 px-6 border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all bg-slate-50/30">
                         </div>
 
@@ -242,6 +245,7 @@
                 </div>
             </div>
  
+            @if(in_array($currentCategory, ['remaja', 'umum']))
             {{-- Dewasa/Umum --}}
             <div class="bg-white rounded-[3rem] border border-slate-100 p-10 shadow-[0_8px_30px_rgb(0,0,0,0.02)] transition-all duration-500"
                  x-show="['remaja', 'umum'].includes(category)"
@@ -267,7 +271,7 @@
                                     <input type="radio" name="education" value="{{ $edu }}" 
                                            {{ old('education') == $edu ? 'checked' : '' }} 
                                            class="hidden peer"
-                                           x-bind:disabled="category === 'ibu_hamil'">
+                                           x-bind:disabled="['bayi', 'baduta', 'balita', 'anak_sekolah'].includes(category)">
                                     <div class="py-3 px-2 text-center border border-slate-200 rounded-2xl peer-checked:border-primary peer-checked:bg-primary/5 peer-checked:text-primary font-bold text-xs hover:border-slate-300 hover:bg-slate-50 transition-all">
                                         {{ $edu }}
                                     </div>
@@ -281,7 +285,7 @@
                         <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Pekerjaan</label>
                         <input type="text" name="job" x-model="currentJob" placeholder="Contoh: PNS, IRT..."
                                class="w-full h-14 px-5 border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all bg-slate-50/30"
-                               x-bind:disabled="category === 'ibu_hamil'">
+                               x-bind:disabled="['bayi', 'baduta', 'balita', 'anak_sekolah'].includes(category)">
                         <div class="flex flex-wrap gap-1.5 mt-2">
                             @foreach(['IRT', 'PNS', 'Karyawan', 'Wiraswasta', 'Buruh', 'Tidak Bekerja'] as $jobChip)
                                 <button type="button" @click="currentJob = '{{ $jobChip }}'" 
@@ -297,19 +301,20 @@
                         <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Jumlah Anak</label>
                         <input type="number" name="number_of_children" value="{{ old('number_of_children', 0) }}"
                                class="w-full h-14 px-5 border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all bg-slate-50/30"
-                               x-bind:disabled="category === 'ibu_hamil'">
+                               x-bind:disabled="['bayi', 'baduta', 'balita', 'anak_sekolah'].includes(category)">
                     </div>
 
                     {{-- Status Kehamilan --}}
                     <div class="space-y-3">
                         <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Status Kehamilan</label>
-                        <x-forms.select-input name="is_pregnant" placeholder="" value="{{ old('is_pregnant', request('category') == 'ibu_hamil' ? '1' : '0') }}" x-bind:disabled="category === 'ibu_hamil'">
+                        <x-forms.select-input name="is_pregnant" placeholder="" value="{{ old('is_pregnant', request('category') == 'ibu_hamil' ? '1' : '0') }}" x-bind:disabled="category === 'ibu_hamil' || category === 'lansia' || ['bayi', 'baduta', 'balita', 'anak_sekolah'].includes(category)">
                             <option value="0" {{ old('is_pregnant') == '0' ? 'selected' : '' }}>Tidak Hamil</option>
                             <option value="1" {{ (old('is_pregnant') == '1' || request('category') == 'ibu_hamil') ? 'selected' : '' }}>Sedang Hamil</option>
                         </x-forms.select-input>
                     </div>
                 </div>
             </div>
+            @endif
  
  
             {{-- 4. Kontak & Alamat --}}
@@ -386,6 +391,110 @@
                     </div>
                 </div>
             </div>
+
+            @if(false)
+            {{-- Lansia Specific --}}
+            <div class="bg-white rounded-[3rem] border border-slate-100 p-10 shadow-[0_8px_30px_rgb(0,0,0,0.02)] transition-all duration-500"
+                 x-show="false"
+                 x-transition:enter="transition ease-out duration-500"
+                 x-transition:enter-start="opacity-0 transform translate-y-8"
+                 x-transition:enter-end="opacity-100 transform translate-y-0">
+                <div class="flex items-center gap-4 mb-10">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-700 text-white flex items-center justify-center shadow-lg shadow-amber-200">
+                        <span class="material-symbols-outlined text-[24px]">elderly</span>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-black text-slate-800 uppercase tracking-[0.2em]">Informasi Lansia</h3>
+                        <p class="text-xs font-bold text-slate-400 mt-0.5">Status kemandirian dan riwayat penyakit lansia</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-3">
+                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Status Kemandirian</label>
+                        <x-forms.select-input name="independence_status" placeholder="Pilih Status Kemandirian" value="{{ old('independence_status') }}" x-bind:disabled="category !== 'lansia'">
+                            <option value="Mandiri" {{ old('independence_status') == 'Mandiri' ? 'selected' : '' }}>Mandiri (Tanpa Bantuan)</option>
+                            <option value="Butuh Bantuan" {{ old('independence_status') == 'Butuh Bantuan' ? 'selected' : '' }}>Butuh Bantuan</option>
+                        </x-forms.select-input>
+                    </div>
+                    <div class="space-y-3">
+                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Status Tinggal</label>
+                        <x-forms.select-input name="living_status" placeholder="Pilih Status Tinggal" value="{{ old('living_status') }}" x-bind:disabled="category !== 'lansia'">
+                            <option value="Sendiri" {{ old('living_status') == 'Sendiri' ? 'selected' : '' }}>Tinggal Sendiri</option>
+                            <option value="Dengan Keluarga" {{ old('living_status') == 'Dengan Keluarga' ? 'selected' : '' }}>Tinggal Bersama Keluarga</option>
+                        </x-forms.select-input>
+                    </div>
+                    <div class="md:col-span-2 space-y-3">
+                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Riwayat Penyakit Dahulu</label>
+                        <textarea name="historical_diseases" rows="3" placeholder="Tuliskan riwayat penyakit seperti Hipertensi, Diabetes, Asam Urat..."
+                                  class="w-full p-6 border border-slate-200 rounded-[2rem] text-sm font-bold text-slate-700 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all bg-slate-50/30 resize-none"
+                                  x-bind:disabled="category !== 'lansia'">{{ old('historical_diseases') }}</textarea>
+                    </div>
+                </div>
+            </div>
+            @endif
+
+            @if(in_array($currentCategory, ['remaja', 'umum']))
+            {{-- Sosial Ekonomi & Lingkungan --}}
+            <div class="bg-white rounded-[3rem] border border-slate-100 p-10 shadow-[0_8px_30px_rgb(0,0,0,0.02)] transition-all duration-500"
+                 x-show="['remaja', 'umum'].includes(category)"
+                 x-transition:enter="transition ease-out duration-500"
+                 x-transition:enter-start="opacity-0 transform translate-y-8"
+                 x-transition:enter-end="opacity-100 transform translate-y-0">
+                <div class="flex items-center gap-4 mb-10">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-700 text-white flex items-center justify-center shadow-lg shadow-emerald-200">
+                        <span class="material-symbols-outlined text-[24px]">real_estate_agent</span>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-black text-slate-800 uppercase tracking-[0.2em]">Sosial Ekonomi & Lingkungan</h3>
+                        <p class="text-xs font-bold text-slate-400 mt-0.5">Kondisi tempat tinggal dan status sosial keluarga</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="space-y-3">
+                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Nama Kepala Keluarga</label>
+                        <input type="text" name="head_of_family_name" value="{{ old('head_of_family_name') }}" placeholder="Nama kepala keluarga..."
+                               class="w-full h-16 px-6 border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all bg-slate-50/30">
+                    </div>
+                    <div class="space-y-3">
+                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Jumlah Anggota Keluarga</label>
+                        <input type="number" name="family_member_count" value="{{ old('family_member_count') }}" placeholder="Contoh: 4..." min="0"
+                               class="w-full h-16 px-6 border border-slate-200 rounded-2xl text-sm font-bold text-slate-700 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all bg-slate-50/30">
+                    </div>
+                    <div class="space-y-3">
+                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Status Ekonomi</label>
+                        <x-forms.select-input name="economic_status" placeholder="Pilih Status Ekonomi" value="{{ old('economic_status') }}">
+                            <option value="Mampu" {{ old('economic_status') == 'Mampu' ? 'selected' : '' }}>Mampu</option>
+                            <option value="Cukup Mampu" {{ old('economic_status') == 'Cukup Mampu' ? 'selected' : '' }}>Cukup Mampu</option>
+                            <option value="Kurang Mampu" {{ old('economic_status') == 'Kurang Mampu' ? 'selected' : '' }}>Kurang Mampu</option>
+                        </x-forms.select-input>
+                    </div>
+                    <div class="space-y-3">
+                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Kondisi Rumah</label>
+                        <x-forms.select-input name="house_condition" placeholder="Pilih Kondisi Rumah" value="{{ old('house_condition') }}">
+                            <option value="Permanen" {{ old('house_condition') == 'Permanen' ? 'selected' : '' }}>Permanen (Tembok/Semen)</option>
+                            <option value="Semi Permanen" {{ old('house_condition') == 'Semi Permanen' ? 'selected' : '' }}>Semi Permanen</option>
+                            <option value="Non Permanen" {{ old('house_condition') == 'Non Permanen' ? 'selected' : '' }}>Non Permanen / Panggung</option>
+                        </x-forms.select-input>
+                    </div>
+                    <div class="space-y-3">
+                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Akses Air Bersih</label>
+                        <x-forms.select-input name="water_access" placeholder="Pilih Akses Air" value="{{ old('water_access') }}">
+                            <option value="PDAM" {{ old('water_access') == 'PDAM' ? 'selected' : '' }}>PDAM / Air Perpipaan</option>
+                            <option value="Sumur Terlindungi" {{ old('water_access') == 'Sumur Terlindungi' ? 'selected' : '' }}>Sumur Terlindungi / Air Tanah</option>
+                            <option value="Air Hujan" {{ old('water_access') == 'Air Hujan' ? 'selected' : '' }}>Penampungan Air Hujan</option>
+                            <option value="Lainnya" {{ old('water_access') == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
+                        </x-forms.select-input>
+                    </div>
+                    <div class="space-y-3">
+                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Kepemilikan Jamban Sehat</label>
+                        <x-forms.select-input name="has_latrine" placeholder="" value="{{ old('has_latrine', '1') }}">
+                            <option value="1" {{ old('has_latrine', '1') == '1' ? 'selected' : '' }}>Ya, Memiliki Jamban Sehat</option>
+                            <option value="0" {{ old('has_latrine') == '0' ? 'selected' : '' }}>Tidak Memiliki</option>
+                        </x-forms.select-input>
+                    </div>
+                </div>
+            </div>
+            @endif
  
             {{-- ── Action Buttons ── --}}
             <div class="flex items-center justify-between bg-white/50 backdrop-blur-md p-6 rounded-[2.5rem] border border-white shadow-xl">

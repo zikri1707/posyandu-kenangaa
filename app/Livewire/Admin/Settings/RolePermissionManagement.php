@@ -13,7 +13,10 @@ class RolePermissionManagement extends Component
         $role = Role::find($roleId);
         if ($role) {
             $role->permissions()->toggle($permissionId);
-            session()->flash('message', 'Pengaturan hak akses untuk role ' . $role->display_name . ' berhasil diperbarui.');
+            $this->dispatch('notify', [
+                'message' => 'Pengaturan hak akses untuk role ' . $role->display_name . ' berhasil diperbarui.',
+                'type' => 'success',
+            ]);
         }
     }
 

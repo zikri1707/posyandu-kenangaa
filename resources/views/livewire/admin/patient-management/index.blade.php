@@ -41,6 +41,20 @@
         </div>
     </div>
 
+    @if(session('import_errors') && count(session('import_errors')) > 0)
+        <div class="p-6 bg-amber-50 border border-amber-200 rounded-[2rem] text-sm flex flex-col gap-3 shadow-sm animate-in slide-in-from-top-4 duration-300">
+            <div class="flex items-center gap-3 text-amber-800 font-black">
+                <span class="material-symbols-outlined text-amber-600 text-[24px]">warning</span>
+                <span>Detail Catatan/Peringatan Proses Import:</span>
+            </div>
+            <ul class="list-disc list-inside space-y-1 text-amber-700 font-semibold pl-2 max-h-60 overflow-y-auto">
+                @foreach(session('import_errors') as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     {{-- ── Summary Cards ── --}}
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
         {{-- Bayi --}}

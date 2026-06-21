@@ -55,14 +55,14 @@ class UserManagement extends BaseAdminComponent
         
         // Prevent toggling superadmin
         if ($user->isSuperAdmin()) {
-            session()->flash('error', 'Role Superadmin tidak dapat diubah.');
+            $this->notify('Role Superadmin tidak dapat diubah.', 'error');
             return;
         }
 
         $user->role = $user->role === User::ROLE_ADMIN ? User::ROLE_KADER : User::ROLE_ADMIN;
         $user->save();
         
-        session()->flash('success', 'Role user ' . $user->name . ' berhasil diubah menjadi ' . strtoupper($user->role) . '.');
+        $this->notify('Role user ' . $user->name . ' berhasil diubah menjadi ' . strtoupper($user->role) . '.');
     }
 
     public function delete($id)
@@ -71,11 +71,11 @@ class UserManagement extends BaseAdminComponent
         
         // Prevent deleting self
         if ($user->id === auth()->id()) {
-            session()->flash('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
+            $this->notify('Anda tidak dapat menghapus akun Anda sendiri.', 'error');
             return;
         }
 
         app(UserService::class)->deleteUser($user);
-        session()->flash('success', 'User berhasil dihapus.');
+        $this->notify('User berhasil dihapus.');
     }
 }

@@ -70,6 +70,16 @@ class PatientRowProcessor
         $rw = $get('rw');
         $alamat = $get('alamat');
 
+        // New fields
+        $categoryInput = $get('category');
+        $husbandName = $get('husband_name');
+        $fatherName = $get('father_name');
+        $motherName = $get('mother_name');
+        $placeOfBirth = $get('place_of_birth');
+        $phoneNumber = $get('phone_number');
+        $historicalDiseases = $get('historical_diseases');
+        $isPregnantInput = $get('is_pregnant');
+
         // Medical fields
         $tglUkur = $get('tanggal_ukur');
         $berat = $get('berat');
@@ -100,21 +110,30 @@ class PatientRowProcessor
         }
 
         $gender = $this->normalizeGender($jk);
+        if ($gender === null) {
+            $this->errors[] = "Baris {$rowNum}: Jenis kelamin '{$jk}' tidak valid atau kosong untuk '{$nama}'. Gunakan L atau P.";
+            $this->skipped++;
+
+            return;
+        }
         $fullAddress = $this->buildAddress($alamat, $rt, $rw);
         $nikClean = preg_replace('/[^0-9]/', '', $nik); // Strip everything except digits
         $hasValidNik = strlen($nikClean) >= 15 && strlen($nikClean) <= 17; // More lenient length check
 
+        if (! $hasValidNik) {
+            if ($nik === '') {
+                $this->errors[] = "Baris {$rowNum}: NIK kosong untuk '{$nama}'. Sistem otomatis membuatkan NIK sementara.";
+            } else {
+                $this->errors[] = "Baris {$rowNum}: NIK '{$nik}' tidak sesuai format 16 digit untuk '{$nama}'. Sistem otomatis membuatkan NIK sementara.";
+            }
+        }
+
         try {
             $patient = $this->resolvePatient(
-                $hasValidNik, $nikClean, $nama, $birthDate, $namaOrtu, $fullAddress, $gender
+                $hasValidNik, $nikClean, $nama, $birthDate, $namaOrtu, $fullAddress, $gender,
+                $categoryInput, $husbandName, $fatherName, $motherName, $placeOfBirth, $phoneNumber,
+                $historicalDiseases, $isPregnantInput, $rt, $rw
             );
-
-            // Detailed Debugging: If placeholder was used, let's find out why
-            if (! $hasValidNik && $nama !== '') {
-                $rawNik = $get('nik');
-                $colNames = implode(', ', array_keys($colMap));
-                $this->errors[] = "DEBUG Baris {$rowNum}: NIK asli='{$rawNik}', NIK bersih='{$nikClean}', Panjang=".strlen($nikClean).". Kolom terdeteksi: [{$colNames}]";
-            }
 
             if ($berat !== '' || $tinggi !== '') {
                 $this->saveMedicalRecord($patient, $berat, $tinggi, $lingkarKepala, $vitamin, $imunisasi, $birthDate, $tglUkur, $gender, $rowNum);
@@ -134,17 +153,46 @@ class PatientRowProcessor
         ?Carbon $birthDate,
         string $namaOrtu,
         string $fullAddress,
-        ?string $gender
+        ?string $gender,
+        string $categoryInput = '',
+        string $husbandName = '',
+        string $fatherName = '',
+        string $motherName = '',
+        string $placeOfBirth = '',
+        string $phoneNumber = '',
+        string $historicalDiseases = '',
+        string $isPregnantInput = '',
+        string $rt = '',
+        string $rw = ''
     ): Patient {
         $existing = $this->findExistingPatient($hasValidNik, $nikClean, $nama, $birthDate);
+
+        // Normalize pregnant status
+        $isPregnant = false;
+        if ($isPregnantInput !== '') {
+            $isPregnant = $this->parseBool($isPregnantInput);
+        }
+
+        // Determine category
+        $category = $this->normalizeCategory($categoryInput, $birthDate, $isPregnant);
 
         if ($existing) {
             $updateData = [
                 'parent_name' => $namaOrtu ?: $existing->parent_name,
                 'address' => $fullAddress ?: $existing->address,
                 'gender' => $gender ?? $existing->gender,
-                'category' => $this->determineCategory($birthDate ?: $existing->birth_date),
+                'category' => $category,
+                'is_pregnant' => $isPregnant ?: $existing->is_pregnant,
             ];
+
+            if ($husbandName !== '') $updateData['husband_name'] = $husbandName;
+            if ($fatherName !== '') $updateData['father_name'] = $fatherName;
+            if ($motherName !== '') $updateData['mother_name'] = $motherName;
+            if ($placeOfBirth !== '') $updateData['place_of_birth'] = $placeOfBirth;
+            if ($phoneNumber !== '') $updateData['phone_number'] = $phoneNumber;
+            if ($historicalDiseases !== '') $updateData['historical_diseases'] = $historicalDiseases;
+            if ($rt !== '') $updateData['rt_domisili'] = $rt;
+            if ($rw !== '') $updateData['dusun_rt_rw'] = $rw;
 
             // If existing has a placeholder NIK (9999...) and we now have a valid one, update it
             if (str_starts_with($existing->id_number, '9999') && $hasValidNik) {
@@ -160,17 +208,27 @@ class PatientRowProcessor
             $nikClean = $this->generatePlaceholderNik();
         }
 
-        $patient = Patient::create([
+        $createData = [
             'posyandu_id' => $this->posyanduId,
             'id_number' => $nikClean,
             'full_name' => $nama,
             'birth_date' => $birthDate,
             'gender' => $gender,
-            'category' => $this->determineCategory($birthDate),
+            'category' => $category,
             'parent_name' => $namaOrtu,
             'address' => $fullAddress,
-            'phone_number' => '',
-        ]);
+            'phone_number' => $phoneNumber,
+            'husband_name' => $husbandName,
+            'father_name' => $fatherName,
+            'mother_name' => $motherName,
+            'place_of_birth' => $placeOfBirth,
+            'historical_diseases' => $historicalDiseases,
+            'is_pregnant' => $isPregnant,
+            'rt_domisili' => $rt,
+            'dusun_rt_rw' => $rw,
+        ];
+
+        $patient = Patient::create($createData);
 
         $this->imported++;
 
@@ -184,7 +242,7 @@ class PatientRowProcessor
         ?Carbon $birthDate
     ): ?Patient {
         if ($hasValidNik) {
-            $found = Patient::where('id_number', $nikClean)
+            $found = Patient::where('id_number_hash', Patient::generateBlindIndex($nikClean))
                 ->where('posyandu_id', $this->posyanduId)
                 ->first();
             if ($found) {
@@ -373,11 +431,17 @@ class PatientRowProcessor
 
     private function normalizeGender(string $jk): ?string
     {
-        return match (strtoupper(trim($jk))) {
-            'L', 'LAKI', 'LAKI-LAKI', 'MALE', 'M' => 'L',
-            'P', 'PEREMPUAN', 'FEMALE', 'F' => 'P',
-            default => null,
-        };
+        $jk = strtoupper(trim($jk));
+        $clean = str_replace([' ', '-', '.', '_'], '', $jk);
+
+        if (in_array($clean, ['L', 'LAKI', 'LAKILAKI', 'MALE', 'M', 'PRIA', 'LAKI2', 'COWOK'], true)) {
+            return 'L';
+        }
+        if (in_array($clean, ['P', 'PEREMPUAN', 'FEMALE', 'F', 'WANITA', 'CEWEK'], true)) {
+            return 'P';
+        }
+
+        return null;
     }
 
     private function generatePlaceholderNik(): string
@@ -386,9 +450,40 @@ class PatientRowProcessor
             $nik = '9999'
                 .str_pad((string) $this->posyanduId, 4, '0', STR_PAD_LEFT)
                 .str_pad((string) rand(0, 99999999), 8, '0', STR_PAD_LEFT);
-        } while (Patient::where('id_number', $nik)->exists());
+        } while (Patient::where('id_number_hash', Patient::generateBlindIndex($nik))->exists());
 
         return $nik;
+    }
+
+    private function normalizeCategory(string $catInput, ?Carbon $birthDate, bool $isPregnant): string
+    {
+        $cat = strtolower(trim($catInput));
+        if (in_array($cat, ['ibu hamil', 'ibu_hamil', 'hamil', 'pregnant']) || $isPregnant) {
+            return 'ibu_hamil';
+        }
+        if (in_array($cat, ['lansia', 'elderly'])) {
+            return 'lansia';
+        }
+        if (in_array($cat, ['balita', 'toddler'])) {
+            return 'balita';
+        }
+        if (in_array($cat, ['bayi', 'baby'])) {
+            return 'bayi';
+        }
+        if (in_array($cat, ['baduta'])) {
+            return 'baduta';
+        }
+        if (in_array($cat, ['anak sekolah', 'anak_sekolah', 'anak'])) {
+            return 'anak_sekolah';
+        }
+        if (in_array($cat, ['remaja', 'teenager'])) {
+            return 'remaja';
+        }
+        if (in_array($cat, ['umum', 'general'])) {
+            return 'umum';
+        }
+
+        return $this->determineCategory($birthDate);
     }
 
     /**

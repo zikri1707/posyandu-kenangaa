@@ -61,6 +61,10 @@
         .overflow-x-auto {
             -webkit-overflow-scrolling: touch;
         }
+
+        [x-cloak] {
+            display: none !important;
+        }
     </style>
 
     @stack('styles')
@@ -106,10 +110,12 @@
         {{-- Existing Session Notifications (Initial Load) --}}
         @if (session('success'))
             <x-ui.notification type="success" :message="session('success')" />
+            @php session()->forget('success'); @endphp
         @endif
 
         @if (session('error'))
             <x-ui.notification type="error" :message="session('error')" />
+            @php session()->forget('error'); @endphp
         @endif
 
         {{-- Dynamic Notifications from Livewire --}}

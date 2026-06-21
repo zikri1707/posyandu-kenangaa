@@ -69,7 +69,7 @@ class ArticleCreate extends BaseAdminComponent
         unset($validated['cover']);
 
         $service->createArticle($validated, auth()->user());
-        $this->notify('Artikel berhasil disimpan.');
+        $this->notify('Artikel berhasil disimpan.', 'success', true);
         return redirect()->route('admin.articles.index');
     }
     public function save(ArticleService $service)
@@ -83,7 +83,7 @@ class ArticleCreate extends BaseAdminComponent
 
         $service->createArticle($validated, auth()->user());
 
-        $this->notify('Artikel berhasil disimpan.');
+        $this->notify('Artikel berhasil disimpan.', 'success', true);
 
         return redirect()->route('admin.articles.index');
     }
