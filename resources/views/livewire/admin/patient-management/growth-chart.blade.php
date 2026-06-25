@@ -90,48 +90,6 @@
         </div>
     </div>
 
-    {{-- ── Section 2: Quick Stats Row ── --}}
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm flex items-center gap-6 group">
-            <div class="w-16 h-16 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
-                <span class="material-symbols-outlined text-[32px]">vaccines</span>
-            </div>
-            <div>
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Capaian Imunisasi</p>
-                <p class="text-2xl font-black text-slate-800">{{ $receivedCount }} <span class="text-sm text-slate-400">/ {{ $totalCount }}</span></p>
-            </div>
-        </div>
-
-        <div class="bg-slate-900 rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-2xl group">
-            <div class="absolute -right-16 -bottom-16 w-48 h-48 bg-teal-500/10 rounded-full blur-3xl"></div>
-            <div class="relative z-10 flex items-center justify-between">
-                <div class="space-y-4">
-                    <div class="px-3 py-1 bg-white/10 backdrop-blur-md rounded-lg border border-white/10 w-fit">
-                        <span class="text-[9px] font-black uppercase tracking-[0.2em] text-teal-400">Digital Pass</span>
-                    </div>
-                    <div>
-                        <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Terakhir Diperiksa</p>
-                        <p class="text-sm font-black italic text-slate-200">
-                            {{ $latestRecord?->visit_date ? \Carbon\Carbon::parse($latestRecord->visit_date)->translatedFormat('d F Y') : 'N/A' }}
-                        </p>
-                    </div>
-                </div>
-                <span class="material-symbols-outlined text-teal-400 text-[40px] opacity-40">qr_code_2</span>
-            </div>
-        </div>
-
-        <div class="bg-linear-to-br from-amber-50 to-orange-50 border border-orange-100 rounded-[2.5rem] p-8 relative overflow-hidden group shadow-sm flex items-center gap-6">
-            <div class="w-16 h-16 rounded-2xl bg-white text-orange-500 flex items-center justify-center shadow-md shrink-0">
-                <span class="material-symbols-outlined text-[32px]">lightbulb</span>
-            </div>
-            <div class="min-w-0">
-                <p class="text-[10px] font-black text-orange-700 uppercase tracking-[0.2em] mb-1">Insight Pertumbuhan</p>
-                <p class="text-xs text-slate-600 font-bold leading-relaxed">
-                    {{ $latestRecord?->nutrition_status ? 'Status terakhir: ' . $latestRecord->nutrition_status : 'Tambahkan pemeriksaan untuk melihat insight terbaru.' }}
-                </p>
-            </div>
-        </div>
-    </div>
 
     {{-- ── Section 3: Grafik Pertumbuhan (Bottom Section) ── --}}
     <div class="bg-white rounded-[3rem] p-10 shadow-[0_8px_30px_rgb(0,0,0,0.02)] border border-slate-100 overflow-hidden relative group"

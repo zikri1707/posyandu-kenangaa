@@ -63,25 +63,61 @@ class WhoHeightForAgeSeeder extends Seeder
             60 => [1, 109.4, 0.0340, 99.9, 102.3, 116.5, 119.6],
         ];
 
-        // Insert MALE
-        foreach ($maleMilestones as $age => $v) {
+        // Interpolasi data bulanan dari milestones (0-60 bulan) agar data lengkap 61 bulan
+        $allMonthsData = [];
+        $milestoneAges = array_keys($maleMilestones);
+
+        for ($i = 0; $i < count($milestoneAges) - 1; $i++) {
+            $ageStart = $milestoneAges[$i];
+            $ageEnd = $milestoneAges[$i + 1];
+
+            $valStartM = $maleMilestones[$ageStart];
+            $valEndM = $maleMilestones[$ageEnd];
+
+            $valStartF = $femaleMilestones[$ageStart];
+            $valEndF = $femaleMilestones[$ageEnd];
+
+            for ($age = $ageStart; $age < $ageEnd; $age++) {
+                $ratio = ($age - $ageStart) / ($ageEnd - $ageStart);
+
+                // Male
+                $interpolatedM = [];
+                for ($k = 0; $k < count($valStartM); $k++) {
+                    $interpolatedM[$k] = $valStartM[$k] + $ratio * ($valEndM[$k] - $valStartM[$k]);
+                }
+                $allMonthsData['M'][$age] = $interpolatedM;
+
+                // Female
+                $interpolatedF = [];
+                for ($k = 0; $k < count($valStartF); $k++) {
+                    $interpolatedF[$k] = $valStartF[$k] + $ratio * ($valEndF[$k] - $valStartF[$k]);
+                }
+                $allMonthsData['F'][$age] = $interpolatedF;
+            }
+        }
+
+        // Tambah milestone terakhir (60 bulan)
+        $allMonthsData['M'][60] = $maleMilestones[60];
+        $allMonthsData['F'][60] = $femaleMilestones[60];
+
+        // Masukkan data ke array $data untuk di-insert bulk
+        foreach ($allMonthsData['M'] as $age => $v) {
             $data[] = [
                 'gender' => 'M', 'age_months' => $age,
-                'l_value' => $v[0], 'm_value' => $v[1], 's_value' => $v[2],
-                'sd_minus3' => $v[3], 'sd_minus2' => $v[4], 'sd_plus2' => $v[5], 'sd_plus3' => $v[6],
+                'l_value' => round($v[0], 5), 'm_value' => round($v[1], 5), 's_value' => round($v[2], 5),
+                'sd_minus3' => round($v[3], 1), 'sd_minus2' => round($v[4], 1), 'sd_plus2' => round($v[5], 1), 'sd_plus3' => round($v[6], 1),
             ];
         }
 
-        // Insert FEMALE
-        foreach ($femaleMilestones as $age => $v) {
+        foreach ($allMonthsData['F'] as $age => $v) {
             $data[] = [
                 'gender' => 'F', 'age_months' => $age,
-                'l_value' => $v[0], 'm_value' => $v[1], 's_value' => $v[2],
-                'sd_minus3' => $v[3], 'sd_minus2' => $v[4], 'sd_plus2' => $v[5], 'sd_plus3' => $v[6],
+                'l_value' => round($v[0], 5), 'm_value' => round($v[1], 5), 's_value' => round($v[2], 5),
+                'sd_minus3' => round($v[3], 1), 'sd_minus2' => round($v[4], 1), 'sd_plus2' => round($v[5], 1), 'sd_plus3' => round($v[6], 1),
             ];
         }
 
         DB::table('who_height_for_age')->insert($data);
-        $this->command->info('Berhasil mengisi data WHO TB/U Milestones.');
+        $this->command->info('Berhasil mengisi data lengkap WHO TB/U (0-60 bulan) sebanyak ' . count($data) . ' baris.');
     }
 }

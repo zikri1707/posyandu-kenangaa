@@ -1,122 +1,164 @@
-{{-- Grid Informasi Detail Balita --}}
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-    {{-- 1. Identitas Pribadi --}}
-    <div class="bg-white rounded-[3rem] border border-slate-100 p-8 shadow-[0_8px_30px_rgb(0,0,0,0.02)] flex flex-col justify-between">
-        <div>
-            <div class="flex items-center gap-4 mb-8">
-                <div class="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center">
-                    <span class="material-symbols-outlined text-[20px]">badge</span>
-                </div>
-                <h4 class="text-sm font-black text-slate-800 uppercase tracking-widest">Identitas Pribadi</h4>
+{{-- Card Informasi Detail Balita (Unified Premium Card) --}}
+<div class="bg-white rounded-[3rem] border border-slate-100 p-8 md:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
+    {{-- Profile Card Header (Premium Centered) --}}
+    <div class="flex flex-col items-center text-center mb-10 pb-8 border-b border-slate-100">
+        <div class="relative mb-4">
+            <div class="w-28 h-28 rounded-[2rem] border-4 border-slate-50 bg-slate-50 shadow-md overflow-hidden relative z-10">
+                @if($patient->profile_photo)
+                    <img src="{{ asset('storage/' . $patient->profile_photo) }}" class="w-full h-full object-cover">
+                @else
+                    <div class="w-full h-full bg-linear-to-br from-slate-50 to-slate-100 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-slate-300 text-[56px]" style="font-variation-settings: 'wght' 100;">{{ $theme['avatar_icon'] }}</span>
+                    </div>
+                @endif
             </div>
-            
-            <div class="space-y-4">
-                <div class="flex justify-between items-center py-2.5 border-b border-slate-50">
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">NIK / No. Identitas</span>
-                    <span class="text-sm font-black text-slate-700 font-mono">{{ $patient->id_number }}</span>
-                </div>
-                <div class="flex justify-between items-center py-2.5 border-b border-slate-50">
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nama Lengkap</span>
-                    <span class="text-sm font-black text-slate-700 text-right ml-4">{{ $patient->full_name }}</span>
-                </div>
-                <div class="flex justify-between items-center py-2.5 border-b border-slate-50">
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Jenis Kelamin</span>
-                    <span class="text-sm font-black text-slate-700">{{ ($patient->gender == 'L' || $patient->gender == 'M') ? 'Laki-laki' : 'Perempuan' }}</span>
-                </div>
-                <div class="flex justify-between items-center py-2.5 border-b border-slate-50">
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Tempat Lahir</span>
-                    <span class="text-sm font-black text-slate-700 text-right ml-4">{{ $patient->place_of_birth ?? '-' }}</span>
-                </div>
-                <div class="flex justify-between items-center py-2.5 border-b border-slate-50">
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Tanggal Lahir</span>
-                    <span class="text-sm font-black text-slate-700">{{ \Carbon\Carbon::parse($patient->birth_date)->translatedFormat('d F Y') }}</span>
-                </div>
-                <div class="flex justify-between items-center py-2.5">
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Usia</span>
-                    <span class="text-sm font-black text-slate-700">{{ $patient->age }}</span>
-                </div>
-            </div>
+        </div>
+        
+        <h3 class="text-2xl font-black text-slate-800 leading-tight mb-2 tracking-tight">{{ $patient->full_name }}</h3>
+        
+        <div class="flex flex-wrap justify-center items-center gap-2">
+            <span class="px-3 py-1.5 bg-slate-50 border border-slate-100 text-slate-600 rounded-xl text-xs font-black font-mono tracking-wider">
+                NIK: {{ $patient->id_number }}
+            </span>
+            <span class="px-3 py-1.5 bg-teal-50 border border-teal-100 text-teal-600 rounded-xl text-xs font-black uppercase tracking-widest">
+                {{ $theme['name'] }}
+            </span>
         </div>
     </div>
 
-    {{-- 2. Informasi Keluarga & Lahir --}}
-    <div class="bg-white rounded-[3rem] border border-slate-100 p-8 shadow-[0_8px_30px_rgb(0,0,0,0.02)] flex flex-col justify-between">
+    {{-- Details Sections in Google Form style (Stacked Vertically) --}}
+    <div class="space-y-8">
+        {{-- Section 1: Identitas Pribadi --}}
         <div>
-            <div class="flex items-center gap-4 mb-8">
-                <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
-                    <span class="material-symbols-outlined text-[20px]">clinical_notes</span>
-                </div>
-                <h4 class="text-sm font-black text-slate-800 uppercase tracking-widest">Informasi Keluarga & Lahir</h4>
-            </div>
-            
+            <h4 class="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">badge</span>
+                Identitas Pribadi
+            </h4>
             <div class="space-y-4">
-                <div class="flex justify-between items-center py-2.5 border-b border-slate-50">
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nama Ayah</span>
-                    <span class="text-sm font-black text-slate-700 text-right ml-4">{{ $patient->father_name ?? '-' }}</span>
-                </div>
-                <div class="flex justify-between items-center py-2.5 border-b border-slate-50">
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nama Ibu</span>
-                    <span class="text-sm font-black text-slate-700 text-right ml-4">{{ $patient->mother_name ?? '-' }}</span>
-                </div>
-                <div class="flex justify-between items-center py-2.5 border-b border-slate-50">
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">BB Lahir (kg)</span>
-                    <span class="text-sm font-black text-slate-700">{{ isset($patient->weight_at_birth) ? $patient->weight_at_birth . ' kg' : '-' }}</span>
-                </div>
-                <div class="flex justify-between items-center py-2.5 border-b border-slate-50">
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">PB Lahir (cm)</span>
-                    <span class="text-sm font-black text-slate-700">{{ isset($patient->height_at_birth) ? $patient->height_at_birth . ' cm' : '-' }}</span>
-                </div>
-                <div class="flex justify-between items-center py-2.5 border-b border-slate-50">
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">NIK Ibu</span>
-                    <span class="text-sm font-black text-slate-700 font-mono">{{ $patient->mother_nik ?? '-' }}</span>
-                </div>
-                <div class="flex justify-between items-center py-2.5">
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Kepemilikan Buku KIA</span>
+                {{-- Gender --}}
+                <div class="pb-3 border-b border-slate-100">
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5">Jenis Kelamin</p>
                     <span @class([
-                        'px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border',
-                        'bg-teal-50 text-teal-600 border-teal-100' => $patient->kia_book_ownership,
-                        'bg-red-50 text-red-500 border-red-100' => !$patient->kia_book_ownership,
+                        'px-2.5 py-1 rounded-lg text-sm font-black uppercase tracking-wider border inline-block',
+                        'bg-sky-50 text-sky-600 border-sky-100' => $patient->gender == 'L' || $patient->gender == 'M',
+                        'bg-pink-50 text-pink-600 border-pink-100' => $patient->gender == 'F' || $patient->gender == 'P',
                     ])>
-                        {{ $patient->kia_book_ownership ? 'Ya, Memiliki' : 'Tidak Memiliki' }}
+                        {{ ($patient->gender == 'L' || $patient->gender == 'M') ? 'Laki-laki' : 'Perempuan' }}
+                    </span>
+                </div>
+                {{-- Tempat Lahir --}}
+                <div class="pb-3 border-b border-slate-100">
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5">Tempat Lahir</p>
+                    <span class="text-base font-black text-slate-800">{{ $patient->place_of_birth ?? '-' }}</span>
+                </div>
+                {{-- Tanggal Lahir --}}
+                <div class="pb-3 border-b border-slate-100">
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5">Tanggal Lahir</p>
+                    <span class="text-base font-black text-slate-800">{{ \Carbon\Carbon::parse($patient->birth_date)->translatedFormat('d F Y') }}</span>
+                </div>
+                {{-- Usia --}}
+                <div class="pb-3 last:border-b-0 last:pb-0">
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5">Usia</p>
+                    <span class="text-base font-black text-slate-800">{{ $patient->age }}</span>
+                </div>
+            </div>
+        </div>
+
+        <hr class="border-slate-100">
+
+        {{-- Section 2: Keluarga & Lahir --}}
+        <div>
+            <h4 class="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">clinical_notes</span>
+                Keluarga & Lahir
+            </h4>
+            <div class="space-y-4">
+                {{-- Father --}}
+                <div class="pb-3 border-b border-slate-100">
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5">Nama Ayah</p>
+                    <span class="text-base font-black text-slate-800">{{ $patient->father_name ?? '-' }}</span>
+                </div>
+                {{-- Mother --}}
+                <div class="pb-3 border-b border-slate-100">
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5">Nama Ibu</p>
+                    <span class="text-base font-black text-slate-800">{{ $patient->mother_name ?? '-' }}</span>
+                </div>
+                {{-- BB Lahir --}}
+                <div class="pb-3 border-b border-slate-100">
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5">BB Lahir</p>
+                    <span class="text-base font-black text-slate-800">{{ isset($patient->weight_at_birth) ? $patient->weight_at_birth . ' kg' : '-' }}</span>
+                </div>
+                {{-- PB Lahir --}}
+                <div class="pb-3 border-b border-slate-100">
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5">PB Lahir</p>
+                    <span class="text-base font-black text-slate-800">{{ isset($patient->height_at_birth) ? $patient->height_at_birth . ' cm' : '-' }}</span>
+                </div>
+                {{-- NIK Ibu --}}
+                <div class="pb-3 border-b border-slate-100">
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5">NIK Ibu</p>
+                    <span class="text-base font-black text-slate-800 font-mono">{{ $patient->mother_nik ?? '-' }}</span>
+                </div>
+                {{-- KIA Ownership --}}
+                <div class="pb-3 last:border-b-0 last:pb-0">
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5">Buku KIA</p>
+                    <span @class([
+                        'px-2.5 py-1 rounded-lg text-sm font-black uppercase tracking-wider border inline-block',
+                        'bg-teal-50 text-teal-600 border-teal-100' => $patient->kia_book_ownership,
+                        'bg-red-50 text-red-600 border-red-100' => !$patient->kia_book_ownership,
+                    ])>
+                        {{ $patient->kia_book_ownership ? 'Memiliki' : 'Tidak Memiliki' }}
                     </span>
                 </div>
             </div>
         </div>
-    </div>
 
-    {{-- 3. Domisili & Kontak --}}
-    <div class="bg-white rounded-[3rem] border border-slate-100 p-8 shadow-[0_8px_30px_rgb(0,0,0,0.02)] flex flex-col justify-between">
+        <hr class="border-slate-100">
+
+        {{-- Section 3: Domisili & Kontak --}}
         <div>
-            <div class="flex items-center gap-4 mb-8">
-                <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
-                    <span class="material-symbols-outlined text-[20px]">location_on</span>
-                </div>
-                <h4 class="text-sm font-black text-slate-800 uppercase tracking-widest">Domisili & Kontak</h4>
-            </div>
-            
+            <h4 class="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">location_on</span>
+                Domisili & Kontak
+            </h4>
             <div class="space-y-4">
-                <div class="flex justify-between items-center py-2.5 border-b border-slate-50">
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">No. HP / WhatsApp</span>
-                    <span class="text-sm font-black text-slate-700 font-mono">{{ $patient->phone_number ?? '-' }}</span>
+                {{-- No HP --}}
+                <div class="pb-3 border-b border-slate-100">
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5">No. HP / WhatsApp</p>
+                    <span class="text-base font-black text-slate-800 font-mono">{{ $patient->phone_number ?? '-' }}</span>
                 </div>
-                <div class="flex justify-between items-center py-2.5 border-b border-slate-50">
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Unit Posyandu</span>
-                    <span class="text-sm font-black text-slate-700 text-right ml-4">{{ $patient->posyandu->name ?? '-' }}</span>
+                {{-- Unit Posyandu --}}
+                <div class="pb-3 border-b border-slate-100">
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5">Unit Posyandu</p>
+                    <span class="px-2.5 py-1 rounded-lg text-sm font-black uppercase tracking-wider border inline-block bg-teal-50 text-teal-600 border-teal-100">{{ $patient->posyandu->name ?? '-' }}</span>
                 </div>
-                <div class="flex justify-between items-center py-2.5 border-b border-slate-50">
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">RT Domisili</span>
-                    <span class="text-sm font-black text-slate-700">{{ $patient->rt_domisili ?? '-' }}</span>
+                {{-- RT --}}
+                <div class="pb-3 border-b border-slate-100">
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5">RT Domisili</p>
+                    <span class="text-base font-black text-slate-800">{{ $patient->rt_domisili ? 'RT ' . $patient->rt_domisili : '-' }}</span>
                 </div>
-                <div class="flex flex-col py-2.5">
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Alamat Lengkap</span>
-                    <p class="text-xs font-bold text-slate-600 bg-slate-50 p-4 rounded-2xl border border-slate-100 leading-relaxed">{{ $patient->address }}</p>
+                {{-- Alamat --}}
+                <div class="pb-3 last:border-b-0 last:pb-0">
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5">Alamat Lengkap</p>
+                    <span class="text-base font-semibold text-slate-600 leading-relaxed">{{ $patient->address }}</span>
                 </div>
             </div>
         </div>
     </div>
-
 </div>
+
+@php
+    $immunizationStatus = $patient->getImmunizationStatus();
+    $totalCount = 0;
+    $receivedCount = 0;
+    foreach ($immunizationStatus as $group) {
+        foreach ($group['vaccines'] as $vax) {
+            $totalCount++;
+            if ($vax['received']) {
+                $receivedCount++;
+            }
+        }
+    }
+@endphp
 
 {{-- Kartu Imunisasi --}}
 <div class="bg-white rounded-[3rem] border border-slate-100 p-10 shadow-[0_8px_30px_rgb(0,0,0,0.02)] transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,108,73,0.05)] mt-8">
@@ -130,10 +172,14 @@
                 <p class="text-xs font-bold text-slate-400 mt-0.5">Status kelengkapan vaksinasi anak</p>
             </div>
         </div>
+        <div class="bg-indigo-50 border border-indigo-100 rounded-2xl px-5 py-2.5 flex flex-col items-end shadow-xs">
+            <span class="text-[9px] font-black text-indigo-600 uppercase tracking-widest mb-0.5">Capaian Imunisasi</span>
+            <span class="text-lg font-black text-slate-800">{{ $receivedCount }} <span class="text-xs font-bold text-slate-400">/ {{ $totalCount }}</span></span>
+        </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        @foreach($patient->getImmunizationStatus() as $group)
+        @foreach($immunizationStatus as $group)
             <div @class([
                 'p-6 rounded-4xl border transition-all duration-300',
                 'bg-slate-50 border-slate-100 opacity-60' => !$group['vaccines'][0]['is_due'],

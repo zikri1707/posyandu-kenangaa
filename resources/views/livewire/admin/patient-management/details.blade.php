@@ -75,7 +75,7 @@
                 </div>
             </nav>
             <h1 class="text-3xl font-black tracking-tight leading-none">
-                <span class="text-transparent bg-clip-text bg-linear-to-r {{ $theme['gradient'] }}">{{ $patient->full_name }}</span>
+                <span class="text-transparent bg-clip-text bg-linear-to-r {{ $theme['gradient'] }}">Profil Detail Warga</span>
             </h1>
         </div>
 
@@ -104,42 +104,7 @@
         </div>
     </div>
 
-    {{-- ── Horizontal Profile Banner (Premium) ── --}}
-    <div class="bg-white rounded-[3rem] border border-slate-100 p-8 md:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.02)] relative overflow-hidden group">
-        {{-- Decorative Background --}}
-        <div class="absolute -right-10 -top-10 w-32 h-32 bg-teal-500/5 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
-        
-        <div class="flex flex-col md:flex-row items-center md:items-start gap-8">
-            {{-- Profile Photo --}}
-            <div class="relative shrink-0" style="width: 144px; height: 144px; flex-shrink: 0;">
-                <div class="rounded-[2.5rem] border-4 border-white bg-slate-50 shadow-xl overflow-hidden relative z-10" style="width: 144px; height: 144px;">
-                    @if($patient->profile_photo)
-                        <img src="{{ asset('storage/' . $patient->profile_photo) }}" style="width: 100%; height: 100%; object-fit: cover;">
-                    @else
-                        <div class="w-full h-full bg-linear-to-br from-slate-50 to-slate-100 flex items-center justify-center" style="width: 100%; height: 100%;">
-                            <span class="material-symbols-outlined text-slate-300 text-[80px]" style="font-variation-settings: 'wght' 100;">{{ $theme['avatar_icon'] }}</span>
-                        </div>
-                    @endif
-                </div>
-                <div class="absolute -bottom-3 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-slate-900 text-white text-[9px] font-black rounded-xl uppercase tracking-[0.2em] shadow-xl z-20 whitespace-nowrap">
-                    {{ str_replace('_', ' ', $theme['name']) }}
-                </div>
-            </div>
-            
-            {{-- Info Details (Horizontal Layout) --}}
-            <div class="flex-1 w-full space-y-6">
-                <div class="text-center md:text-left">
-                    <h2 class="text-3xl font-black text-slate-900 leading-tight mb-2 tracking-tight">{{ $patient->full_name }}</h2>
-                    <span @class([
-                        'inline-block text-[11px] font-black px-4 py-1 rounded-full uppercase tracking-widest border',
-                        'text-sky-600 bg-sky-50 border-sky-100' => $patient->gender == 'L' || $patient->gender == 'M',
-                        'text-pink-600 bg-pink-50 border-pink-100' => $patient->gender == 'F' || $patient->gender == 'P',
-                    ])>NIK: {{ $patient->id_number }}</span>
-                </div>
-            </div>
-        </div>
-    </div>
-    
+
     {{-- ── Section 2: Data Medis & Sosial (Full Width) ── --}}
     <div class="w-full">
         @include('livewire.admin.patient-management.details.' . $theme['partial'])

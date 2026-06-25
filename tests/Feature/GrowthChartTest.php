@@ -1,10 +1,10 @@
 <?php
-
 use App\Livewire\Admin\PatientManagement\GrowthChart;
 use App\Models\MedicalRecord;
 use App\Models\Patient;
 use App\Models\Posyandu;
 use App\Models\User;
+use App\Models\WhoHeightForAge;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
@@ -210,3 +210,40 @@ it('does not render growth chart content for lansia patient', function () {
         ->assertOk()
         ->assertDontSeeLivewire('admin.patient-management.growth-chart');
 });
+
+it('can switch chart to hfa and retrieve height for age data', function () {
+    // Seed WHO references first
+    WhoHeightForAge::create([
+        'gender' => 'M',
+        'age_months' => 0,
+        'l_value' => 1,
+        'm_value' => 49.9,
+        's_value' => 0.038,
+        'sd_minus3' => 44.2,
+        'sd_minus2' => 46.1,
+        'sd_plus2' => 53.7,
+        'sd_plus3' => 55.6,
+    ]);
+
+    $patient = Patient::factory()->create([
+        'posyandu_id' => $this->posyandu->id,
+        'category' => 'balita',
+        'birth_date' => now()->subMonths(1),
+        'gender' => 'L',
+    ]);
+
+    MedicalRecord::factory()->create([
+        'patient_id' => $patient->id,
+        'user_id' => $this->admin->id,
+        'visit_date' => now(),
+        'weight' => 3.5,
+        'height' => 50.0,
+    ]);
+
+    Livewire::actingAs($this->admin)
+        ->test(GrowthChart::class, ['patient' => $patient])
+        ->call('switchChart', 'hfa')
+        ->assertSet('activeChart', 'hfa')
+        ->assertSet('chartData.datasets.5.label', 'Tinggi Badan Anak');
+});
+
