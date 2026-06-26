@@ -22,12 +22,19 @@ class Analytics extends BaseAdminComponent
 
     public string $activeTab = 'overview';
 
-    // Overview stats
+    // Overview stats — total terdaftar (semua, tanpa filter tahun)
     public int $totalBalita = 0;
 
     public int $totalIbuHamil = 0;
 
     public int $totalLansia = 0;
+
+    // Jumlah yang aktif berkunjung di tahun dipilih
+    public int $balitaBerkunjung = 0;
+
+    public int $ibuHamilBerkunjung = 0;
+
+    public int $lansiaBerkunjung = 0;
 
     public int $totalKunjungan = 0;
 
@@ -394,17 +401,31 @@ class Analytics extends BaseAdminComponent
             ->when($selectedMonth, fn ($mq) => $mq->whereMonth('visit_date', $selectedMonth));
 
         // ── 1. GLOBAL OVERVIEW STATS ────────────────────────────────
-        $totalBalita = (clone $patientQuery)
+        // Total terdaftar (tidak difilter tahun — semua sasaran posyandu)
+        $totalBalita = $this->applyPosyanduScope(Patient::query(), $this->selectedPosyandu)
+            ->whereIn('category', ['balita', 'bayi', 'baduta'])
+            ->count();
+
+        $totalIbuHamil = $this->applyPosyanduScope(Patient::query(), $this->selectedPosyandu)
+            ->where('category', 'ibu_hamil')
+            ->count();
+
+        $totalLansia = $this->applyPosyanduScope(Patient::query(), $this->selectedPosyandu)
+            ->where('category', 'lansia')
+            ->count();
+
+        // Yang sudah berkunjung di tahun/bulan yang dipilih
+        $balitaBerkunjung = (clone $patientQuery)
             ->whereIn('category', ['balita', 'bayi', 'baduta'])
             ->whereHas('medicalRecords', $basePatientFilter)
             ->count();
 
-        $totalIbuHamil = (clone $patientQuery)
+        $ibuHamilBerkunjung = (clone $patientQuery)
             ->where('category', 'ibu_hamil')
             ->whereHas('medicalRecords', $basePatientFilter)
             ->count();
 
-        $totalLansia = (clone $patientQuery)
+        $lansiaBerkunjung = (clone $patientQuery)
             ->where('category', 'lansia')
             ->whereHas('medicalRecords', $basePatientFilter)
             ->count();

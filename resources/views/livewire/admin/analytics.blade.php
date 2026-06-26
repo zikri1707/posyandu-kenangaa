@@ -1,88 +1,81 @@
+@push('styles')
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+    <style>
+        .hero-gradient {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #134e4a 100%);
+        }
+
+        .hero-orb-1 {
+            background: radial-gradient(circle, rgba(20, 184, 166, 0.25) 0%, transparent 70%);
+        }
+
+        .hero-orb-2 {
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, transparent 70%);
+        }
+
+        @keyframes ping-slow {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            50% {
+                transform: scale(1.8);
+                opacity: 0;
+            }
+        }
+
+        .animate-ping-slow {
+            animation: ping-slow 2s ease-in-out infinite;
+        }
+    </style>
+@endpush
+
 <div class="max-w-7xl mx-auto space-y-6 pb-20 px-4 sm:px-6">
 
-    {{-- ── Professional Healthcare Header ── --}}
-    <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div class="space-y-2">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 text-teal-700 border border-teal-200 text-xs font-extrabold uppercase tracking-wider">
-                <span class="w-2 h-2 rounded-full bg-teal-500 animate-pulse"></span>
-                Sistem Analitik Pelayanan Kesehatan
-            </div>
-            <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">
-                Dashboard Analitik & Wawasan Posyandu
-            </h1>
-            <p class="text-sm md:text-base text-slate-600 font-medium">
-                Data Wawasan Klinis & Keaktifan Posyandu Periode Tahun <strong class="text-slate-900 font-extrabold">{{ $selectedYear }}</strong>
-                @if(auth()->user()->posyandu)
-                    | <span class="text-teal-600 font-bold">Unit Kerja: {{ auth()->user()->posyandu->name }}</span>
-                @endif
-            </p>
+    {{-- ── Hero Section (Analitik) ── --}}
+    <section class="relative rounded-2xl overflow-hidden" style="background:#0f172a;">
+        {{-- Background layers --}}
+        <div class="absolute inset-0 hero-gradient"></div>
+        <div class="absolute top-0 left-1/4 w-72 h-72 hero-orb-1 rounded-full filter blur-[60px] animate-pulse"></div>
+        <div class="absolute bottom-0 right-1/4 w-72 h-72 hero-orb-2 rounded-full filter blur-[60px]"
+            style="animation:pulse 4s ease-in-out 1.5s infinite;"></div>
+        {{-- Grid overlay --}}
+        <div class="absolute inset-0 opacity-[0.04]"
+            style="background-image:url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjAuNSIgZmlsbD0ibm9uZSI+PHBhdGggZD0iTTQwIDBMMCA0ME0wIDBsNDAgNDAiLz48L2c+PC9zdmc+');">
         </div>
 
-        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
-            <div class="text-xs md:text-sm font-bold text-slate-700 bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-xl">
-                Terakhir Diperbarui: <span class="text-slate-900 font-black">{{ $lastUpdated }}</span>
+        <div class="relative z-10 px-8 py-10 md:px-12 md:py-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+            <div class="space-y-3">
+                {{-- Live badge --}}
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full"
+                    style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.1);">
+                    <span class="relative flex h-2.5 w-2.5">
+                        <span class="animate-ping-slow absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
+                        <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-teal-400"></span>
+                    </span>
+                    <span class="text-xs font-bold text-teal-100 tracking-wide uppercase">Sistem Analitik Pelayanan Kesehatan</span>
+                </div>
+
+                <h1 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight leading-tight" style="letter-spacing:-0.02em;">
+                    Dashboard Analitik & Wawasan Posyandu
+                </h1>
+
+                <p class="text-slate-300 text-sm md:text-base leading-relaxed font-medium" style="opacity:0.9;">
+                    Data Wawasan Klinis & Keaktifan Posyandu Periode Tahun <strong class="text-white font-black">{{ $selectedYear }}</strong>
+                    @if(auth()->user()->posyandu)
+                        | <span class="text-teal-300 font-bold">Unit Kerja: {{ auth()->user()->posyandu->name }}</span>
+                    @endif
+                </p>
+            </div>
+
+            <div class="flex items-center no-print mt-4 md:mt-0">
+                <div class="text-xs md:text-sm font-bold text-teal-100 bg-white/10 border border-white/20 backdrop-blur-xs px-4 py-2.5 rounded-xl shadow-xs">
+                    Terakhir Diperbarui: <span class="text-white font-extrabold">{{ $lastUpdated }}</span>
+                </div>
             </div>
         </div>
-    </div>
-
-    {{-- ── Clean Filter Panel ── --}}
-    <div class="bg-white rounded-2xl shadow-xs border border-slate-200 p-6">
-        <div class="flex flex-col lg:flex-row gap-6 items-end justify-between">
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full lg:w-auto flex-1">
-                {{-- Posyandu Filter --}}
-                @if(auth()->user()->isSuperAdmin())
-                <div class="flex flex-col gap-1.5">
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Pilih Wilayah Posyandu</label>
-                    <select wire:model.live="selectedPosyandu" class="w-full h-11 rounded-xl border border-slate-300 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 bg-white py-2 px-3 shadow-xs">
-                        <option value="">Semua Wilayah</option>
-                        @foreach(\App\Models\Posyandu::all() as $p)
-                            <option value="{{ $p->id }}">{{ $p->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                @else
-                <div class="hidden sm:block"></div>
-                @endif
-
-                {{-- Tahun Filter --}}
-                <div class="flex flex-col gap-1.5">
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Pilih Tahun</label>
-                    <select wire:model.live="selectedYear" class="w-full h-11 rounded-xl border border-slate-300 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 bg-white py-2 px-3 shadow-xs">
-                        @foreach($years as $y)
-                            <option value="{{ $y }}">{{ $y }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                {{-- Bulan Filter --}}
-                <div class="flex flex-col gap-1.5">
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Pilih Bulan</label>
-                    <select wire:model.live="selectedMonth" class="w-full h-11 rounded-xl border border-slate-300 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 bg-white py-2 px-3 shadow-xs">
-                        <option value="">Semua Bulan (Tahunan)</option>
-                        @foreach(range(1, 12) as $m)
-                            <option value="{{ $m }}">{{ Carbon\Carbon::create(2000, $m)->translatedFormat('F') }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-
-            {{-- Actions --}}
-            <div class="flex gap-3 w-full lg:w-auto justify-end">
-                <button wire:click="resetFilters" 
-                        class="h-11 px-5 flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold uppercase tracking-wider transition-all border border-slate-300 shadow-xs cursor-pointer" title="Reset Filter">
-                    <span class="material-symbols-outlined text-[20px]">filter_alt_off</span>
-                    Reset Filter
-                </button>
-
-                <button wire:click="refreshStats" 
-                        wire:loading.attr="disabled"
-                        class="h-11 px-6 flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold uppercase tracking-wider shadow-xs transition-all cursor-pointer">
-                    <span class="material-symbols-outlined text-[20px]" wire:loading.class="animate-spin" wire:target="refreshStats">sync</span>
-                    Perbarui Data
-                </button>
-            </div>
-        </div>
-    </div>
+    </section>
 
     {{-- ── Accessible Tab Navigation ── --}}
     <div class="flex flex-wrap items-center bg-slate-100 p-1.5 rounded-2xl border border-slate-200 shadow-xs gap-1">
@@ -120,41 +113,162 @@
         </button>
     </div>
 
+    {{-- ── Unified Control Card (Filter + View Settings) ── --}}
+    <div class="bg-white rounded-2xl shadow-xs border border-slate-200 overflow-hidden">
+
+        {{-- ── Baris 1: Filter Global ── --}}
+        <div class="p-5 sm:p-6">
+            <div class="flex flex-col xl:flex-row gap-5 items-start xl:items-end">
+
+                {{-- Label kiri atas --}}
+                <div class="flex-1 w-full">
+                    <p class="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-[15px] text-teal-600">tune</span>
+                        Filter Data
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+
+                        {{-- Wilayah Posyandu --}}
+                        @if(auth()->user()->isSuperAdmin())
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Wilayah Posyandu</label>
+                            <div class="relative">
+                                <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-teal-500">
+                                    <span class="material-symbols-outlined text-[18px]">location_on</span>
+                                </span>
+                                <select wire:model.live="selectedPosyandu"
+                                    class="w-full h-11 pl-9 pr-4 rounded-xl border border-slate-200 text-sm font-semibold text-slate-800 bg-white focus:ring-2 focus:ring-teal-500 focus:border-teal-500 shadow-xs transition-shadow hover:border-slate-300">
+                                    <option value="">Semua Wilayah</option>
+                                    @foreach(\App\Models\Posyandu::all() as $p)
+                                        <option value="{{ $p->id }}">{{ $p->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        @endif
+
+                        {{-- Tahun --}}
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Tahun</label>
+                            <div class="relative">
+                                <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-slate-400">
+                                    <span class="material-symbols-outlined text-[18px]">calendar_today</span>
+                                </span>
+                                <select wire:model.live="selectedYear"
+                                    class="w-full h-11 pl-9 pr-4 rounded-xl border border-slate-200 text-sm font-semibold text-slate-800 bg-white focus:ring-2 focus:ring-teal-500 focus:border-teal-500 shadow-xs transition-shadow hover:border-slate-300">
+                                    @foreach($years as $y)
+                                        <option value="{{ $y }}">{{ $y }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        {{-- Bulan --}}
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Bulan</label>
+                            <div class="relative">
+                                <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center {{ ($activeTab === 'overview' && $viewMode === 'yearly') ? 'text-slate-300' : 'text-slate-400' }}">
+                                    <span class="material-symbols-outlined text-[18px]">event_note</span>
+                                </span>
+                                <select wire:model.live="selectedMonth"
+                                    @if($activeTab === 'overview' && $viewMode === 'yearly') disabled @endif
+                                    class="w-full h-11 pl-9 pr-4 rounded-xl border text-sm font-semibold bg-white focus:ring-2 focus:ring-teal-500 focus:border-teal-500 shadow-xs transition-shadow
+                                        {{ ($activeTab === 'overview' && $viewMode === 'yearly')
+                                            ? 'border-slate-100 text-slate-300 bg-slate-50 cursor-not-allowed'
+                                            : 'border-slate-200 text-slate-800 hover:border-slate-300 cursor-pointer' }}">
+                                    <option value="">{{ ($activeTab === 'overview' && $viewMode === 'yearly') ? 'Nonaktif (Mode YoY)' : 'Semua Bulan (Tahunan)' }}</option>
+                                    @foreach(range(1, 12) as $m)
+                                        <option value="{{ $m }}">{{ Carbon\Carbon::create(2000, $m)->translatedFormat('F') }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Tombol Aksi --}}
+                <div class="flex gap-2.5 w-full xl:w-auto shrink-0">
+                    <button wire:click="resetFilters"
+                        class="flex-1 xl:flex-none h-11 px-4 xl:px-5 inline-flex items-center justify-center gap-2 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs uppercase tracking-wider rounded-xl border border-slate-200 hover:border-slate-300 shadow-xs transition-all cursor-pointer">
+                        <span class="material-symbols-outlined text-[18px]">filter_alt_off</span>
+                        Reset
+                    </button>
+                    <button wire:click="refreshStats"
+                        wire:loading.attr="disabled"
+                        class="flex-1 xl:flex-none h-11 px-4 xl:px-6 inline-flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 active:bg-teal-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-xs transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
+                        <span class="material-symbols-outlined text-[18px]" wire:loading.class="animate-spin" wire:target="refreshStats">sync</span>
+                        Perbarui Data
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        {{-- ── Baris 2: Pengaturan Visualisasi (hanya untuk tab Overview) ── --}}
+        @if($activeTab === 'overview')
+        <div class="border-t border-slate-100 bg-slate-50/60 px-5 sm:px-6 py-4">
+            <p class="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[15px] text-indigo-500">insert_chart</span>
+                Konfigurasi Visualisasi Grafik Overview
+            </p>
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+
+                {{-- Segmented view mode control --}}
+                <div class="flex flex-col gap-1">
+                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Mode Tampilan</span>
+                    <div class="inline-flex items-center bg-slate-200/70 rounded-xl p-1 gap-1">
+                        <button wire:click="$set('viewMode', 'monthly')" @class([
+                            'inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold tracking-wide transition-all cursor-pointer',
+                            'bg-white text-teal-700 shadow-sm border border-slate-200/80' => $viewMode === 'monthly',
+                            'text-slate-600 hover:text-slate-900 hover:bg-white/50' => $viewMode !== 'monthly',
+                        ])>
+                            <span class="material-symbols-outlined text-[16px]">bar_chart</span>
+                            Tampilan Bulanan
+                        </button>
+                        <button wire:click="$set('viewMode', 'yearly')" @class([
+                            'inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold tracking-wide transition-all cursor-pointer',
+                            'bg-white text-indigo-700 shadow-sm border border-slate-200/80' => $viewMode === 'yearly',
+                            'text-slate-600 hover:text-slate-900 hover:bg-white/50' => $viewMode !== 'yearly',
+                        ])>
+                            <span class="material-symbols-outlined text-[16px]">show_chart</span>
+                            Year-over-Year (Tahunan)
+                        </button>
+                    </div>
+                </div>
+
+                <div class="hidden sm:block h-8 w-px bg-slate-200 self-end mb-0.5"></div>
+
+                {{-- Compare toggle --}}
+                <div class="flex flex-col gap-1">
+                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Bandingkan Periode</span>
+                    <button wire:click="$toggle('compareMode')" @class([
+                        'inline-flex items-center gap-3 h-10 px-4 rounded-xl border font-bold text-sm transition-all cursor-pointer',
+                        'bg-teal-50 border-teal-300 text-teal-800' => $compareMode,
+                        'bg-white border-slate-200 text-slate-600 hover:border-slate-300' => !$compareMode,
+                    ])>
+                        {{-- Toggle track --}}
+                        <span @class([
+                            'relative inline-flex h-5 w-9 items-center rounded-full transition-colors shrink-0',
+                            'bg-teal-500' => $compareMode,
+                            'bg-slate-300' => !$compareMode,
+                        ])>
+                            <span @class([
+                                'inline-block h-3.5 w-3.5 rounded-full bg-white shadow transition-transform',
+                                'translate-x-4' => $compareMode,
+                                'translate-x-0.5' => !$compareMode,
+                            ])></span>
+                        </span>
+                        <span>Mode Bandingkan (Bulan Lalu)</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        @endif
+    </div>
+
     {{-- ── Tab Contents ── --}}
     @if($activeTab === 'overview')
         {{-- ================= OVERVIEW TAB ================= --}}
         <div class="space-y-8 animate-fadeIn">
-            {{-- Toolbar Overview (Compare / View Mode) --}}
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
-                <div class="flex items-center gap-2">
-                    <button wire:click="$set('viewMode', 'monthly')" @class([
-                        'px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer border',
-                        'bg-teal-600 text-white border-teal-700 shadow-xs' => $viewMode === 'monthly',
-                        'bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-250' => $viewMode !== 'monthly'
-                    ])>Tampilan Bulanan</button>
-                    <button wire:click="$set('viewMode', 'yearly')" @class([
-                        'px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer border',
-                        'bg-teal-600 text-white border-teal-700 shadow-xs' => $viewMode === 'yearly',
-                        'bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-250' => $viewMode !== 'yearly'
-                    ])>Year-over-Year (Tahunan)</button>
-                </div>
-                
-                <div class="flex items-center gap-3">
-                    <span class="text-sm font-bold text-slate-700">Mode Bandingkan (Bulan Lalu)</span>
-                    <button wire:click="$toggle('compareMode')" @class([
-                        'relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-hidden cursor-pointer',
-                        'bg-teal-600' => $compareMode,
-                        'bg-slate-300' => !$compareMode
-                    ])>
-                        <span @class([
-                            'inline-block h-4 w-4 transform rounded-full bg-white transition-transform',
-                            'translate-x-6' => $compareMode,
-                            'translate-x-1' => !$compareMode
-                        ])></span>
-                    </button>
-                </div>
-            </div>
-
             {{-- Stats Grid --}}
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 @php
