@@ -21,22 +21,6 @@
                 <p class="text-slate-600 text-sm leading-relaxed mb-6">
                     Mentransformasi dan memodernisasi pelayanan kesehatan primer untuk ibu, bayi, dan lansia di wilayah Bekasi Timur.
                 </p>
-                <div class="flex space-x-3">
-                    @php
-                        $socials = [
-                            ['icon' => 'fa-instagram', 'href' => '#'],
-                            ['icon' => 'fa-facebook',  'href' => '#'],
-                            ['icon' => 'fa-twitter',   'href' => '#'],
-                            ['icon' => 'fa-whatsapp',  'href' => '#'],
-                        ];
-                    @endphp
-                    @foreach($socials as $soc)
-                        <a href="{{ $soc['href'] }}" 
-                           class="w-9 h-9 rounded-xl bg-white border border-slate-200/80 flex items-center justify-center text-slate-500 hover:bg-linear-to-br hover:from-emerald-600 hover:to-teal-500 hover:text-white hover:border-transparent transition-all duration-300 shadow-sm hover:shadow-md hover:shadow-emerald-600/10">
-                            <i class="fab {{ $soc['icon'] }} text-xs"></i>
-                        </a>
-                    @endforeach
-                </div>
             </div>
 
             {{-- Column 2: Layanan --}}
@@ -98,20 +82,21 @@
                     Kontak Kami
                 </h4>
                 <ul class="space-y-4 text-[13.5px]">
-                    <li class="text-slate-600 flex items-start">
-                        <span class="material-symbols-outlined text-[18px] text-slate-400 mr-2.5 mt-0.5">map</span>
-                        <span>Bekasi Timur, Jawa Barat, Indonesia</span>
-                    </li>
                     <li>
-                        <a href="mailto:support@posyandudigital.com" class="text-slate-600 hover:text-slate-900 transition-colors duration-300 flex items-center group">
-                            <span class="material-symbols-outlined text-[18px] text-slate-400 mr-2.5 group-hover:text-slate-600">mail</span>
-                            support@posyandudigital.com
+                        <a href="https://www.google.com/maps/place/Jl.+Pulau+Lombok+I,+RT.005%2FRW.011,+Aren+Jaya,+Kec.+Bekasi+Tim.,+Kota+Bks,+Jawa+Barat+17111/@-6.2440988,107.0340301,17z/data=!3m1!4b1!4m6!3m5!1s0x2e698ef3b1f96e2d:0x6b6411d4927c81b2!8m2!3d-6.2440988!4d107.0340301!16s%2Fg%2F11lf4vqv43!18m1!1e1?entry=ttu&g_ep=EgoyMDI2MDYyNC4wIKXMDSoASAFQAw%3D%3D" 
+                           target="_blank" rel="noopener noreferrer" 
+                           class="text-slate-600 hover:text-slate-900 transition-colors duration-300 flex items-start group">
+                            <span class="material-symbols-outlined text-[18px] text-slate-400 mr-2.5 mt-0.5 group-hover:text-emerald-600 shrink-0">location_on</span>
+                            <span class="leading-relaxed">
+                                Jl. Pulau Lombok I, RT.005/RW.011, Aren Jaya, Kec. Bekasi Timur, Kota Bekasi, Jawa Barat 17111
+                            </span>
                         </a>
                     </li>
                     <li>
-                        <a href="tel:+628123456789" class="text-slate-600 hover:text-slate-900 transition-colors duration-300 flex items-center group">
-                            <span class="material-symbols-outlined text-[18px] text-slate-400 mr-2.5 group-hover:text-slate-600">call</span>
-                            +62 (812) 3456-789
+                        <a href="mailto:posyanduilp_kenanga1@gmail.com" 
+                           class="text-slate-600 hover:text-slate-900 transition-colors duration-300 flex items-start group">
+                            <span class="material-symbols-outlined text-[18px] text-slate-400 mr-2.5 mt-0.5 group-hover:text-emerald-600 shrink-0">mail</span>
+                            <span class="break-all">posyanduilp_kenanga1@gmail.com</span>
                         </a>
                     </li>
                 </ul>

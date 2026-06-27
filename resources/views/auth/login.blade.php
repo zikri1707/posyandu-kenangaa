@@ -3,20 +3,20 @@
 @section('title', 'Masuk - Dashboard Posyandu')
 
 @section('content')
-{{-- ── Modern Header Section ── --}}
+{{-- ── Header Section ── --}}
 <div class="mb-12 text-center md:text-left">
-    <div class="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-xl text-[10px] font-black uppercase tracking-[0.2em] mb-8 border border-primary/20">
-        <span class="relative flex h-2 w-2">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary/40 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+    <div class="inline-flex items-center gap-2.5 px-5 py-2 bg-teal-50/80 text-teal-800 rounded-full text-xs font-bold uppercase tracking-wider mb-6 border border-teal-200/40">
+        <span class="relative flex h-2.5 w-2.5">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-teal-600"></span>
         </span>
-        Akses Petugas & Kader
+        Akses Petugas &amp; Kader
     </div>
     
-    <h2 class="text-display mb-6">
-        Selamat Datang <br> <span class="text-primary italic">Kembali.</span>
+    <h2 class="text-4xl md:text-5xl font-extrabold text-slate-900 leading-tight tracking-tight font-jakarta mb-4">
+        Selamat Datang <br> <span class="text-teal-700">Kembali.</span>
     </h2>
-    <p class="text-body-lg font-bold text-contrast-safe max-w-sm">
+    <p class="text-slate-600 text-lg font-medium leading-relaxed max-w-md">
         Gunakan akun resmi Anda untuk mengelola data Posyandu.
     </p>
 </div>
@@ -26,77 +26,78 @@
 
     {{-- ── Email Input Field ── --}}
     <div class="group">
-        <label for="email" class="ml-4 font-black text-high-contrast uppercase tracking-[0.3em] text-[10px] flex items-center gap-2 mb-3 group-focus-within:text-primary transition-colors">
-            <span class="material-symbols-outlined text-[18px]">alternate_email</span>
+        <label for="email" class="ml-1 font-bold text-slate-700 text-base flex items-center gap-2 mb-3 group-focus-within:text-teal-700 transition-colors">
+            <span class="material-symbols-outlined text-[20px] text-teal-600">alternate_email</span>
             Alamat Email Resmi
         </label>
         <div class="relative">
             <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus
                    placeholder="nama@posyandu.com"
-                   class="w-full h-20 px-8 rounded-4xl bg-surface-container-low border-4 border-transparent text-xl font-black text-on-surface placeholder:text-slate-300 focus:outline-none focus:bg-white focus:border-primary/10 focus:ring-12 focus:ring-primary/5 transition-all shadow-inner group-hover:bg-surface-container">
-            <div class="absolute inset-y-0 right-8 flex items-center text-slate-300 group-focus-within:text-primary transition-colors">
-                <span class="material-symbols-outlined text-[32px]">verified_user</span>
+                   class="w-full h-16 px-6 rounded-2xl bg-slate-50 border border-slate-300 text-lg font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-teal-600 focus:ring-4 focus:ring-teal-100 transition-all"
+                   style="border: 1px solid #cbd5e1; outline: none;">
+            <div class="absolute inset-y-0 right-6 flex items-center text-slate-400 group-focus-within:text-teal-600 transition-colors">
+                <span class="material-symbols-outlined text-[26px]">verified_user</span>
             </div>
         </div>
     </div>
 
     {{-- ── Password Input Field ── --}}
     <div class="group">
-        <div class="flex justify-between items-center px-4 mb-3">
-            <label for="password" class="font-black text-high-contrast uppercase tracking-[0.3em] text-[10px] flex items-center gap-2 group-focus-within:text-primary transition-colors">
-                <span class="material-symbols-outlined text-[18px]">key</span>
-                Kata Sandi Akun
-            </label>
-        </div>
+        <label for="password" class="ml-1 font-bold text-slate-700 text-base flex items-center gap-2 mb-3 group-focus-within:text-teal-700 transition-colors">
+            <span class="material-symbols-outlined text-[20px] text-teal-600">key</span>
+            Kata Sandi Akun
+        </label>
         <div class="relative">
             <input id="password" type="password" name="password" required
                    placeholder="••••••••"
-                   class="w-full h-20 px-8 pr-24 rounded-4xl bg-surface-container-low border-4 border-transparent text-2xl font-black text-on-surface placeholder:text-slate-200 focus:outline-none focus:bg-white focus:border-primary/10 focus:ring-12 focus:ring-primary/5 transition-all shadow-inner group-hover:bg-surface-container tracking-widest">
+                   class="w-full h-16 px-6 pr-16 rounded-2xl bg-slate-50 border border-slate-300 text-xl font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-teal-600 focus:ring-4 focus:ring-teal-100 transition-all tracking-widest"
+                   style="border: 1px solid #cbd5e1; outline: none;">
             
             <button type="button" onclick="togglePassword()" id="toggleBtn"
-                    class="absolute right-6 top-1/2 -translate-y-1/2 w-14 h-14 flex items-center justify-center rounded-2xl text-slate-400 hover:bg-white hover:text-primary hover:shadow-lg transition-all active:scale-95">
-                <span class="material-symbols-outlined text-[32px]" id="toggleIcon">visibility</span>
+                    class="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 flex items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 hover:text-teal-700 transition-all active:scale-95">
+                <span class="material-symbols-outlined text-[24px]" id="toggleIcon">visibility</span>
             </button>
         </div>
     </div>
 
-    {{-- ── Advanced Options ── --}}
-    <div class="flex items-center justify-between px-4">
-        <label class="relative flex items-center gap-3 cursor-pointer group select-none">
-            <div class="relative">
-                <input id="remember_me" type="checkbox" name="remember" 
-                       class="sr-only peer">
-                <div class="w-10 h-6 bg-slate-200 rounded-full peer peer-checked:bg-primary transition-all after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-4"></div>
-            </div>
-            <span class="text-sm font-black text-slate-600 group-hover:text-primary transition-colors">Ingat Perangkat</span>
+    {{-- ── Advanced Options (Ingat Perangkat) ── --}}
+    <div class="flex items-center px-1">
+        <label class="inline-flex items-center gap-3 cursor-pointer select-none">
+            <input id="remember_me" type="checkbox" name="remember" 
+                   class="w-6 h-6 text-teal-600 border-slate-300 rounded focus:ring-teal-500 cursor-pointer"
+                   style="accent-color: #0d9488;">
+            <span class="text-base font-bold text-slate-700 hover:text-teal-700 transition-colors">Ingat Perangkat</span>
         </label>
     </div>
 
     {{-- ── Submission ── --}}
-    <div class="pt-4">
+    <div class="pt-2">
         <button type="submit" id="submitBtn"
-                class="btn-premium bg-premium-gradient w-full h-24 text-white text-2xl font-black uppercase tracking-[0.2em] rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,104,95,0.3)] hover:shadow-[0_25px_60px_rgba(0,104,95,0.4)] hover:-translate-y-1 active:translate-y-0 active:scale-[0.98] transition-all flex items-center justify-center gap-5 group">
-            <span>Masuk</span>
-            <span class="material-symbols-outlined text-[36px] group-hover:translate-x-2 transition-transform">arrow_forward</span>
+                class="w-full h-16 text-lg font-bold uppercase tracking-wider rounded-2xl shadow-lg transition-all flex items-center justify-center gap-3 group"
+                style="background-color: #0d9488 !important; color: #ffffff !important;">
+            <span>LOGIN</span>
+            <span class="material-symbols-outlined text-[22px]">arrow_forward</span>
         </button>
     </div>
 
-    {{-- ── High-Trust Support Section ── --}}
-    <div class="mt-16 p-10 bg-surface-container-high rounded-[3rem] text-on-surface relative overflow-hidden group shadow-2xl border border-primary/5">
-        <div class="absolute -right-10 -top-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors"></div>
+    {{-- ── Support Section ── --}}
+    <div class="mt-12 p-8 bg-slate-50 rounded-3xl border border-slate-200 relative overflow-hidden group shadow-sm">
+        <div class="absolute -right-10 -top-10 w-32 h-32 bg-teal-500/5 rounded-full blur-2xl group-hover:bg-teal-500/10 transition-colors"></div>
         
-        <div class="relative z-10 flex flex-col items-center text-center gap-6">
-            <div class="w-16 h-16 bg-primary/10 rounded-[1.5rem] flex items-center justify-center backdrop-blur-xl border border-primary/10 text-primary">
-                <span class="material-symbols-outlined text-[32px]">support_agent</span>
+        <div class="relative z-10 flex flex-col items-center text-center gap-5">
+            <div class="w-14 h-14 bg-teal-50 rounded-2xl flex items-center justify-center text-teal-700 border border-teal-100/60">
+                <span class="material-symbols-outlined text-[28px]">support_agent</span>
             </div>
-            <div class="space-y-2">
-                <p class="text-sm font-black uppercase tracking-[0.3em] text-primary">Pusat Bantuan</p>
-                <p class="text-base font-bold text-contrast-safe">Butuh bantuan akses atau reset sandi?</p>
+            <div class="space-y-1.5">
+                <p class="text-xs font-bold uppercase tracking-widest text-teal-700">Pusat Bantuan</p>
+                <p class="text-base font-semibold text-slate-700">Butuh bantuan akses atau reset sandi?</p>
             </div>
-            <a href="https://wa.me/6281234567890" target="_blank"
-               class="w-full h-16 inline-flex items-center justify-center gap-4 bg-white text-on-surface border-2 border-primary/10 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all active:scale-95">
-                <span class="material-symbols-outlined text-[20px] text-primary group-hover:text-white transition-colors">chat_bubble</span>
-                Hubungi Kami
+            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=posyanduilp_kenanga1@gmail.com"
+               target="_blank" rel="noopener noreferrer"
+               class="w-full h-14 inline-flex items-center justify-center gap-2.5 bg-white text-slate-800 border border-slate-300 rounded-xl text-sm font-bold uppercase tracking-wider hover:bg-teal-50 hover:text-teal-900 hover:border-teal-300 transition-all active:scale-95 shadow-xs"
+               style="border: 1px solid #cbd5e1;">
+                <span class="material-symbols-outlined text-[20px] text-teal-600">mail</span>
+                Hubungi via Gmail
             </a>
         </div>
     </div>
@@ -111,11 +112,11 @@
         if (passInput.type === 'password') {
             passInput.type = 'text';
             icon.textContent = 'visibility_off';
-            btn.classList.add('bg-white', 'text-primary', 'shadow-lg');
+            btn.classList.add('bg-slate-100', 'text-teal-700');
         } else {
             passInput.type = 'password';
             icon.textContent = 'visibility';
-            btn.classList.remove('bg-white', 'text-primary', 'shadow-lg');
+            btn.classList.remove('bg-slate-100', 'text-teal-700');
         }
     }
 
@@ -123,9 +124,10 @@
         const btn = document.getElementById('submitBtn');
         btn.disabled = true;
         btn.innerHTML = `
-            <div class="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
-            <span class="font-black uppercase tracking-[0.2em]">Memverifikasi...</span>
+            <div class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+            <span class="font-bold uppercase tracking-widest text-base">Memverifikasi...</span>
         `;
     });
 </script>
+
 @endsection
