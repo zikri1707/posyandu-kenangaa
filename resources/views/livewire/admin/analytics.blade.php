@@ -3,15 +3,15 @@
         rel="stylesheet" />
     <style>
         .hero-gradient {
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #134e4a 100%);
+            background: linear-gradient(135deg, #0d9488 0%, #0f766e 50%, #115e59 100%);
         }
 
         .hero-orb-1 {
-            background: radial-gradient(circle, rgba(20, 184, 166, 0.25) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(204, 251, 241, 0.12) 0%, transparent 70%);
         }
 
         .hero-orb-2 {
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(45, 212, 191, 0.1) 0%, transparent 70%);
         }
 
         @keyframes ping-slow {
@@ -26,118 +26,113 @@
         }
 
         .animate-ping-slow {
-            animation: ping-slow 2s ease-in-out infinite;
+            animation: ping-slow 2.5s ease-in-out infinite;
         }
     </style>
 @endpush
 
-<div class="max-w-7xl mx-auto space-y-6 pb-20 px-4 sm:px-6">
+<div class="max-w-7xl mx-auto space-y-8 pb-20 px-4 sm:px-6">
 
     {{-- ── Hero Section (Analitik) ── --}}
-    <section class="relative rounded-2xl overflow-hidden" style="background:#0f172a;">
+    <section class="relative rounded-2xl overflow-hidden border border-teal-900/10 shadow-xs" style="background:#0f766e;">
         {{-- Background layers --}}
         <div class="absolute inset-0 hero-gradient"></div>
-        <div class="absolute top-0 left-1/4 w-72 h-72 hero-orb-1 rounded-full filter blur-[60px] animate-pulse"></div>
-        <div class="absolute bottom-0 right-1/4 w-72 h-72 hero-orb-2 rounded-full filter blur-[60px]"
-            style="animation:pulse 4s ease-in-out 1.5s infinite;"></div>
-        {{-- Grid overlay --}}
-        <div class="absolute inset-0 opacity-[0.04]"
-            style="background-image:url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjAuNSIgZmlsbD0ibm9uZSI+PHBhdGggZD0iTTQwIDBMMCA0ME0wIDBsNDAgNDAiLz48L2c+PC9zdmc+');">
-        </div>
+        <div class="absolute top-0 left-1/4 w-80 h-80 hero-orb-1 rounded-full filter blur-[60px] animate-pulse"></div>
+        <div class="absolute bottom-0 right-1/4 w-80 h-80 hero-orb-2 rounded-full filter blur-[60px]"
+            style="animation:pulse 5s ease-in-out 1.5s infinite;"></div>
 
-        <div class="relative z-10 px-8 py-10 md:px-12 md:py-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-            <div class="space-y-3">
-                {{-- Live badge --}}
-                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full"
-                    style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.1);">
-                    <span class="relative flex h-2.5 w-2.5">
-                        <span class="animate-ping-slow absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
-                        <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-teal-400"></span>
-                    </span>
-                    <span class="text-xs font-bold text-teal-100 tracking-wide uppercase">Sistem Analitik Pelayanan Kesehatan</span>
-                </div>
-
-                <h1 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight leading-tight" style="letter-spacing:-0.02em;">
-                    Dashboard Analitik & Wawasan Posyandu
-                </h1>
-
-                <p class="text-slate-300 text-sm md:text-base leading-relaxed font-medium" style="opacity:0.9;">
-                    Data Wawasan Klinis & Keaktifan Posyandu Periode Tahun <strong class="text-white font-black">{{ $selectedYear }}</strong>
-                    @if(auth()->user()->posyandu)
-                        | <span class="text-teal-300 font-bold">Unit Kerja: {{ auth()->user()->posyandu->name }}</span>
-                    @endif
-                </p>
+        <div class="relative z-10 px-8 py-10 md:px-12 md:py-12 max-w-3xl">
+            {{-- Live badge --}}
+            <div class="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full mb-6 shadow-xs"
+                style="background:rgba(255, 255, 255, 0.08); border:1px solid rgba(255, 255, 255, 0.15);">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping-slow absolute inline-flex h-full w-full rounded-full bg-teal-200 opacity-75"></span>
+                    <span class="relative inline-flex h-2 w-2 rounded-full bg-teal-350"></span>
+                </span>
+                <span class="text-xs font-semibold text-teal-100 tracking-wide uppercase">Sistem Analitik Pelayanan Kesehatan</span>
             </div>
 
-            <div class="flex items-center no-print mt-4 md:mt-0">
-                <div class="text-xs md:text-sm font-bold text-teal-100 bg-white/10 border border-white/20 backdrop-blur-xs px-4 py-2.5 rounded-xl shadow-xs">
-                    Terakhir Diperbarui: <span class="text-white font-extrabold">{{ $lastUpdated }}</span>
+            <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white mb-4 leading-tight drop-shadow-xs" style="letter-spacing:-0.03em;">
+                Wawasan &amp; Analitik Posyandu
+            </h1>
+
+            <p class="text-teal-50 text-base max-w-xl leading-relaxed mb-8 font-semibold">
+                Data wawasan klinis &amp; keaktifan posyandu periode tahun <span class="text-white font-black underline decoration-teal-300 decoration-2">{{ $selectedYear }}</span>
+                @if(auth()->user()->posyandu)
+                    | <span class="text-white font-bold">Unit Kerja: {{ auth()->user()->posyandu->name }}</span>
+                @endif
+            </p>
+
+            <div class="flex flex-wrap items-center gap-3">
+                <div class="inline-flex items-center gap-2.5 h-11 px-5 rounded-xl font-semibold text-sm text-teal-50 bg-teal-950/45 border border-teal-400/25 backdrop-blur-md shadow-sm no-print">
+                    <span class="material-symbols-outlined text-[20px] text-teal-200">sync</span>
+                    Terakhir Diperbarui: <span class="text-white font-black">{{ $lastUpdated }}</span>
                 </div>
             </div>
         </div>
     </section>
 
     {{-- ── Accessible Tab Navigation ── --}}
-    <div class="flex flex-wrap items-center bg-slate-100 p-1.5 rounded-2xl border border-slate-200 shadow-xs gap-1">
+    <div class="flex flex-wrap items-center bg-slate-100/90 backdrop-blur-md p-1.5 rounded-2xl border border-slate-200 shadow-xs gap-1">
         <button wire:click="$set('activeTab', 'overview')" @class([
-            'flex-1 min-w-[120px] py-3 px-4 rounded-xl text-sm font-bold transition-all duration-200 flex items-center justify-center gap-2 border cursor-pointer',
-            'bg-teal-600 text-white border-teal-700 shadow-xs' => $activeTab === 'overview',
-            'text-slate-700 hover:text-slate-900 hover:bg-slate-200/60 border-transparent' => $activeTab !== 'overview'
+            'flex-1 min-w-[120px] py-3.5 px-5 rounded-xl text-sm font-bold transition-all duration-200 flex items-center justify-center gap-2 border cursor-pointer',
+            'bg-white text-teal-850 border-slate-200 shadow-sm font-extrabold' => $activeTab === 'overview',
+            'text-slate-600 hover:text-slate-900 hover:bg-white/50 border-transparent' => $activeTab !== 'overview'
         ])>
-            <span class="material-symbols-outlined text-[20px]">dashboard</span>
+            <span class="material-symbols-outlined text-[20px] {{ $activeTab === 'overview' ? 'text-teal-700' : 'text-slate-400' }}">dashboard</span>
             Overview Ringkasan
         </button>
         <button wire:click="$set('activeTab', 'balita')" @class([
-            'flex-1 min-w-[120px] py-3 px-4 rounded-xl text-sm font-bold transition-all duration-200 flex items-center justify-center gap-2 border cursor-pointer',
-            'bg-teal-600 text-white border-teal-700 shadow-xs' => $activeTab === 'balita',
-            'text-slate-700 hover:text-slate-900 hover:bg-slate-200/60 border-transparent' => $activeTab !== 'balita'
+            'flex-1 min-w-[120px] py-3.5 px-5 rounded-xl text-sm font-bold transition-all duration-200 flex items-center justify-center gap-2 border cursor-pointer',
+            'bg-white text-teal-850 border-slate-200 shadow-sm font-extrabold' => $activeTab === 'balita',
+            'text-slate-600 hover:text-slate-900 hover:bg-white/50 border-transparent' => $activeTab !== 'balita'
         ])>
-            <span class="material-symbols-outlined text-[20px]">child_care</span>
-            Balita & Anak
+            <span class="material-symbols-outlined text-[20px] {{ $activeTab === 'balita' ? 'text-teal-700' : 'text-slate-400' }}">child_care</span>
+            Balita &amp; Anak
         </button>
         <button wire:click="$set('activeTab', 'pregnancy')" @class([
-            'flex-1 min-w-[120px] py-3 px-4 rounded-xl text-sm font-bold transition-all duration-200 flex items-center justify-center gap-2 border cursor-pointer',
-            'bg-teal-600 text-white border-teal-700 shadow-xs' => $activeTab === 'pregnancy',
-            'text-slate-700 hover:text-slate-900 hover:bg-slate-200/60 border-transparent' => $activeTab !== 'pregnancy'
+            'flex-1 min-w-[120px] py-3.5 px-5 rounded-xl text-sm font-bold transition-all duration-200 flex items-center justify-center gap-2 border cursor-pointer',
+            'bg-white text-teal-850 border-slate-200 shadow-sm font-extrabold' => $activeTab === 'pregnancy',
+            'text-slate-600 hover:text-slate-900 hover:bg-white/50 border-transparent' => $activeTab !== 'pregnancy'
         ])>
-            <span class="material-symbols-outlined text-[20px]">pregnant_woman</span>
+            <span class="material-symbols-outlined text-[20px] {{ $activeTab === 'pregnancy' ? 'text-teal-700' : 'text-slate-400' }}">pregnant_woman</span>
             Ibu Hamil
         </button>
         <button wire:click="$set('activeTab', 'lansia')" @class([
-            'flex-1 min-w-[120px] py-3 px-4 rounded-xl text-sm font-bold transition-all duration-200 flex items-center justify-center gap-2 border cursor-pointer',
-            'bg-teal-600 text-white border-teal-700 shadow-xs' => $activeTab === 'lansia',
-            'text-slate-700 hover:text-slate-900 hover:bg-slate-200/60 border-transparent' => $activeTab !== 'lansia'
+            'flex-1 min-w-[120px] py-3.5 px-5 rounded-xl text-sm font-bold transition-all duration-200 flex items-center justify-center gap-2 border cursor-pointer',
+            'bg-white text-teal-850 border-slate-200 shadow-sm font-extrabold' => $activeTab === 'lansia',
+            'text-slate-600 hover:text-slate-900 hover:bg-white/50 border-transparent' => $activeTab !== 'lansia'
         ])>
-            <span class="material-symbols-outlined text-[20px]">elderly</span>
+            <span class="material-symbols-outlined text-[20px] {{ $activeTab === 'lansia' ? 'text-teal-700' : 'text-slate-400' }}">elderly</span>
             Lanjut Usia (Lansia)
         </button>
     </div>
 
     {{-- ── Unified Control Card (Filter + View Settings) ── --}}
-    <div class="bg-white rounded-2xl shadow-xs border border-slate-200 overflow-hidden">
+    <div class="bg-white rounded-3xl shadow-xs border border-slate-200 overflow-hidden">
 
         {{-- ── Baris 1: Filter Global ── --}}
-        <div class="p-5 sm:p-6">
-            <div class="flex flex-col xl:flex-row gap-5 items-start xl:items-end">
+        <div class="p-6">
+            <div class="flex flex-col xl:flex-row gap-6 items-start xl:items-end">
 
                 {{-- Label kiri atas --}}
                 <div class="flex-1 w-full">
-                    <p class="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-1.5">
-                        <span class="material-symbols-outlined text-[15px] text-teal-600">tune</span>
-                        Filter Data
+                    <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-[16px] text-teal-600">tune</span>
+                        Filter Parameter Data
                     </p>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 
                         {{-- Wilayah Posyandu --}}
                         @if(auth()->user()->isSuperAdmin())
-                        <div class="flex flex-col gap-1">
-                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Wilayah Posyandu</label>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider pl-1">Wilayah Posyandu</label>
                             <div class="relative">
-                                <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-teal-500">
+                                <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-teal-600">
                                     <span class="material-symbols-outlined text-[18px]">location_on</span>
                                 </span>
                                 <select wire:model.live="selectedPosyandu"
-                                    class="w-full h-11 pl-9 pr-4 rounded-xl border border-slate-200 text-sm font-semibold text-slate-800 bg-white focus:ring-2 focus:ring-teal-500 focus:border-teal-500 shadow-xs transition-shadow hover:border-slate-300">
+                                    class="w-full h-11 pl-9 pr-4 rounded-xl border border-slate-300 text-sm font-semibold text-slate-800 bg-white focus:ring-4 focus:ring-teal-100 focus:border-teal-600 shadow-xs transition-all hover:border-slate-400 focus:outline-none">
                                     <option value="">Semua Wilayah</option>
                                     @foreach(\App\Models\Posyandu::all() as $p)
                                         <option value="{{ $p->id }}">{{ $p->name }}</option>
@@ -148,14 +143,14 @@
                         @endif
 
                         {{-- Tahun --}}
-                        <div class="flex flex-col gap-1">
-                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Tahun</label>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider pl-1">Tahun</label>
                             <div class="relative">
                                 <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-slate-400">
                                     <span class="material-symbols-outlined text-[18px]">calendar_today</span>
                                 </span>
                                 <select wire:model.live="selectedYear"
-                                    class="w-full h-11 pl-9 pr-4 rounded-xl border border-slate-200 text-sm font-semibold text-slate-800 bg-white focus:ring-2 focus:ring-teal-500 focus:border-teal-500 shadow-xs transition-shadow hover:border-slate-300">
+                                    class="w-full h-11 pl-9 pr-4 rounded-xl border border-slate-300 text-sm font-semibold text-slate-800 bg-white focus:ring-4 focus:ring-teal-100 focus:border-teal-600 shadow-xs transition-all hover:border-slate-400 focus:outline-none">
                                     @foreach($years as $y)
                                         <option value="{{ $y }}">{{ $y }}</option>
                                     @endforeach
@@ -164,18 +159,18 @@
                         </div>
 
                         {{-- Bulan --}}
-                        <div class="flex flex-col gap-1">
-                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Bulan</label>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider pl-1">Bulan</label>
                             <div class="relative">
                                 <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center {{ ($activeTab === 'overview' && $viewMode === 'yearly') ? 'text-slate-300' : 'text-slate-400' }}">
                                     <span class="material-symbols-outlined text-[18px]">event_note</span>
                                 </span>
                                 <select wire:model.live="selectedMonth"
                                     @if($activeTab === 'overview' && $viewMode === 'yearly') disabled @endif
-                                    class="w-full h-11 pl-9 pr-4 rounded-xl border text-sm font-semibold bg-white focus:ring-2 focus:ring-teal-500 focus:border-teal-500 shadow-xs transition-shadow
+                                    class="w-full h-11 pl-9 pr-4 rounded-xl border text-sm font-semibold bg-white focus:ring-4 focus:ring-teal-100 focus:border-teal-600 shadow-xs transition-all focus:outline-none
                                         {{ ($activeTab === 'overview' && $viewMode === 'yearly')
-                                            ? 'border-slate-100 text-slate-300 bg-slate-50 cursor-not-allowed'
-                                            : 'border-slate-200 text-slate-800 hover:border-slate-300 cursor-pointer' }}">
+                                            ? 'border-slate-100 text-slate-350 bg-slate-50 cursor-not-allowed'
+                                            : 'border-slate-300 text-slate-800 hover:border-slate-400 cursor-pointer' }}">
                                     <option value="">{{ ($activeTab === 'overview' && $viewMode === 'yearly') ? 'Nonaktif (Mode YoY)' : 'Semua Bulan (Tahunan)' }}</option>
                                     @foreach(range(1, 12) as $m)
                                         <option value="{{ $m }}">{{ Carbon\Carbon::create(2000, $m)->translatedFormat('F') }}</option>
@@ -187,15 +182,15 @@
                 </div>
 
                 {{-- Tombol Aksi --}}
-                <div class="flex gap-2.5 w-full xl:w-auto shrink-0">
+                <div class="flex gap-3 w-full xl:w-auto shrink-0">
                     <button wire:click="resetFilters"
-                        class="flex-1 xl:flex-none h-11 px-4 xl:px-5 inline-flex items-center justify-center gap-2 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs uppercase tracking-wider rounded-xl border border-slate-200 hover:border-slate-300 shadow-xs transition-all cursor-pointer">
+                        class="flex-1 xl:flex-none h-11 px-5 inline-flex items-center justify-center gap-2 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs uppercase tracking-wider rounded-xl border border-slate-300 hover:border-slate-400 shadow-xs transition-all cursor-pointer focus:outline-none">
                         <span class="material-symbols-outlined text-[18px]">filter_alt_off</span>
                         Reset
                     </button>
                     <button wire:click="refreshStats"
                         wire:loading.attr="disabled"
-                        class="flex-1 xl:flex-none h-11 px-4 xl:px-6 inline-flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 active:bg-teal-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-xs transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
+                        class="flex-1 xl:flex-none h-11 px-6 inline-flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 active:bg-teal-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-xs transition-all cursor-pointer focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed">
                         <span class="material-symbols-outlined text-[18px]" wire:loading.class="animate-spin" wire:target="refreshStats">sync</span>
                         Perbarui Data
                     </button>
@@ -205,29 +200,29 @@
 
         {{-- ── Baris 2: Pengaturan Visualisasi (hanya untuk tab Overview) ── --}}
         @if($activeTab === 'overview')
-        <div class="border-t border-slate-100 bg-slate-50/60 px-5 sm:px-6 py-4">
-            <p class="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-1.5">
-                <span class="material-symbols-outlined text-[15px] text-indigo-500">insert_chart</span>
+        <div class="border-t border-slate-150 bg-slate-50/50 px-6 py-4">
+            <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[16px] text-indigo-500">insert_chart</span>
                 Konfigurasi Visualisasi Grafik Overview
             </p>
-            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-5">
 
                 {{-- Segmented view mode control --}}
                 <div class="flex flex-col gap-1">
-                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Mode Tampilan</span>
-                    <div class="inline-flex items-center bg-slate-200/70 rounded-xl p-1 gap-1">
+                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider pl-1">Mode Tampilan</span>
+                    <div class="inline-flex items-center bg-slate-200/50 rounded-xl p-1 gap-1 border border-slate-200">
                         <button wire:click="$set('viewMode', 'monthly')" @class([
                             'inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold tracking-wide transition-all cursor-pointer',
-                            'bg-white text-teal-700 shadow-sm border border-slate-200/80' => $viewMode === 'monthly',
-                            'text-slate-600 hover:text-slate-900 hover:bg-white/50' => $viewMode !== 'monthly',
+                            'bg-white text-teal-800 shadow-xs border border-slate-200/50' => $viewMode === 'monthly',
+                            'text-slate-500 hover:text-slate-900 hover:bg-white/40' => $viewMode !== 'monthly',
                         ])>
                             <span class="material-symbols-outlined text-[16px]">bar_chart</span>
                             Tampilan Bulanan
                         </button>
                         <button wire:click="$set('viewMode', 'yearly')" @class([
                             'inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold tracking-wide transition-all cursor-pointer',
-                            'bg-white text-indigo-700 shadow-sm border border-slate-200/80' => $viewMode === 'yearly',
-                            'text-slate-600 hover:text-slate-900 hover:bg-white/50' => $viewMode !== 'yearly',
+                            'bg-white text-indigo-800 shadow-xs border border-slate-200/50' => $viewMode === 'yearly',
+                            'text-slate-500 hover:text-slate-900 hover:bg-white/40' => $viewMode !== 'yearly',
                         ])>
                             <span class="material-symbols-outlined text-[16px]">show_chart</span>
                             Year-over-Year (Tahunan)
@@ -235,20 +230,20 @@
                     </div>
                 </div>
 
-                <div class="hidden sm:block h-8 w-px bg-slate-200 self-end mb-0.5"></div>
+                <div class="hidden sm:block h-10 w-px bg-slate-200 self-end mb-0.5"></div>
 
                 {{-- Compare toggle --}}
                 <div class="flex flex-col gap-1">
-                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Bandingkan Periode</span>
+                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider pl-1">Bandingkan Periode</span>
                     <button wire:click="$toggle('compareMode')" @class([
                         'inline-flex items-center gap-3 h-10 px-4 rounded-xl border font-bold text-sm transition-all cursor-pointer',
-                        'bg-teal-50 border-teal-300 text-teal-800' => $compareMode,
-                        'bg-white border-slate-200 text-slate-600 hover:border-slate-300' => !$compareMode,
+                        'bg-teal-50/50 border-teal-200 text-teal-800 shadow-xs' => $compareMode,
+                        'bg-white border-slate-300 text-slate-650 hover:border-slate-400' => !$compareMode,
                     ])>
                         {{-- Toggle track --}}
                         <span @class([
                             'relative inline-flex h-5 w-9 items-center rounded-full transition-colors shrink-0',
-                            'bg-teal-500' => $compareMode,
+                            'bg-teal-600' => $compareMode,
                             'bg-slate-300' => !$compareMode,
                         ])>
                             <span @class([
@@ -282,29 +277,29 @@
 
                 @foreach($overviewCards as $c)
                 <div @class([
-                    'relative overflow-hidden bg-white rounded-2xl p-6 border-2 transition-all duration-300 group shadow-xs',
-                    'border-slate-200 hover:border-slate-400' => $c['color'] === 'slate',
-                    'border-teal-200 hover:border-teal-500' => $c['color'] === 'teal',
-                    'border-rose-200 hover:border-rose-500' => $c['color'] === 'rose',
-                    'border-indigo-200 hover:border-indigo-500' => $c['color'] === 'indigo',
+                    'relative overflow-hidden bg-white rounded-3xl p-6 border transition-all duration-300 group shadow-xs hover:shadow-md hover:-translate-y-1.5',
+                    'border-slate-200/85 hover:border-slate-400' => $c['color'] === 'slate',
+                    'border-teal-200/60 hover:border-teal-500/80' => $c['color'] === 'teal',
+                    'border-rose-200/60 hover:border-rose-500/80' => $c['color'] === 'rose',
+                    'border-indigo-200/60 hover:border-indigo-500/80' => $c['color'] === 'indigo',
                 ])>
-                    <div class="relative z-10 flex items-center justify-between mb-3">
+                    <div class="relative z-10 flex items-center justify-between mb-4">
                         <div @class([
-                            'w-11 h-11 rounded-lg flex items-center justify-center',
-                            'bg-slate-900 text-white' => $c['color'] === 'slate',
-                            'bg-teal-600 text-white' => $c['color'] === 'teal',
-                            'bg-rose-600 text-white' => $c['color'] === 'rose',
-                            'bg-indigo-600 text-white' => $c['color'] === 'indigo',
+                            'w-12 h-12 rounded-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 shadow-sm',
+                            'bg-slate-900 text-white shadow-slate-900/10' => $c['color'] === 'slate',
+                            'bg-teal-600 text-white shadow-teal-600/10' => $c['color'] === 'teal',
+                            'bg-rose-600 text-white shadow-rose-600/10' => $c['color'] === 'rose',
+                            'bg-indigo-600 text-white shadow-indigo-600/10' => $c['color'] === 'indigo',
                         ])>
                             <span class="material-symbols-outlined text-[24px]">{{ $c['icon'] }}</span>
                         </div>
-                        <span class="text-xs font-black uppercase tracking-wider text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">{{ $c['unit'] }}</span>
+                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-500 bg-slate-100/80 px-2.5 py-1 rounded-lg">{{ $c['unit'] }}</span>
                     </div>
 
-                    <div class="space-y-1">
-                        <h3 class="text-3xl font-black text-slate-900 tracking-tight">{{ $c['val'] }}</h3>
-                        <p class="text-sm font-extrabold text-slate-800 uppercase tracking-tight">{{ $c['label'] }}</p>
-                        <p class="text-xs text-slate-500 mt-2 border-t border-slate-100 pt-2 font-medium">{{ $c['desc'] }}</p>
+                    <div class="space-y-1.5">
+                        <h3 class="text-3xl font-black text-slate-900 tracking-tight leading-none mb-1">{{ $c['val'] }}</h3>
+                        <p class="text-sm font-extrabold text-slate-800 uppercase tracking-wide">{{ $c['label'] }}</p>
+                        <p class="text-xs text-slate-500 mt-3 border-t border-slate-100 pt-3 font-medium leading-relaxed">{{ $c['desc'] }}</p>
                     </div>
                 </div>
                 @endforeach
@@ -349,29 +344,29 @@
 
                 @foreach($balitaCards as $c)
                 <div @class([
-                    'relative overflow-hidden bg-white rounded-2xl p-6 border-2 transition-all duration-300 group shadow-xs',
-                    'border-teal-200 hover:border-teal-500' => $c['color'] === 'teal',
-                    'border-red-200 hover:border-red-500' => $c['color'] === 'red',
-                    'border-blue-200 hover:border-blue-500' => $c['color'] === 'blue',
-                    'border-amber-200 hover:border-amber-500' => $c['color'] === 'amber',
+                    'relative overflow-hidden bg-white rounded-3xl p-6 border transition-all duration-300 group shadow-xs hover:shadow-md hover:-translate-y-1.5',
+                    'border-teal-200/60 hover:border-teal-500/80' => $c['color'] === 'teal',
+                    'border-red-200/60 hover:border-red-500/80' => $c['color'] === 'red',
+                    'border-blue-200/60 hover:border-blue-500/80' => $c['color'] === 'blue',
+                    'border-amber-200/60 hover:border-amber-500/80' => $c['color'] === 'amber',
                 ])>
-                    <div class="relative z-10 flex items-center justify-between mb-3">
+                    <div class="relative z-10 flex items-center justify-between mb-4">
                         <div @class([
-                            'w-11 h-11 rounded-lg flex items-center justify-center',
-                            'bg-teal-600 text-white' => $c['color'] === 'teal',
-                            'bg-red-600 text-white' => $c['color'] === 'red',
-                            'bg-blue-600 text-white' => $c['color'] === 'blue',
-                            'bg-amber-600 text-white' => $c['color'] === 'amber',
+                            'w-12 h-12 rounded-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 shadow-sm text-white',
+                            'bg-teal-600 shadow-teal-600/10' => $c['color'] === 'teal',
+                            'bg-red-650 shadow-red-600/10' => $c['color'] === 'red',
+                            'bg-blue-600 shadow-blue-600/10' => $c['color'] === 'blue',
+                            'bg-amber-600 shadow-amber-600/10' => $c['color'] === 'amber',
                         ])>
                             <span class="material-symbols-outlined text-[24px]">{{ $c['icon'] }}</span>
                         </div>
-                        <span class="text-xs font-black uppercase tracking-wider text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">{{ $c['unit'] }}</span>
+                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-500 bg-slate-100/80 px-2.5 py-1 rounded-lg">{{ $c['unit'] }}</span>
                     </div>
 
-                    <div class="space-y-1">
-                        <h3 class="text-3xl font-black text-slate-900 tracking-tight">{{ $c['val'] }}</h3>
-                        <p class="text-sm font-extrabold text-slate-800 uppercase tracking-tight">{{ $c['label'] }}</p>
-                        <p class="text-xs text-slate-500 mt-2 border-t border-slate-100 pt-2 font-medium">{{ $c['desc'] }}</p>
+                    <div class="space-y-1.5">
+                        <h3 class="text-3xl font-black text-slate-900 tracking-tight leading-none mb-1">{{ $c['val'] }}</h3>
+                        <p class="text-sm font-extrabold text-slate-800 uppercase tracking-wide">{{ $c['label'] }}</p>
+                        <p class="text-xs text-slate-500 mt-3 border-t border-slate-100 pt-3 font-medium leading-relaxed">{{ $c['desc'] }}</p>
                     </div>
                 </div>
                 @endforeach
@@ -512,11 +507,11 @@
             </div>
 
             {{-- Recent Records for Balita --}}
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
-                <div class="px-6 py-5 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/50">
+            <div class="bg-white rounded-3xl border border-slate-200 shadow-xs overflow-hidden">
+                <div class="px-6 py-5 border-b border-slate-150 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/50">
                     <div>
                         <h3 class="text-lg font-bold text-slate-900">Pemeriksaan Balita Terbaru</h3>
-                        <p class="text-xs text-slate-500 mt-0.5">Daftar rekam medis pemeriksaan balita terkini</p>
+                        <p class="text-xs text-slate-500 mt-0.5 font-semibold">Daftar rekam medis pemeriksaan balita terkini</p>
                     </div>
                     <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto items-center">
                         <div class="relative w-full sm:w-64">
@@ -524,13 +519,13 @@
                                 <span class="material-symbols-outlined text-[20px]">search</span>
                             </span>
                             <input type="text" wire:model.live.debounce.300ms="tableSearch" 
-                                   class="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-teal-500 focus:border-teal-500 shadow-xs" 
+                                   class="w-full pl-10 pr-4 py-2 bg-white border border-slate-300 rounded-xl text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-teal-100 focus:border-teal-600 shadow-xs transition-all" 
                                    placeholder="Cari Nama atau NIK Anak...">
                         </div>
                         <div class="flex items-center gap-2 w-full sm:w-auto">
-                            <span class="text-sm font-bold text-slate-700 whitespace-nowrap">Gender:</span>
+                            <span class="text-xs font-bold text-slate-650 whitespace-nowrap uppercase tracking-wider">Gender:</span>
                             <select wire:model.live="filterGender" 
-                                    class="w-full sm:w-36 py-2 px-3 bg-white border border-slate-300 rounded-xl text-sm font-semibold text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-teal-500 focus:border-teal-500 shadow-xs">
+                                    class="w-full sm:w-36 py-2 px-3 bg-white border border-slate-300 rounded-xl text-sm font-semibold text-slate-800 focus:outline-none focus:ring-4 focus:ring-teal-100 focus:border-teal-600 shadow-xs transition-all">
                                 <option value="">Semua</option>
                                 <option value="L">Laki-laki</option>
                                 <option value="P">Perempuan</option>
@@ -539,46 +534,56 @@
                     </div>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left">
+                    <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-slate-100 border-b border-slate-200">
-                                <th class="px-6 py-3.5 text-xs font-bold text-slate-700 uppercase tracking-wider">Nama Anak</th>
-                                <th class="px-6 py-3.5 text-xs font-bold text-slate-700 uppercase tracking-wider">Unit Posyandu</th>
-                                <th class="px-6 py-3.5 text-xs font-bold text-slate-700 uppercase tracking-wider">Status Gizi</th>
-                                <th class="px-6 py-3.5 text-xs font-bold text-slate-700 uppercase tracking-wider">Tanggal</th>
-                                <th class="px-6 py-3.5 text-right text-xs font-bold text-slate-700 uppercase tracking-wider">Aksi</th>
+                            <tr class="bg-slate-50 border-b border-slate-200">
+                                <th class="px-6 py-3.5 text-xs font-black text-slate-500 uppercase tracking-wider">Nama Anak</th>
+                                <th class="px-6 py-3.5 text-xs font-black text-slate-500 uppercase tracking-wider">Unit Posyandu</th>
+                                <th class="px-6 py-3.5 text-xs font-black text-slate-500 uppercase tracking-wider">Status Gizi</th>
+                                <th class="px-6 py-3.5 text-xs font-black text-slate-500 uppercase tracking-wider">Tanggal</th>
+                                <th class="px-6 py-3.5 text-right text-xs font-black text-slate-500 uppercase tracking-wider">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-250">
+                        <tbody class="divide-y divide-slate-100">
                             @forelse($recentRecords as $record)
-                            <tr class="hover:bg-slate-50 text-slate-800">
+                            <tr class="hover:bg-slate-50/80 transition-colors text-slate-800">
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-3">
-                                        <div class="w-8 h-8 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center font-extrabold text-sm border border-teal-100">
+                                        <div class="w-9 h-9 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center font-extrabold text-sm border border-teal-100 shadow-xs">
                                             {{ strtoupper(substr($record->patient?->full_name ?? 'B', 0, 2)) }}
                                         </div>
                                         <div>
-                                            <span class="block font-bold text-slate-900">{{ $record->patient?->full_name }}</span>
-                                            <span class="text-xs font-bold text-slate-500 uppercase block">NIK: {{ $record->patient?->id_number ?: '-' }}</span>
+                                            <span class="block font-bold text-slate-900 text-sm">{{ $record->patient?->full_name }}</span>
+                                            <span class="text-[10px] font-black text-slate-400 uppercase block tracking-wider mt-0.5">NIK: {{ $record->patient?->id_number ?: '-' }}</span>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 text-xs font-bold text-slate-700">{{ $record->patient?->posyandu?->name ?? '-' }}</td>
+                                <td class="px-6 py-4 text-xs font-bold text-slate-650">{{ $record->patient?->posyandu?->name ?? '-' }}</td>
                                 <td class="px-6 py-4">
-                                    <span class="inline-flex px-3 py-1 rounded-full text-xs font-bold bg-teal-550/10 text-teal-700 border border-teal-100">
-                                        {{ $record->nutrition_status ?: 'Normal' }}
+                                    @php
+                                        $status = $record->nutrition_status ?: 'Normal';
+                                        $isNormal = str_contains(strtolower($status), 'normal') || str_contains(strtolower($status), 'baik');
+                                        $isRisk = str_contains(strtolower($status), 'risiko') || str_contains(strtolower($status), 'kurang');
+                                    @endphp
+                                    <span @class([
+                                        'inline-flex px-3 py-1 rounded-full text-xs font-bold border',
+                                        'bg-emerald-50 text-emerald-700 border-emerald-200/60' => $isNormal,
+                                        'bg-amber-50 text-amber-700 border-amber-200/60' => $isRisk && !$isNormal,
+                                        'bg-rose-50 text-rose-700 border-rose-200/60' => !$isNormal && !$isRisk,
+                                    ])>
+                                        {{ $status }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-xs font-bold text-slate-600">{{ \Carbon\Carbon::parse($record->visit_date)->translatedFormat('d M Y') }}</td>
                                 <td class="px-6 py-4 text-right">
-                                    <a href="{{ route('admin.patients.show', $record->patient_id) }}" class="w-9 h-9 inline-flex items-center justify-center rounded-xl bg-slate-100 text-slate-500 hover:bg-teal-600 hover:text-white transition-all shadow-xs">
+                                    <a href="{{ route('admin.patients.show', $record->patient_id) }}" class="w-9 h-9 inline-flex items-center justify-center rounded-xl bg-slate-100 text-slate-500 hover:bg-teal-600 hover:text-white hover:shadow-md hover:shadow-teal-600/10 transition-all border border-slate-200/60">
                                         <span class="material-symbols-outlined text-[20px]">visibility</span>
                                     </a>
                                 </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="5" class="px-6 py-10 text-center text-sm text-slate-500 font-bold bg-white">Belum ada pemeriksaan balita</td>
+                                <td colspan="5" class="px-6 py-12 text-center text-sm text-slate-400 font-bold bg-white">Belum ada pemeriksaan balita</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -594,11 +599,11 @@
             <livewire:admin.analytics.ibu-hamil-analytics :selected-year="$selectedYear" :selected-month="$selectedMonth" :selected-posyandu="$selectedPosyandu" />
 
             {{-- Recent Records for Ibu Hamil --}}
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
-                <div class="px-6 py-5 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/50">
+            <div class="bg-white rounded-3xl border border-slate-200 shadow-xs overflow-hidden">
+                <div class="px-6 py-5 border-b border-slate-150 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/50">
                     <div>
                         <h3 class="text-lg font-bold text-slate-900">Pemeriksaan Ibu Hamil Terbaru</h3>
-                        <p class="text-xs text-slate-500 mt-0.5">Daftar rekam medis pemeriksaan ibu hamil terkini</p>
+                        <p class="text-xs text-slate-500 mt-0.5 font-semibold">Daftar rekam medis pemeriksaan ibu hamil terkini</p>
                     </div>
                     <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto items-center">
                         <div class="relative w-full sm:w-64">
@@ -606,52 +611,52 @@
                                 <span class="material-symbols-outlined text-[20px]">search</span>
                             </span>
                             <input type="text" wire:model.live.debounce.300ms="tableSearch" 
-                                   class="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-teal-500 focus:border-teal-500 shadow-xs" 
+                                   class="w-full pl-10 pr-4 py-2 bg-white border border-slate-300 rounded-xl text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-teal-100 focus:border-teal-600 shadow-xs transition-all" 
                                    placeholder="Cari Nama atau NIK Ibu...">
                         </div>
                     </div>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left">
+                    <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-slate-100 border-b border-slate-200">
-                                <th class="px-6 py-3.5 text-xs font-bold text-slate-700 uppercase tracking-wider">Nama Ibu</th>
-                                <th class="px-6 py-3.5 text-xs font-bold text-slate-700 uppercase tracking-wider">Unit Posyandu</th>
-                                <th class="px-6 py-3.5 text-xs font-bold text-slate-700 uppercase tracking-wider">Usia Kehamilan</th>
-                                <th class="px-6 py-3.5 text-xs font-bold text-slate-700 uppercase tracking-wider">Tanggal</th>
-                                <th class="px-6 py-3.5 text-right text-xs font-bold text-slate-700 uppercase tracking-wider">Aksi</th>
+                            <tr class="bg-slate-50 border-b border-slate-200">
+                                <th class="px-6 py-3.5 text-xs font-black text-slate-500 uppercase tracking-wider">Nama Ibu</th>
+                                <th class="px-6 py-3.5 text-xs font-black text-slate-500 uppercase tracking-wider">Unit Posyandu</th>
+                                <th class="px-6 py-3.5 text-xs font-black text-slate-500 uppercase tracking-wider">Usia Kehamilan</th>
+                                <th class="px-6 py-3.5 text-xs font-black text-slate-500 uppercase tracking-wider">Tanggal</th>
+                                <th class="px-6 py-3.5 text-right text-xs font-black text-slate-500 uppercase tracking-wider">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-250">
+                        <tbody class="divide-y divide-slate-100">
                             @forelse($recentPregnancyRecords as $record)
-                            <tr class="hover:bg-slate-50 text-slate-800">
+                            <tr class="hover:bg-slate-50/80 transition-colors text-slate-800">
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-3">
-                                        <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-700 flex items-center justify-center font-extrabold text-sm border border-rose-100">
+                                        <div class="w-9 h-9 rounded-xl bg-rose-50 text-rose-700 flex items-center justify-center font-extrabold text-sm border border-rose-100 shadow-xs">
                                             {{ strtoupper(substr($record->patient?->full_name ?? 'I', 0, 2)) }}
                                         </div>
                                         <div>
-                                            <span class="block font-bold text-slate-900">{{ $record->patient?->full_name }}</span>
-                                            <span class="text-xs font-bold text-slate-500 uppercase block">NIK: {{ $record->patient?->id_number ?: '-' }}</span>
+                                            <span class="block font-bold text-slate-900 text-sm">{{ $record->patient?->full_name }}</span>
+                                            <span class="text-[10px] font-black text-slate-400 uppercase block tracking-wider mt-0.5">NIK: {{ $record->patient?->id_number ?: '-' }}</span>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 text-xs font-bold text-slate-700">{{ $record->patient?->posyandu?->name ?? '-' }}</td>
+                                <td class="px-6 py-4 text-xs font-bold text-slate-650">{{ $record->patient?->posyandu?->name ?? '-' }}</td>
                                 <td class="px-6 py-4">
-                                    <span class="inline-flex px-3 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-750 border border-rose-100">
+                                    <span class="inline-flex px-3 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-750 border border-rose-200/60">
                                         {{ $record->gestational_age ?: 'N/A' }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-xs font-bold text-slate-600">{{ \Carbon\Carbon::parse($record->visit_date)->translatedFormat('d M Y') }}</td>
                                 <td class="px-6 py-4 text-right">
-                                    <a href="{{ route('admin.patients.show', $record->patient_id) }}" class="w-9 h-9 inline-flex items-center justify-center rounded-xl bg-slate-100 text-slate-500 hover:bg-rose-600 hover:text-white transition-all shadow-xs">
+                                    <a href="{{ route('admin.patients.show', $record->patient_id) }}" class="w-9 h-9 inline-flex items-center justify-center rounded-xl bg-slate-100 text-slate-500 hover:bg-rose-600 hover:text-white hover:shadow-md hover:shadow-rose-600/10 transition-all border border-slate-200/60">
                                         <span class="material-symbols-outlined text-[20px]">visibility</span>
                                     </a>
                                 </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="5" class="px-6 py-10 text-center text-sm text-slate-500 font-bold bg-white">Belum ada pemeriksaan ibu hamil</td>
+                                <td colspan="5" class="px-6 py-12 text-center text-sm text-slate-400 font-bold bg-white">Belum ada pemeriksaan ibu hamil</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -667,11 +672,11 @@
             <livewire:admin.analytics.lansia-analytics :selected-year="$selectedYear" :selected-month="$selectedMonth" :selected-posyandu="$selectedPosyandu" />
 
             {{-- Recent Records for Lansia --}}
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
-                <div class="px-6 py-5 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/50">
+            <div class="bg-white rounded-3xl border border-slate-200 shadow-xs overflow-hidden">
+                <div class="px-6 py-5 border-b border-slate-150 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/50">
                     <div>
                         <h3 class="text-lg font-bold text-slate-900">Pemeriksaan Lansia Terbaru</h3>
-                        <p class="text-xs text-slate-500 mt-0.5">Daftar rekam medis pemeriksaan lansia terkini</p>
+                        <p class="text-xs text-slate-500 mt-0.5 font-semibold">Daftar rekam medis pemeriksaan lansia terkini</p>
                     </div>
                     <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto items-center">
                         <div class="relative w-full sm:w-64">
@@ -679,13 +684,13 @@
                                 <span class="material-symbols-outlined text-[20px]">search</span>
                             </span>
                             <input type="text" wire:model.live.debounce.300ms="tableSearch" 
-                                   class="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-teal-500 focus:border-teal-500 shadow-xs" 
+                                   class="w-full pl-10 pr-4 py-2 bg-white border border-slate-300 rounded-xl text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-teal-100 focus:border-teal-600 shadow-xs transition-all" 
                                    placeholder="Cari Nama atau NIK Lansia...">
                         </div>
                         <div class="flex items-center gap-2 w-full sm:w-auto">
-                            <span class="text-sm font-bold text-slate-700 whitespace-nowrap">Gender:</span>
+                            <span class="text-xs font-bold text-slate-650 whitespace-nowrap uppercase tracking-wider">Gender:</span>
                             <select wire:model.live="filterGender" 
-                                    class="w-full sm:w-36 py-2 px-3 bg-white border border-slate-300 rounded-xl text-sm font-semibold text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-teal-500 focus:border-teal-500 shadow-xs">
+                                    class="w-full sm:w-36 py-2 px-3 bg-white border border-slate-300 rounded-xl text-sm font-semibold text-slate-800 focus:outline-none focus:ring-4 focus:ring-teal-100 focus:border-teal-600 shadow-xs transition-all">
                                 <option value="">Semua</option>
                                 <option value="L">Laki-laki</option>
                                 <option value="P">Perempuan</option>
@@ -694,48 +699,48 @@
                     </div>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left">
+                    <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-slate-100 border-b border-slate-200">
-                                <th class="px-6 py-3.5 text-xs font-bold text-slate-700 uppercase tracking-wider">Nama Lansia</th>
-                                <th class="px-6 py-3.5 text-xs font-bold text-slate-700 uppercase tracking-wider">Unit Posyandu</th>
-                                <th class="px-6 py-3.5 text-xs font-bold text-slate-700 uppercase tracking-wider">Tekanan Darah</th>
-                                <th class="px-6 py-3.5 text-xs font-bold text-slate-700 uppercase tracking-wider">Gula Darah</th>
-                                <th class="px-6 py-3.5 text-xs font-bold text-slate-700 uppercase tracking-wider">Tanggal</th>
-                                <th class="px-6 py-3.5 text-right text-xs font-bold text-slate-700 uppercase tracking-wider">Aksi</th>
+                            <tr class="bg-slate-50 border-b border-slate-200">
+                                <th class="px-6 py-3.5 text-xs font-black text-slate-500 uppercase tracking-wider">Nama Lansia</th>
+                                <th class="px-6 py-3.5 text-xs font-black text-slate-500 uppercase tracking-wider">Unit Posyandu</th>
+                                <th class="px-6 py-3.5 text-xs font-black text-slate-500 uppercase tracking-wider">Tekanan Darah</th>
+                                <th class="px-6 py-3.5 text-xs font-black text-slate-500 uppercase tracking-wider">Gula Darah</th>
+                                <th class="px-6 py-3.5 text-xs font-black text-slate-500 uppercase tracking-wider">Tanggal</th>
+                                <th class="px-6 py-3.5 text-right text-xs font-black text-slate-500 uppercase tracking-wider">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-250">
+                        <tbody class="divide-y divide-slate-100">
                             @forelse($recentLansiaRecords as $record)
-                            <tr class="hover:bg-slate-50 text-slate-800">
+                            <tr class="hover:bg-slate-50/80 transition-colors text-slate-800">
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-3">
-                                        <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center font-extrabold text-sm border border-indigo-100">
+                                        <div class="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-750 flex items-center justify-center font-extrabold text-sm border border-indigo-100 shadow-xs">
                                             {{ strtoupper(substr($record->patient?->full_name ?? 'L', 0, 2)) }}
                                         </div>
                                         <div>
-                                            <span class="block font-bold text-slate-900">{{ $record->patient?->full_name }}</span>
-                                            <span class="text-xs font-bold text-slate-500 uppercase block">NIK: {{ $record->patient?->id_number ?: '-' }}</span>
+                                            <span class="block font-bold text-slate-900 text-sm">{{ $record->patient?->full_name }}</span>
+                                            <span class="text-[10px] font-black text-slate-400 uppercase block tracking-wider mt-0.5">NIK: {{ $record->patient?->id_number ?: '-' }}</span>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 text-xs font-bold text-slate-700">{{ $record->patient?->posyandu?->name ?? '-' }}</td>
+                                <td class="px-6 py-4 text-xs font-bold text-slate-650">{{ $record->patient?->posyandu?->name ?? '-' }}</td>
                                 <td class="px-6 py-4 text-xs font-bold text-slate-800">
-                                    {{ $record->systolic_bp ?: '-' }}/{{ $record->diastolic_bp ?: '-' }} mmHg
+                                    {{ $record->systolic_bp ?: '-' }}/{{ $record->diastolic_bp ?: '-' }} <span class="text-[10px] font-semibold text-slate-500">mmHg</span>
                                 </td>
                                 <td class="px-6 py-4 text-xs font-bold text-slate-800">
-                                    {{ $record->blood_sugar ?: '-' }} mg/dL
+                                    {{ $record->blood_sugar ?: '-' }} <span class="text-[10px] font-semibold text-slate-500">mg/dL</span>
                                 </td>
                                 <td class="px-6 py-4 text-xs font-bold text-slate-600">{{ \Carbon\Carbon::parse($record->visit_date)->translatedFormat('d M Y') }}</td>
                                 <td class="px-6 py-4 text-right">
-                                    <a href="{{ route('admin.patients.show', $record->patient_id) }}" class="w-9 h-9 inline-flex items-center justify-center rounded-xl bg-slate-100 text-slate-500 hover:bg-indigo-600 hover:text-white transition-all shadow-xs">
+                                    <a href="{{ route('admin.patients.show', $record->patient_id) }}" class="w-9 h-9 inline-flex items-center justify-center rounded-xl bg-slate-100 text-slate-500 hover:bg-indigo-650 hover:text-white hover:shadow-md hover:shadow-indigo-650/10 transition-all border border-slate-200/60">
                                         <span class="material-symbols-outlined text-[20px]">visibility</span>
                                     </a>
                                 </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-10 text-center text-sm text-slate-500 font-bold bg-white">Belum ada pemeriksaan lansia</td>
+                                <td colspan="6" class="px-6 py-12 text-center text-sm text-slate-400 font-bold bg-white">Belum ada pemeriksaan lansia</td>
                             </tr>
                             @endforelse
                         </tbody>
