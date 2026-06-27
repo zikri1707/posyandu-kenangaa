@@ -3,8 +3,10 @@
 namespace App\Livewire\Traits;
 
 use App\Models\Posyandu;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+
 
 /**
  * Trait untuk menangani pembatasan data (scoping) berdasarkan Role dan Posyandu pengguna.
@@ -16,6 +18,7 @@ trait HasPosyanduScope
      */
     protected function applyPosyanduScope(Builder $query, ?int $selectedPosyanduId = null): Builder
     {
+        /** @var User $user */
         $user = Auth::user();
 
         // Admin RW / Superadmin
@@ -49,6 +52,7 @@ trait HasPosyanduScope
      */
     protected function getAllowedPosyandus()
     {
+        /** @var User $user */
         $user = Auth::user();
 
         if ($user->isSuperAdmin()) {

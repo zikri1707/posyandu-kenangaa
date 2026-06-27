@@ -15,7 +15,9 @@
 
     <!-- Scripts & Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @stack('head')
 </head>
+
 <body class="antialiased overflow-x-hidden" style="font-family:'Public Sans',sans-serif;">
 
     {{-- Komponen Navbar Modular --}}

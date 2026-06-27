@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
@@ -12,6 +13,7 @@ class DashboardController extends Controller
             return redirect()->route('login');
         }
 
+        /** @var User $user */
         $user = Auth::user();
 
         // Redirect based on user role
