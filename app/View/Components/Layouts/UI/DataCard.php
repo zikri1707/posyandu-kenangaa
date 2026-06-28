@@ -8,11 +8,11 @@ use Illuminate\View\Component;
 
 class DataCard extends Component
 {
-    public $title;
+    public ?string $title;
 
-    public $icon;
+    public ?string $icon;
 
-    public $variant;
+    public string $variant;
 
     /**
      * Create a new component instance.

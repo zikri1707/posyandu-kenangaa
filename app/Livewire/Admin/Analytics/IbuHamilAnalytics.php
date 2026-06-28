@@ -10,8 +10,14 @@ class IbuHamilAnalytics extends Component
 {
     use HasPosyanduScope;
 
+<<<<<<< HEAD
     #[Reactive]
     public $selectedYear;
+=======
+    public ?int $selectedYear = null;
+    public ?int $selectedMonth = null;
+    public ?int $selectedPosyandu = null;
+>>>>>>> bc548dd93fee3cc7787407528fa68fa3737e5322
 
     #[Reactive]
     public $selectedMonth;

@@ -12,7 +12,7 @@ class RoleMiddleware
     /**
      * The activity log service instance.
      */
-    protected $activityLogService;
+    protected ActivityLogService $activityLogService;
 
     /**
      * Create a new middleware instance.
@@ -27,7 +27,7 @@ class RoleMiddleware
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, ...$roles): Response
+    public function handle(Request $request, Closure $next, string ...$roles): Response
     {
         if (! $request->user() || ! in_array($request->user()->role, $roles)) {
             $this->logUnauthorizedAccess($request, $roles);

@@ -8,9 +8,9 @@ use Illuminate\View\Component;
 
 class Alert extends Component
 {
-    public $type;
+    public string $type;
 
-    public $message;
+    public ?string $message;
 
     /**
      * Create a new component instance.

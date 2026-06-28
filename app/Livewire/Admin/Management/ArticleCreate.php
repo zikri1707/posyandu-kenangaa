@@ -6,6 +6,7 @@ use App\Livewire\Shared\BaseAdminComponent;
 use App\Models\Article;
 use App\Models\Category;
 use App\Services\ArticleService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\WithFileUploads;
@@ -19,7 +20,7 @@ class ArticleCreate extends BaseAdminComponent
     public string $content    = '';   // JSON string dari Alpine editor
     public string $status     = 'draft';
     public ?int   $category_id = null;
-    public $cover = null;
+    public mixed  $cover = null;
 
     protected function rules(): array
     {
@@ -63,7 +64,7 @@ class ArticleCreate extends BaseAdminComponent
         unset($validated['cover']);
 
         // Inject service via app() karena Livewire v3 tidak support DI di method Alpine
-        app(ArticleService::class)->createArticle($validated, auth()->user());
+        app(ArticleService::class)->createArticle($validated, Auth::user());
         
         $this->notify('Artikel berhasil disimpan.', 'success', true);
         return redirect()->route('admin.articles.index');
@@ -78,7 +79,7 @@ class ArticleCreate extends BaseAdminComponent
         $validated['thumbnail'] = $validated['cover'];
         unset($validated['cover']);
 
-        $service->createArticle($validated, auth()->user());
+        $service->createArticle($validated, Auth::user());
 
         $this->notify('Artikel berhasil disimpan.', 'success', true);
 

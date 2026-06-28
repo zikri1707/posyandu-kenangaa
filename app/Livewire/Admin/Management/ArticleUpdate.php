@@ -19,8 +19,8 @@ class ArticleUpdate extends BaseAdminComponent
     public string $content    = '';   // JSON string dari Alpine editor
     public string $status     = '';
     public ?int   $category_id = null;
-    public $cover;
-    public $existingCover;
+    public mixed $cover = null;
+    public ?string $existingCover = null;
 
     public function mount(Article $article): void
     {

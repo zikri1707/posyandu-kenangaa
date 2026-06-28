@@ -3,8 +3,11 @@
 namespace App\Livewire\Admin\Management;
 
 use App\Livewire\Shared\BaseAdminComponent;
+use App\Models\Posyandu;
 use App\Models\Schedule;
 use App\Services\ScheduleService;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
@@ -51,12 +54,9 @@ class ScheduleManagement extends BaseAdminComponent
         'posyandu_id' => ['except' => ''],
     ];
 
-    /**
-     * Inisialisasi komponen.
-     */
     public function mount(): void
     {
-        $user = auth()->user();
+        $user = Auth::user();
         if (! $user->isSuperAdmin()) {
             $this->selected_posyandu_id = $user->posyandu_id;
         }
@@ -90,7 +90,7 @@ class ScheduleManagement extends BaseAdminComponent
             'posyandu_id' => $this->selected_posyandu_id,
         ];
 
-        $service->createSchedule($data, auth()->user());
+        $service->createSchedule($data, Auth::user());
 
         $this->reset(['title', 'description', 'start_time', 'end_time', 'location', 'new_status', 'showCreateModal']);
         $this->notify('Jadwal baru berhasil ditambahkan.');
@@ -119,10 +119,7 @@ class ScheduleManagement extends BaseAdminComponent
         ]);
     }
 
-    /**
-     * Menghitung statistik untuk Dashboard Jadwal.
-     */
-    private function getStats($query): array
+    private function getStats(Builder $query): array
     {
         $now = now();
         $stats = (clone $query)
@@ -140,10 +137,7 @@ class ScheduleManagement extends BaseAdminComponent
         ];
     }
 
-    /**
-     * Mendapatkan agenda mendatang paling dekat.
-     */
-    private function getUpcomingAgenda($query): ?Schedule
+    private function getUpcomingAgenda(Builder $query): ?Schedule
     {
         return (clone $query)
             ->where('status', 'upcoming')

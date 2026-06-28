@@ -6,6 +6,7 @@ use App\Livewire\Shared\BaseAdminComponent;
 use App\Models\Posyandu;
 use App\Models\User;
 use App\Services\UserService;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 
 #[Layout('layouts.admin-layout')]
@@ -49,7 +50,7 @@ class UserManagement extends BaseAdminComponent
         ]);
     }
 
-    public function toggleRole($id)
+    public function toggleRole(int $id)
     {
         $user = User::findOrFail($id);
         
@@ -65,12 +66,12 @@ class UserManagement extends BaseAdminComponent
         $this->notify('Role user ' . $user->name . ' berhasil diubah menjadi ' . strtoupper($user->role) . '.');
     }
 
-    public function delete($id)
+    public function delete(int $id)
     {
         $user = User::findOrFail($id);
         
         // Prevent deleting self
-        if ($user->id === auth()->id()) {
+        if ($user->id === Auth::id()) {
             $this->notify('Anda tidak dapat menghapus akun Anda sendiri.', 'error');
             return;
         }

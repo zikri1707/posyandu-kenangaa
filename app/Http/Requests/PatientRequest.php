@@ -26,7 +26,7 @@ class PatientRequest extends FormRequest
     /**
      * Configure the validator instance.
      */
-    public function withValidator($validator): void
+    public function withValidator(\Illuminate\Validation\Validator $validator): void
     {
         $validator->after(function ($validator) {
             if ($validator->errors()->has('id_number_hash')) {

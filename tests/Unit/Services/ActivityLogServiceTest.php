@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @var Tests\TestCase $this
+ * @property \App\Models\User $user
+ * @property \App\Services\ActivityLogService $service
+ */
+
 use App\Models\ActivityLog;
 use App\Models\User;
 use App\Services\ActivityLogService;

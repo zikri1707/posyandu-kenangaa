@@ -176,7 +176,7 @@ class GrowthChartService
     // Helper Methods
     // ─────────────────────────────────────────────
 
-    private function createReferenceDataset(string $label, $data, string $color, int $width = 1, string $style = 'solid'): array
+    private function createReferenceDataset(string $label, array $data, string $color, int $width = 1, string $style = 'solid'): array
     {
         return [
             'label' => $label,
@@ -229,7 +229,7 @@ class GrowthChartService
     public function getLansiaHealthData(Patient $patient): array
     {
         $records = $patient->medicalRecords()
-            ->orderBy('visit_date')
+            ->reorder('visit_date', 'asc')
             ->get();
 
         $labels = [];

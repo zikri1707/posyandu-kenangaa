@@ -6,7 +6,7 @@
         <p class="text-[12px] font-medium text-on-surface-variant">
             &copy; {{ date('Y') }}
             <span class="font-bold text-primary">{{ config('app.name', 'Posyandu') }}</span>.
-            Sistem Pengelolaan Data Posyandu Bekasi Timur.
+            Sistem Pengelolaan Data Posyandu ILP Kenanga Bekasi Timur.
         </p>
 
         <div class="flex items-center gap-3 text-[11px] font-semibold uppercase tracking-wider text-outline">

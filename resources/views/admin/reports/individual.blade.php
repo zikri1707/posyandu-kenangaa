@@ -467,7 +467,7 @@
                                     <span class="text-[13px] font-bold text-slate-700 group-hover:text-teal-700 transition-colors">{{ $vit['note'] }}</span>
                                     <span class="text-[10px] font-medium text-slate-400 mt-0.5"><span class="font-bold">Diberikan:</span> {{ $vit['date'] }}</span>
                                 </div>
-                                <span class="text-[9px] font-black uppercase px-3 py-1.5 rounded-xl border @if($vit['color']=='red') bg-rose-50 text-rose-600 border-rose-100 @else bg-blue-50 text-blue-600 border-blue-100 @endif shadow-inner-sm">{{ $vit['color'] }}</span>
+                                <span class="text-[9px] font-black uppercase px-3 py-1.5 rounded-xl border {{ $vit['color'] == 'red' ? 'bg-rose-50 text-rose-600 border-rose-100' : 'bg-blue-50 text-blue-600 border-blue-100' }} shadow-inner-sm">{{ $vit['color'] }}</span>
                             </div>
                         @empty
                             <div class="h-full flex flex-col items-center justify-center py-8 text-center">

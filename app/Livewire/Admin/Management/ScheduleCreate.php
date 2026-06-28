@@ -6,6 +6,7 @@ use App\Models\Posyandu;
 use App\Models\Schedule;
 use App\Models\User;
 use App\Services\ScheduleService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 use Livewire\Attributes\Layout;
@@ -37,7 +38,7 @@ class ScheduleCreate extends Component
     public function mount(): void
     {
         /** @var User $user */
-        $user = auth()->user();
+        $user = Auth::user();
         if (! $user->isSuperAdmin()) {
             $this->posyandu_id = $user->posyandu_id;
         }
@@ -68,7 +69,7 @@ class ScheduleCreate extends Component
         $validated = $this->validate();
 
         /** @var User $user */
-        $user = auth()->user();
+        $user = Auth::user();
         $service->createSchedule($validated, $user);
 
         session()->flash('success', 'Jadwal kegiatan berhasil ditambahkan.');
@@ -82,7 +83,7 @@ class ScheduleCreate extends Component
     public function render(): View
     {
         /** @var User $user */
-        $user     = auth()->user();
+        $user     = Auth::user();
         $posyandus = $user->isSuperAdmin()
             ? Posyandu::orderBy('name')->get()
             : Posyandu::where('id', $user->posyandu_id)->get();

@@ -27,7 +27,7 @@
                 <p class="text-base font-black text-slate-800">Unduh Contoh File</p>
             </div>
         </div>
-        <div class="bg-white p-6 rounded-3xl border border-amber-200 bg-amber-50/30 flex items-center gap-5 shadow-sm">
+        <div class="p-6 rounded-3xl border border-amber-200 bg-amber-50/30 flex items-center gap-5 shadow-sm">
             <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl font-black">2</div>
             <div>
                 <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Langkah Kedua</p>
@@ -90,9 +90,9 @@
                             </label>
                             
                             <div id="dropzone"
-                                 class="relative border-4 border-dashed border-slate-100 rounded-[2.5rem] p-12 text-center cursor-pointer
+                                 class="relative border-4 border-dashed rounded-[2.5rem] p-12 text-center cursor-pointer
                                         hover:border-teal-400 hover:bg-teal-50/50 transition-all group shadow-inner
-                                        @error('file') border-red-200 bg-red-50 @enderror"
+                                        {{ $errors->has('file') ? 'border-red-200 bg-red-50' : 'border-slate-100' }}"
                                  onclick="document.getElementById('fileInput').click()">
                                 <input type="file" id="fileInput" name="file" accept=".csv,.xlsx,.xls"
                                        class="hidden" onchange="handleFileSelect(this)">

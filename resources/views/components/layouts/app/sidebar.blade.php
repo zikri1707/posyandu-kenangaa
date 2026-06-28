@@ -1,24 +1,22 @@
 {{-- Sidebar Component --}}
 <aside id="sidebar"
-    class="shrink-0 flex flex-col h-screen fixed lg:sticky top-0 left-0 z-50 overflow-hidden transition-all duration-300 ease-in-out"
-    style="width:260px; background:#ffffff; border-right:1px solid rgba(0,0,0,0.07); box-shadow:1px 0 12px rgba(0,0,0,0.04);">
+    class="shrink-0 flex flex-col h-screen fixed lg:sticky top-0 left-0 z-50 overflow-hidden transition-all duration-300 ease-in-out bg-white dark:bg-slate-900 border-r border-slate-100 dark:border-slate-800/80 shadow-md shadow-slate-100/30 dark:shadow-none"
+    style="width:260px;">
 
     {{-- ── Logo & Toggle ── --}}
-    <div class="h-16 flex items-center justify-between px-4 shrink-0"
-         style="border-bottom:1px solid rgba(0,0,0,0.06);">
+    <div class="h-16 flex items-center justify-between px-4 shrink-0 border-b border-slate-100 dark:border-slate-800/80">
         <a href="{{ route('dashboard') }}" class="flex items-center gap-3 group sidebar-logo min-w-0">
-            <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm"
-                 style="background:linear-gradient(135deg,#006c49 0%,#0d9488 100%);">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm bg-gradient-to-br from-emerald-600 to-teal-600">
                 <i class="fas fa-heartbeat text-white" style="font-size:15px;"></i>
             </div>
             <div class="sidebar-text overflow-hidden transition-all duration-300">
-                <span class="block font-extrabold text-slate-900 leading-none" style="font-size:15px; letter-spacing:-0.02em;">Posyandu</span>
-                <span class="block text-slate-400 font-semibold" style="font-size:10px; letter-spacing:.08em; margin-top:2px; text-transform:uppercase;">Admin Dashboard</span>
+                <span class="block font-extrabold text-slate-800 dark:text-slate-100 leading-none text-[15px] tracking-tight">Posyandu</span>
+                <span class="block text-slate-400 dark:text-slate-500 font-bold text-[9px] tracking-widest mt-1.5 uppercase">ILP Kenanga</span>
             </div>
         </a>
 
         <button id="sidebarToggleBtn"
-            class="hidden lg:flex w-7 h-7 items-center justify-center rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all shrink-0"
+            class="hidden lg:flex w-7 h-7 items-center justify-center rounded-lg text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all shrink-0"
             title="Toggle sidebar">
             <i id="toggleIcon" class="fas fa-chevron-left transition-transform duration-300" style="font-size:9px;"></i>
         </button>
@@ -33,8 +31,8 @@
         @endphp
 
         {{-- Section: Overview --}}
-        <div class="sidebar-section-label px-2 mb-1.5 mt-2 transition-all duration-300">
-            <span class="block font-bold text-slate-400" style="font-size:10px; letter-spacing:.1em; text-transform:uppercase;">Ringkasan</span>
+        <div class="sidebar-section-label px-3.5 mb-2 mt-4 transition-all duration-300">
+            <span class="block text-[10px] font-black tracking-widest text-slate-400 dark:text-slate-500 uppercase">Ringkasan</span>
         </div>
 
         <a href="{{ route('dashboard') }}"
@@ -50,8 +48,8 @@
         </a>
 
         {{-- Section: Manajemen --}}
-        <div class="sidebar-section-label px-2 mb-1.5 mt-5 transition-all duration-300">
-            <span class="block font-bold text-slate-400" style="font-size:10px; letter-spacing:.1em; text-transform:uppercase;">Manajemen</span>
+        <div class="sidebar-section-label px-3.5 mb-2 mt-5 transition-all duration-300">
+            <span class="block text-[10px] font-black tracking-widest text-slate-400 dark:text-slate-500 uppercase">Manajemen</span>
         </div>
 
         @php
@@ -83,8 +81,8 @@
 
         {{-- Section: Laporan --}}
         @if(auth()->user()->isSuperAdmin() || auth()->user()->isAdmin() || auth()->user()->isKader())
-        <div class="sidebar-section-label px-2 mb-1.5 mt-5 transition-all duration-300">
-            <span class="block font-bold text-slate-400" style="font-size:10px; letter-spacing:.1em; text-transform:uppercase;">Laporan & Riwayat</span>
+        <div class="sidebar-section-label px-3.5 mb-2 mt-5 transition-all duration-300">
+            <span class="block text-[10px] font-black tracking-widest text-slate-400 dark:text-slate-500 uppercase">Laporan & Riwayat</span>
         </div>
 
         <a href="{{ route('admin.reports.index') }}"
@@ -104,8 +102,8 @@
 
         {{-- Section: Konten --}}
         @if(auth()->user()->isSuperAdmin() || auth()->user()->isAdmin() || auth()->user()->isKader())
-        <div class="sidebar-section-label px-2 mb-1.5 mt-5 transition-all duration-300">
-            <span class="block font-bold text-slate-400" style="font-size:10px; letter-spacing:.1em; text-transform:uppercase;">Konten</span>
+        <div class="sidebar-section-label px-3.5 mb-2 mt-5 transition-all duration-300">
+            <span class="block text-[10px] font-black tracking-widest text-slate-400 dark:text-slate-500 uppercase">Konten</span>
         </div>
 
         @php
@@ -133,8 +131,8 @@
 
         {{-- Section: Sistem --}}
         @if(auth()->user()->isSuperAdmin())
-        <div class="sidebar-section-label px-2 mb-1.5 mt-5 transition-all duration-300">
-            <span class="block font-bold text-slate-400" style="font-size:10px; letter-spacing:.1em; text-transform:uppercase;">Sistem</span>
+        <div class="sidebar-section-label px-3.5 mb-2 mt-5 transition-all duration-300">
+            <span class="block text-[10px] font-black tracking-widest text-slate-400 dark:text-slate-500 uppercase">Sistem</span>
         </div>
 
         <a href="{{ route('admin.users.index') }}"
@@ -147,15 +145,15 @@
     </nav>
 
     {{-- ── User Footer ── --}}
-    <div class="shrink-0 p-3" style="border-top:1px solid rgba(0,0,0,0.06);">
-        <div class="flex items-center gap-3 p-2.5 rounded-xl transition-all duration-200 cursor-pointer hover:bg-slate-50 group">
+    <div class="shrink-0 p-3 border-t border-slate-100 dark:border-slate-800/80">
+        <div class="flex items-center gap-3 p-2 rounded-xl transition-all duration-200 hover:bg-slate-50 dark:hover:bg-slate-800/40 group">
             {{-- Avatar --}}
             <x-avatar :name="Auth::user()->name" size="small" status="online" />
 
             {{-- Info --}}
             <div class="sidebar-text flex-1 min-w-0 transition-all duration-300">
-                <p class="text-slate-800 font-bold truncate leading-tight text-[13px]">{{ Auth::user()->name ?? 'Admin' }}</p>
-                <p class="text-slate-400 truncate text-[11px] font-medium mt-0.5">
+                <p class="text-slate-800 dark:text-slate-200 font-bold truncate leading-tight text-[13px]">{{ Auth::user()->name ?? 'Admin' }}</p>
+                <p class="text-slate-400 dark:text-slate-500 truncate text-[11px] font-semibold mt-0.5">
                     {{ auth()->user()->role_label }}
                 </p>
             </div>
@@ -163,13 +161,10 @@
             {{-- Logout --}}
             <form method="POST" action="{{ route('logout') }}" class="shrink-0 sidebar-text overflow-hidden transition-all duration-300">
                 @csrf
-                <button type="submit" class="Btn" title="Keluar">
-                    <div class="sign">
-                        <svg viewBox="0 0 512 512">
-                            <path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"></path>
-                        </svg>
-                    </div>
-                    <div class="text">Keluar</div>
+                <button type="submit" 
+                        class="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 dark:text-slate-500 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 transition-all cursor-pointer border-0" 
+                        title="Keluar">
+                    <i class="fas fa-right-from-bracket text-[14px]"></i>
                 </button>
             </form>
         </div>

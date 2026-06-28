@@ -67,7 +67,7 @@ class Patient extends Model
     /**
      * Generate a deterministic hash for searching (Blind Index).
      */
-    public static function generateBlindIndex($value): string
+    public static function generateBlindIndex(string $value): string
     {
         return hash_hmac('sha256', $value, config('app.encryption_key') ?? 'default_pepper');
     }
