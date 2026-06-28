@@ -295,27 +295,22 @@
                             </span>
                         </td>
                         <td class="px-6 py-5">
-<<<<<<< Updated upstream
-                            <div class="font-bold text-sm text-on-surface">{{ $record->patient->full_name ?? '-' }}</div>
-                            <div class="text-[11px] font-medium text-outline font-mono mt-0.5">{{ $record->patient->id_number ?? '' }}</div>
-=======
                             <div class="flex items-center gap-3">
                                 @if($record->patient?->profile_photo)
-                                    <img src="{{ asset('storage/' . $record->patient->profile_photo) }}" class="h-9 w-9 rounded-xl object-cover border border-slate-100 flex-shrink-0">
+                                    <img src="{{ asset('storage/' . $record->patient->profile_photo) }}" class="h-9 w-9 rounded-xl object-cover border border-outline-variant flex-shrink-0">
                                 @else
                                     @php
                                         $initials = $record->patient ? strtoupper(substr($record->patient->full_name, 0, 2)) : '-';
                                     @endphp
-                                    <div class="h-9 w-9 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center font-bold text-xs flex-shrink-0 font-sans">
+                                    <div class="h-9 w-9 rounded-xl bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-xs flex-shrink-0 font-sans">
                                         {{ $initials }}
                                     </div>
                                 @endif
                                 <div>
-                                    <div class="font-bold text-sm text-slate-800">{{ $record->patient->full_name ?? '-' }}</div>
-                                    <div class="text-[11px] font-medium text-slate-500 font-mono mt-0.5">{{ $record->patient->id_number ?? '' }}</div>
+                                    <div class="font-bold text-sm text-on-surface">{{ $record->patient->full_name ?? '-' }}</div>
+                                    <div class="text-[11px] font-medium text-outline font-mono mt-0.5">{{ $record->patient->id_number ?? '' }}</div>
                                 </div>
                             </div>
->>>>>>> Stashed changes
                         </td>
                         <td class="px-6 py-5">
                             @if($record->patient?->birth_date)
