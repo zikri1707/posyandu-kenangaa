@@ -112,7 +112,7 @@
     </div>
 
     {{-- 3. BLOCK EDITOR --}}
-    <div id="blocks-container" wire:ignore class="relative mb-12">
+    <div id="blocks-container" wire:ignore class="relative mb-12" @input="showContentError = false">
 
         <template x-for="(block, index) in blocks" :key="block.id">
             <div class="relative group/row -ml-12 pl-12"
@@ -564,6 +564,9 @@
                 <span class="material-symbols-outlined text-[13px]">error</span> {{ $message }}
             </p>
         @enderror
+        <p x-show="showContentError" class="mt-4 text-xs text-red-500 font-bold flex items-center gap-1" style="display: none;">
+            <span class="material-symbols-outlined text-[13px]">error</span> Isi artikel wajib ditulis (konten tidak boleh kosong)
+        </p>
     </div>
 
     {{-- 4. KATEGORI & STATUS --}}
@@ -678,6 +681,7 @@ function articleEditor() {
         formatBarStyle: '',
         showCategoryError: false,
         showStatusError: false,
+        showContentError: false,
 
         init() {
             this.blocks = [{ id: this.nextId++, type: 'paragraph', content: '' }];
@@ -999,9 +1003,12 @@ function articleEditor() {
                 return el ? el.innerText.trim().length > 0 : (b.content || '').trim().length > 0;
             });
             if (!hasContent) {
+                this.showContentError = true;
                 const el = document.getElementById('block-' + this.blocks[0]?.id);
                 if (el) el.focus();
                 valid = false;
+            } else {
+                this.showContentError = false;
             }
 
             if (!valid) return;

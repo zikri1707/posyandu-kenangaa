@@ -61,7 +61,7 @@
 
                     @if(auth()->user()->isSuperAdmin())
                         <div>
-                            <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Unit Posyandu</label>
+                            <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Unit Posyandu <span class="text-red-500">*</span></label>
                             <x-forms.select-input name="posyandu_id" placeholder="Pilih Posyandu (Opsional)" :placeholderDisabled="false" value="{{ old('posyandu_id', $folder->posyandu_id) }}" class="!bg-slate-50 !border-slate-100 !rounded-2xl !h-12 focus:!ring-0 focus:!border-teal-500 focus:!bg-white !shadow-none !border-2">
                                 <option value="">Semua Posyandu (Global)</option>
                                 @foreach($posyandus as $posyandu)
