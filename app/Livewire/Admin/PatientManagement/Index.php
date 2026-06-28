@@ -16,9 +16,9 @@ class Index extends BaseAdminComponent
 
     public string $category = 'all';
 
-    public string $sortBy = 'created_at';
+    public string $sortBy = 'name';
 
-    public string $sortDirection = 'desc';
+    public string $sortDirection = 'asc';
 
     public bool $showDeleteModal = false;
 

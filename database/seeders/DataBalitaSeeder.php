@@ -11,6 +11,121 @@ use Carbon\Carbon;
 
 class DataBalitaSeeder extends Seeder
 {
+    private static array $nameMap = [
+        'A. Zafran U.R' => 'A. ZAFRAN. U.R',
+        'Abhiprana A.S' => 'ABHIPRAYA ATTAR SOESENO',
+        'Abhipraya A' => 'ABHIPRAYA ATTAR SOESENO',
+        'Abraham' => 'ABRAHAM',
+        'Adeela Fida' => 'AQEELA FIDA. K',
+        'Adi Tama' => 'ADITAMA A. F',
+        'Aisyah Hanin' => 'AISYAH HANIN.K',
+        'Albertina A' => 'Albertina A',
+        'Albira' => 'ALBIRU R. H',
+        'Albiru' => 'ALBIRU R. H',
+        'Alena Shalihah' => 'ALENA SALIHAH',
+        'Alfian Zafran' => 'Alfian Zafran',
+        'Alfian Zaftan M' => 'Alfian Zafran',
+        'Angawira A.A' => 'ARGAWIRA ARSYSNENDRA. A',
+        'Anindya Dhea' => 'ANINDYA ZHEA JUSTITIA',
+        'Anindya Shea' => 'ANINDYA ZHEA JUSTITIA',
+        'Anindya Zhea' => 'ANINDYA ZHEA JUSTITIA',
+        'Annisa Jafran' => 'ANNISA ZAFRAN A',
+        'Annisa Zafran' => 'ANNISA ZAFRAN A',
+        'Arcelia A.A' => 'Arcelia A.A',
+        'Arfan Sidai' => 'ARFAN SIDQI. A',
+        'Arfan Sidqi' => 'ARFAN SIDQI. A',
+        'Argawira A.A' => 'ARGAWIRA ARSYSNENDRA. A',
+        'Arka' => 'ARKA',
+        'Arka R' => 'ARKA',
+        'Aseela Fida' => 'AQEELA FIDA. K',
+        'Ashraf Faisan' => 'ASHRAF FAIZAN',
+        'Askara A' => 'Askara A',
+        'Assela Fida' => 'AQEELA FIDA. K',
+        'Athertina A.G' => 'Albertina A',
+        'Azam Rafasya' => 'AZAM RAFASYA. A',
+        'Azzam Rafasya' => 'AZAM RAFASYA. A',
+        'Azzam Ropasisa' => 'AZAM RAFASYA. A',
+        'Barra Al Fatih' => 'Barra Al Fatih',
+        'Barrea Chazada' => 'Barrea Ghazala',
+        'Barrea Ghazala' => 'Barrea Ghazala',
+        'Barrea Ghazala A' => 'Barrea Ghazala',
+        'Bladis A' => 'GLADIS ASMARALAYA',
+        'Calvin Zane' => 'GALVIN ZANE. K',
+        'Cerenah U.T' => 'Serenata U.T',
+        'Chayra Aretha' => 'Chayra Aretha',
+        'Ciara Hafza' => 'Ciara Hafza',
+        'Elisa Shanum' => 'ELISA SHANUM A.',
+        'Elisa Shanum A' => 'ELISA SHANUM A.',
+        'Faiza Takzia' => 'FAIZA TAKZIA. S',
+        'Fatimah' => 'FATIMAH YUMI A.',
+        'Fatimah Yomi' => 'FATIMAH YUMI A.',
+        'Fatimah Yumi' => 'FATIMAH YUMI A.',
+        'Fatimah Yuni' => 'FATIMAH YUMI A.',
+        'Faturrasya Shabir' => 'Faturrasya Shabir',
+        'Galvin Zane' => 'GALVIN ZANE. K',
+        'Ganesh M.D' => 'GANES M. D.',
+        'Ganester' => 'GANES M. D.',
+        'Ganesti' => 'GANES M. D.',
+        'Gladis A' => 'GLADIS ASMARALAYA',
+        'Grace Veliora' => 'GRACE VELIORA',
+        'Hasan Asyub A' => 'Hasan Ayyub A',
+        'Hasan Ayyub A' => 'Hasan Ayyub A',
+        'Haura R.R' => 'HAURA R. R,',
+        'Isabina A.L' => 'TSABINA. A. L',
+        'Jasmin' => 'Jasmin',
+        'Kautsar Arsaka' => 'Kautsar Arsaka',
+        'Khaizanu' => 'KHAIZANU. R. AL',
+        'Khanza Hamdia A' => 'Khanza Hamdia A',
+        'Kirai Hafza H' => 'KIREI HIFZA H.',
+        'Kirei  Hafza H' => 'KIREI HIFZA H.',
+        'Lanang V.A' => 'Lanang V.A',
+        'M. Albifarzan' => 'M. ALBIFARDZAN Z.',
+        'M. Azzumar' => 'M. AZZUMAR',
+        'M. Ibrahim R' => 'M. IBRAHIM',
+        'M. Ichsan A' => 'M. ICHSAN AL. F',
+        'M. Maulia R' => 'M MAULINA R.',
+        'M. Said' => 'M.SAID. R',
+        'M. Zacky' => 'M. ZACKY J.',
+        'M. Zacky J' => 'M. ZACKY J.',
+        'M. Zaid U' => 'M. ZAID U.',
+        'M. Zidan A' => 'M. ZIDAN A',
+        'M. Zidan Rafdi' => 'M. ZIDAN A',
+        'Mabila Warna' => 'NABILA WARNA QIRANI',
+        'Mahira N.P.E.A' => 'MAHIRA. N. E. P. B',
+        'Michayla A.F' => 'MIKHAYLA. A. F',
+        'Mikael' => 'MIKAEL',
+        'Mikail' => 'MIKAIL AURIGA R.',
+        'Mikhayla A.F' => 'MIKHAYLA. A. F',
+        'Mishael N.P.A' => 'MISHAEL N. P. A',
+        'Mistiael V.P.A' => 'MISHAEL N. P. A',
+        'Moriel N.P.A' => 'MORIEL N. P. E.',
+        'Nabila Warna' => 'NABILA WARNA QIRANI',
+        'Nafa Nael' => 'NATA NAEL',
+        'Naha Mael' => 'NATA NAEL',
+        'Nata Noel' => 'NATA NAEL',
+        'Nita Noel' => 'NATA NAEL',
+        'Oki' => 'MIKAIL AURIGA R.',
+        'Raisa Amarilia' => 'Raisa Amarilia S',
+        'Raisa Amarilia S' => 'Raisa Amarilia S',
+        'Ratu Raline VCB' => 'RATU RALINE V. C. B',
+        'Raty Raline VCB' => 'RATU RALINE V. C. B',
+        'Ryuga A.H' => 'RYUGA. A. H',
+        'Sabhika' => 'SABHIRA',
+        'Sabhira' => 'SABHIRA',
+        'Sabhira N.R' => 'SABHIRA',
+        'Sabrina' => 'SABHIRA',
+        'Safia' => 'SAFIQ',
+        'Salwa D. 2' => 'SALWA. D. Z',
+        'Salwa D.Z' => 'SALWA. D. Z',
+        'Serenata U.T' => 'Serenata U.T',
+        'Shaynala' => 'SHAYNALA A. P',
+        'Soca M.N' => 'SOCA M. N.',
+        'Tsabina A.L' => 'TSABINA. A. L',
+        'Vallera Carmen R' => 'VALLERA DARREN. R',
+        'Vallera Darren' => 'VALLERA DARREN. R',
+        'Vallera Darren R' => 'VALLERA DARREN. R'
+    ];
+
     public function run()
     {
         $calculator = app(NutritionCalculatorService::class);
@@ -281,22 +396,10 @@ class DataBalitaSeeder extends Seeder
             $height = $item[6];
             $weightStatus = $item[7];
 
-            $patient = Patient::where('full_name', 'like', $name)->first();
+            $mappedName = self::$nameMap[$name] ?? $name;
+            $patient = Patient::where('full_name', 'like', $mappedName)->first();
             if (!$patient) {
-                $patient = Patient::create([
-                    'full_name' => $name,
-                    'category' => 'balita',
-                    'gender' => $gender,
-                    'birth_date' => $birthDate,
-                    'mother_name' => $ortu,
-                    'dusun_rt_rw' => $rtRw,
-                    'weight_at_birth' => 3.0,
-                    'height_at_birth' => 50.0,
-                    'status_mutasi' => 'aktif',
-                    'posyandu_id' => $posyanduId,
-                    'id_number' => \Faker\Factory::create('id_ID')->unique()->numerify('################'),
-                    'address' => 'RT/RW ' . $rtRw
-                ]);
+                continue;
             }
 
             $actualBirthDate = Carbon::parse($patient->birth_date);
@@ -321,25 +424,10 @@ class DataBalitaSeeder extends Seeder
             $height = $item[7];
             $weightStatus = $item[8];
 
-            $patient = Patient::where('full_name', 'like', $name)->first();
+            $mappedName = self::$nameMap[$name] ?? $name;
+            $patient = Patient::where('full_name', 'like', $mappedName)->first();
             if (!$patient) {
-                if (!$birthDate) {
-                    $birthDate = $carbonVisitDate->copy()->subMonths($ageMonths)->format('Y-m-d');
-                }
-                $patient = Patient::create([
-                    'full_name' => $name,
-                    'category' => 'balita',
-                    'gender' => $gender,
-                    'birth_date' => $birthDate,
-                    'mother_name' => $ortu,
-                    'dusun_rt_rw' => $rtRw,
-                    'weight_at_birth' => 3.0,
-                    'height_at_birth' => 50.0,
-                    'status_mutasi' => 'aktif',
-                    'posyandu_id' => $posyanduId,
-                    'id_number' => \Faker\Factory::create('id_ID')->unique()->numerify('################'),
-                    'address' => 'RT/RW ' . $rtRw
-                ]);
+                continue;
             } else {
                 if ($birthDate) {
                     $patient->update(['birth_date' => $birthDate]);
@@ -371,22 +459,10 @@ class DataBalitaSeeder extends Seeder
             $weightStatus = $item[7];
             $statusMutasi = ($item[8] === 'Pindah') ? 'pindah' : 'aktif';
 
-            $patient = Patient::where('full_name', 'like', $name)->first();
+            $mappedName = self::$nameMap[$name] ?? $name;
+            $patient = Patient::where('full_name', 'like', $mappedName)->first();
             if (!$patient) {
-                $patient = Patient::create([
-                    'full_name' => $name,
-                    'category' => 'balita',
-                    'gender' => $gender,
-                    'birth_date' => $birthDate,
-                    'mother_name' => $ortu,
-                    'dusun_rt_rw' => $rtRw,
-                    'weight_at_birth' => 3.0,
-                    'height_at_birth' => 50.0,
-                    'status_mutasi' => $statusMutasi,
-                    'posyandu_id' => $posyanduId,
-                    'id_number' => \Faker\Factory::create('id_ID')->unique()->numerify('################'),
-                    'address' => 'RT/RW ' . $rtRw
-                ]);
+                continue;
             } else {
                 $patient->update(['status_mutasi' => $statusMutasi]);
             }

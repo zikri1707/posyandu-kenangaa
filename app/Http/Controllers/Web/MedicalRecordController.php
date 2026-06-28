@@ -178,11 +178,12 @@ class MedicalRecordController extends Controller
         $user = auth()->user();
 
         if ($user->isSuperAdmin()) {
-            return Patient::with(['medicalRecords'])->get();
+            return Patient::with(['medicalRecords'])->orderBy('full_name', 'asc')->get();
         }
 
         // Admin, Kader, dan Staff hanya bisa akses pasien di posyandu mereka
         return Patient::where('posyandu_id', $user->posyandu_id)
+            ->orderBy('full_name', 'asc')
             ->with(['medicalRecords' => function($q) {
                 $q->orderBy('visit_date', 'desc')->limit(2);
             }])
