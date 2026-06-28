@@ -142,9 +142,16 @@
             </div>
         </div>
     
-        {{-- Pregnancy Risk Trend Chart --}}
         <div class="bg-white rounded-3xl p-6 md:p-8 border border-slate-200 shadow-xs mt-6">
-            <h3 class="text-lg font-bold text-slate-900 mb-4">Tren Kepatuhan &amp; Risiko Ibu Hamil</h3>
+            <div class="flex items-start justify-between gap-4 mb-6">
+                <div>
+                    <h3 class="text-lg md:text-xl font-extrabold text-slate-900 tracking-tight">Tren Kepatuhan &amp; Risiko Ibu Hamil</h3>
+                    <p class="text-xs md:text-sm text-slate-500 font-semibold mt-1">Tren prevalensi bulanan kepatuhan suplemen zat besi dan risiko tinggi usia kehamilan</p>
+                </div>
+                <button onclick="downloadChart(pregnancyRiskChart, 'tren_kepatuhan_risiko_ibu_hamil')" class="shrink-0 p-2.5 text-slate-500 hover:text-slate-800 rounded-xl bg-slate-50 border border-slate-300 transition-colors shadow-xs cursor-pointer flex items-center justify-center" title="Unduh Gambar Grafik">
+                    <span class="material-symbols-outlined text-[20px]">download</span>
+                </button>
+            </div>
             <div class="relative h-85">
                 <canvas id="pregnancyRiskChart" wire:ignore></canvas>
             </div>
