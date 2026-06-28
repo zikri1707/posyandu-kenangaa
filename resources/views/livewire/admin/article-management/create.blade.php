@@ -102,18 +102,19 @@
     <div id="blocks-container" wire:ignore class="relative mb-12">
 
         <template x-for="(block, index) in blocks" :key="block.id">
-            <div class="relative group/row"
+            <div class="relative group/row -ml-12 pl-12"
                  @mouseenter="hoveredIndex = index"
                  @mouseleave="hoveredIndex = (hoveredIndex === index) ? -1 : hoveredIndex">
 
                 {{-- PARAGRAPH --}}
-                <div x-show="block.type === 'paragraph'" class="relative">
-                    <div class="absolute -left-9 top-[6px] w-7">
+                <div x-show="block.type === 'paragraph'">
+                    <div style="position: absolute; left: 6px; top: 8px; width: 36px; z-index: 10;">
                         <button type="button" @click.stop="toggleBlockMenu(index, $event)"
                                 x-show="hoveredIndex === index || blockMenuAt === index"
-                                class="w-7 h-7 rounded-lg border border-outline-variant flex items-center justify-center transition-all bg-white shadow-sm hover:border-outline hover:text-on-surface-variant"
-                                :class="blockMenuAt === index ? 'border-secondary text-indigo-500 rotate-45' : 'text-outline-variant'">
-                            <span class="material-symbols-outlined text-[16px] leading-none">add</span>
+                                class="w-9 h-9 rounded-full border-2 border-teal-600 flex items-center justify-center transition-all bg-white text-teal-800 shadow-md hover:bg-teal-600 hover:text-white"
+                                :class="blockMenuAt === index ? 'bg-teal-600 text-white rotate-45' : ''"
+                                style="min-width: unset; min-height: unset; width: 36px; height: 36px;">
+                            <span class="material-symbols-outlined text-[20px]" style="font-weight: 900; line-height: 1;">add</span>
                         </button>
                     </div>
                     <div :id="'block-' + block.id" contenteditable="true"
@@ -122,19 +123,20 @@
                          @focus="focusedIndex = index; activeBlockId = block.id"
                          @blur="handleBlur(index)"
                          @mouseup="checkSelection()" @keyup="checkSelection()"
-                         :data-placeholder="index === 0 ? 'Mulai menulis, atau klik + untuk tambah konten…' : 'Tulis paragraf…'"
-                         class="flex-1 min-h-[1.8em] py-2 outline-none text-[1.15rem] leading-[1.9] text-on-surface-variant ce-placeholder"
-                         style="font-family:'Georgia',serif;"></div>
+                         :data-placeholder="index === 0 ? 'Mulai menulis, atau klik + untuk tambah kontenâ€¦' : 'Tulis paragrafâ€¦'"
+                         class="flex-1 min-h-[1.8em] py-2 text-[1.15rem] leading-[1.9] text-on-surface-variant ce-placeholder"
+                         style="font-family:'Georgia',serif; outline: none; border: none; box-shadow: none;"></div>
                 </div>
 
                 {{-- HEADING 1 --}}
-                <div x-show="block.type === 'h1'" class="relative">
-                    <div class="absolute -left-9 top-[8px] w-7">
+                <div x-show="block.type === 'h1'">
+                    <div style="position: absolute; left: 6px; top: 10px; width: 36px; z-index: 10;">
                         <button type="button" @click.stop="toggleBlockMenu(index, $event)"
                                 x-show="hoveredIndex === index || blockMenuAt === index"
-                                class="w-7 h-7 rounded-lg border border-outline-variant flex items-center justify-center transition-all bg-white shadow-sm hover:border-outline hover:text-on-surface-variant"
-                                :class="blockMenuAt === index ? 'border-secondary text-indigo-500 rotate-45' : 'text-outline-variant'">
-                            <span class="material-symbols-outlined text-[16px] leading-none">add</span>
+                                class="w-9 h-9 rounded-full border-2 border-teal-600 flex items-center justify-center transition-all bg-white text-teal-800 shadow-md hover:bg-teal-600 hover:text-white"
+                                :class="blockMenuAt === index ? 'bg-teal-600 text-white rotate-45' : ''"
+                                style="min-width: unset; min-height: unset; width: 36px; height: 36px;">
+                            <span class="material-symbols-outlined text-[20px]" style="font-weight: 900; line-height: 1;">add</span>
                         </button>
                     </div>
                     <div :id="'block-' + block.id" contenteditable="true"
@@ -144,18 +146,19 @@
                          @blur="handleBlur(index)"
                          @mouseup="checkSelection()" @keyup="checkSelection()"
                          :data-placeholder="'Heading 1'"
-                         class="flex-1 min-h-[1.2em] py-1 outline-none font-black text-on-surface ce-placeholder"
-                         style="font-family:'Georgia',serif; font-size:2rem; line-height:1.25;"></div>
+                         class="flex-1 min-h-[1.2em] py-1 font-black text-on-surface ce-placeholder"
+                         style="font-family:'Georgia',serif; font-size:2rem; line-height:1.25; outline: none; border: none; box-shadow: none;"></div>
                 </div>
 
                 {{-- HEADING 2 --}}
-                <div x-show="block.type === 'h2'" class="relative">
-                    <div class="absolute -left-9 top-[6px] w-7">
+                <div x-show="block.type === 'h2'">
+                    <div style="position: absolute; left: 6px; top: 8px; width: 36px; z-index: 10;">
                         <button type="button" @click.stop="toggleBlockMenu(index, $event)"
                                 x-show="hoveredIndex === index || blockMenuAt === index"
-                                class="w-7 h-7 rounded-lg border border-outline-variant flex items-center justify-center transition-all bg-white shadow-sm hover:border-outline hover:text-on-surface-variant"
-                                :class="blockMenuAt === index ? 'border-secondary text-indigo-500 rotate-45' : 'text-outline-variant'">
-                            <span class="material-symbols-outlined text-[16px] leading-none">add</span>
+                                class="w-9 h-9 rounded-full border-2 border-teal-600 flex items-center justify-center transition-all bg-white text-teal-800 shadow-md hover:bg-teal-600 hover:text-white"
+                                :class="blockMenuAt === index ? 'bg-teal-600 text-white rotate-45' : ''"
+                                style="min-width: unset; min-height: unset; width: 36px; height: 36px;">
+                            <span class="material-symbols-outlined text-[20px]" style="font-weight: 900; line-height: 1;">add</span>
                         </button>
                     </div>
                     <div :id="'block-' + block.id" contenteditable="true"
@@ -165,18 +168,19 @@
                          @blur="handleBlur(index)"
                          @mouseup="checkSelection()" @keyup="checkSelection()"
                          :data-placeholder="'Heading 2'"
-                         class="flex-1 min-h-[1.2em] py-1 outline-none font-black text-on-surface ce-placeholder"
-                         style="font-family:'Georgia',serif; font-size:1.5rem; line-height:1.35;"></div>
+                         class="flex-1 min-h-[1.2em] py-1 font-black text-on-surface ce-placeholder"
+                         style="font-family:'Georgia',serif; font-size:1.5rem; line-height:1.35; outline: none; border: none; box-shadow: none;"></div>
                 </div>
 
                 {{-- HEADING 3 --}}
-                <div x-show="block.type === 'h3'" class="relative">
-                    <div class="absolute -left-9 top-[6px] w-7">
+                <div x-show="block.type === 'h3'">
+                    <div style="position: absolute; left: 6px; top: 6px; width: 36px; z-index: 10;">
                         <button type="button" @click.stop="toggleBlockMenu(index, $event)"
                                 x-show="hoveredIndex === index || blockMenuAt === index"
-                                class="w-7 h-7 rounded-lg border border-outline-variant flex items-center justify-center transition-all bg-white shadow-sm hover:border-outline hover:text-on-surface-variant"
-                                :class="blockMenuAt === index ? 'border-secondary text-indigo-500 rotate-45' : 'text-outline-variant'">
-                            <span class="material-symbols-outlined text-[16px] leading-none">add</span>
+                                class="w-9 h-9 rounded-full border-2 border-teal-600 flex items-center justify-center transition-all bg-white text-teal-800 shadow-md hover:bg-teal-600 hover:text-white"
+                                :class="blockMenuAt === index ? 'bg-teal-600 text-white rotate-45' : ''"
+                                style="min-width: unset; min-height: unset; width: 36px; height: 36px;">
+                            <span class="material-symbols-outlined text-[20px]" style="font-weight: 900; line-height: 1;">add</span>
                         </button>
                     </div>
                     <div :id="'block-' + block.id" contenteditable="true"
@@ -186,18 +190,19 @@
                          @blur="handleBlur(index)"
                          @mouseup="checkSelection()" @keyup="checkSelection()"
                          :data-placeholder="'Heading 3'"
-                         class="flex-1 min-h-[1.2em] py-1 outline-none font-bold text-on-surface ce-placeholder"
-                         style="font-family:'Georgia',serif; font-size:1.25rem; line-height:1.4;"></div>
+                         class="flex-1 min-h-[1.2em] py-1 font-bold text-on-surface ce-placeholder"
+                         style="font-family:'Georgia',serif; font-size:1.25rem; line-height:1.4; outline: none; border: none; box-shadow: none;"></div>
                 </div>
 
                 {{-- QUOTE --}}
-                <div x-show="block.type === 'quote'" class="relative my-2">
-                    <div class="absolute -left-9 top-[6px] w-7">
+                <div x-show="block.type === 'quote'" class="my-2">
+                    <div style="position: absolute; left: 6px; top: 6px; width: 36px; z-index: 10;">
                         <button type="button" @click.stop="toggleBlockMenu(index, $event)"
                                 x-show="hoveredIndex === index || blockMenuAt === index"
-                                class="w-7 h-7 rounded-lg border border-outline-variant flex items-center justify-center transition-all bg-white shadow-sm hover:border-outline hover:text-on-surface-variant"
-                                :class="blockMenuAt === index ? 'border-secondary text-indigo-500 rotate-45' : 'text-outline-variant'">
-                            <span class="material-symbols-outlined text-[16px] leading-none">add</span>
+                                class="w-9 h-9 rounded-full border-2 border-teal-600 flex items-center justify-center transition-all bg-white text-teal-800 shadow-md hover:bg-teal-600 hover:text-white"
+                                :class="blockMenuAt === index ? 'bg-teal-600 text-white rotate-45' : ''"
+                                style="min-width: unset; min-height: unset; width: 36px; height: 36px;">
+                            <span class="material-symbols-outlined text-[20px]" style="font-weight: 900; line-height: 1;">add</span>
                         </button>
                     </div>
                     <div class="flex-1 flex gap-3">
@@ -208,20 +213,21 @@
                              @focus="focusedIndex = index; activeBlockId = block.id"
                              @blur="handleBlur(index)"
                              @mouseup="checkSelection()" @keyup="checkSelection()"
-                             :data-placeholder="'Kutipan…'"
-                             class="flex-1 min-h-[1.8em] py-1 outline-none text-[1.15rem] leading-[1.9] text-on-surface-variant italic ce-placeholder"
-                             style="font-family:'Georgia',serif;"></div>
+                             :data-placeholder="'Kutipanâ€¦'"
+                             class="flex-1 min-h-[1.8em] py-1 text-[1.15rem] leading-[1.9] text-on-surface-variant italic ce-placeholder"
+                             style="font-family:'Georgia',serif; outline: none; border: none; box-shadow: none;"></div>
                     </div>
                 </div>
 
                 {{-- CALLOUT --}}
-                <div x-show="block.type === 'callout'" class="relative my-2">
-                    <div class="absolute -left-9 top-[12px] w-7">
+                <div x-show="block.type === 'callout'" class="my-2">
+                    <div style="position: absolute; left: 6px; top: 14px; width: 36px; z-index: 10;">
                         <button type="button" @click.stop="toggleBlockMenu(index, $event)"
                                 x-show="hoveredIndex === index || blockMenuAt === index"
-                                class="w-7 h-7 rounded-lg border border-outline-variant flex items-center justify-center transition-all bg-white shadow-sm hover:border-outline hover:text-on-surface-variant"
-                                :class="blockMenuAt === index ? 'border-secondary text-indigo-500 rotate-45' : 'text-outline-variant'">
-                            <span class="material-symbols-outlined text-[16px] leading-none">add</span>
+                                class="w-9 h-9 rounded-full border-2 border-teal-600 flex items-center justify-center transition-all bg-white text-teal-800 shadow-md hover:bg-teal-600 hover:text-white"
+                                :class="blockMenuAt === index ? 'bg-teal-600 text-white rotate-45' : ''"
+                                style="min-width: unset; min-height: unset; width: 36px; height: 36px;">
+                            <span class="material-symbols-outlined text-[20px]" style="font-weight: 900; line-height: 1;">add</span>
                         </button>
                     </div>
                     <div class="flex-1 bg-gradient-to-r from-amber-50 to-orange-50 border-l-4 border-amber-500 rounded-2xl px-5 py-4 shadow-sm hover:shadow-md transition-all">
@@ -232,20 +238,21 @@
                              @focus="focusedIndex = index; activeBlockId = block.id"
                              @blur="handleBlur(index)"
                              @mouseup="checkSelection()" @keyup="checkSelection()"
-                             :data-placeholder="'Catatan penting…'"
-                             class="flex-1 min-h-[1.8em] py-0.5 outline-none text-[1.05rem] leading-[1.8] text-amber-900 ce-placeholder"
-                             style="font-family:'Georgia',serif;"></div>
+                             :data-placeholder="'Catatan pentingâ€¦'"
+                             class="flex-1 min-h-[1.8em] py-0.5 text-amber-900 ce-placeholder"
+                             style="font-family:'Georgia',serif; outline: none; border: none; box-shadow: none;"></div>
                     </div>
                 </div>
 
                 {{-- BULLETED LIST --}}
-                <div x-show="block.type === 'bullet'" class="relative">
-                    <div class="absolute -left-9 top-[6px] w-7">
+                <div x-show="block.type === 'bullet'">
+                    <div style="position: absolute; left: 6px; top: 6px; width: 36px; z-index: 10;">
                         <button type="button" @click.stop="toggleBlockMenu(index, $event)"
                                 x-show="hoveredIndex === index || blockMenuAt === index"
-                                class="w-7 h-7 rounded-lg border border-outline-variant flex items-center justify-center transition-all bg-white shadow-sm hover:border-outline hover:text-on-surface-variant"
-                                :class="blockMenuAt === index ? 'border-secondary text-indigo-500 rotate-45' : 'text-outline-variant'">
-                            <span class="material-symbols-outlined text-[16px] leading-none">add</span>
+                                class="w-9 h-9 rounded-full border-2 border-teal-600 flex items-center justify-center transition-all bg-white text-teal-800 shadow-md hover:bg-teal-600 hover:text-white"
+                                :class="blockMenuAt === index ? 'bg-teal-600 text-white rotate-45' : ''"
+                                style="min-width: unset; min-height: unset; width: 36px; height: 36px;">
+                            <span class="material-symbols-outlined text-[20px]" style="font-weight: 900; line-height: 1;">add</span>
                         </button>
                     </div>
                     <div class="flex-1 flex items-start gap-2 py-0.5">
@@ -256,20 +263,21 @@
                              @focus="focusedIndex = index; activeBlockId = block.id"
                              @blur="handleBlur(index)"
                              @mouseup="checkSelection()" @keyup="checkSelection()"
-                             :data-placeholder="'Item list…'"
-                             class="flex-1 min-h-[1.8em] outline-none text-[1.15rem] leading-[1.9] text-on-surface-variant ce-placeholder"
-                             style="font-family:'Georgia',serif;"></div>
+                             :data-placeholder="'Item listâ€¦'"
+                             class="flex-1 min-h-[1.8em] text-[1.15rem] leading-[1.9] text-on-surface-variant ce-placeholder"
+                             style="font-family:'Georgia',serif; outline: none; border: none; box-shadow: none;"></div>
                     </div>
                 </div>
 
                 {{-- NUMBERED LIST --}}
-                <div x-show="block.type === 'numbered'" class="relative">
-                    <div class="absolute -left-9 top-[6px] w-7">
+                <div x-show="block.type === 'numbered'">
+                    <div style="position: absolute; left: 6px; top: 6px; width: 36px; z-index: 10;">
                         <button type="button" @click.stop="toggleBlockMenu(index, $event)"
                                 x-show="hoveredIndex === index || blockMenuAt === index"
-                                class="w-7 h-7 rounded-lg border border-outline-variant flex items-center justify-center transition-all bg-white shadow-sm hover:border-outline hover:text-on-surface-variant"
-                                :class="blockMenuAt === index ? 'border-secondary text-indigo-500 rotate-45' : 'text-outline-variant'">
-                            <span class="material-symbols-outlined text-[16px] leading-none">add</span>
+                                class="w-9 h-9 rounded-full border-2 border-teal-600 flex items-center justify-center transition-all bg-white text-teal-800 shadow-md hover:bg-teal-600 hover:text-white"
+                                :class="blockMenuAt === index ? 'bg-teal-600 text-white rotate-45' : ''"
+                                style="min-width: unset; min-height: unset; width: 36px; height: 36px;">
+                            <span class="material-symbols-outlined text-[20px]" style="font-weight: 900; line-height: 1;">add</span>
                         </button>
                     </div>
                     <div class="flex-1 flex items-start gap-2 py-0.5">
@@ -280,32 +288,33 @@
                              @focus="focusedIndex = index; activeBlockId = block.id"
                              @blur="handleBlur(index)"
                              @mouseup="checkSelection()" @keyup="checkSelection()"
-                             :data-placeholder="'Item bernomor…'"
-                             class="flex-1 min-h-[1.8em] outline-none text-[1.15rem] leading-[1.9] text-on-surface-variant ce-placeholder"
-                             style="font-family:'Georgia',serif;"></div>
+                             :data-placeholder="'Item bernomorâ€¦'"
+                             class="flex-1 min-h-[1.8em] text-[1.15rem] leading-[1.9] text-on-surface-variant ce-placeholder"
+                             style="font-family:'Georgia',serif; outline: none; border: none; box-shadow: none;"></div>
                     </div>
                 </div>
 
                 {{-- IMAGE --}}
                 <div x-show="block.type === 'image'"
-                     class="my-4 relative group/img"
+                     class="my-4"
                      tabindex="-1"
                      @keydown.delete.prevent="removeBlock(index)"
                      @keydown.backspace.prevent="removeBlock(index)"
                      @focus="focusedIndex = index">
-                    <div class="absolute -left-9 top-[6px] w-7">
+                    <div style="position: absolute; left: 6px; top: 6px; width: 36px; z-index: 10;">
                         <button type="button" @click.stop="toggleBlockMenu(index, $event)"
                                 x-show="hoveredIndex === index || blockMenuAt === index"
-                                class="w-7 h-7 rounded-lg border border-outline-variant flex items-center justify-center transition-all bg-white shadow-sm hover:border-outline hover:text-on-surface-variant"
-                                :class="blockMenuAt === index ? 'border-secondary text-indigo-500 rotate-45' : 'text-outline-variant'">
-                            <span class="material-symbols-outlined text-[16px] leading-none">add</span>
+                                class="w-9 h-9 rounded-full border-2 border-teal-600 flex items-center justify-center transition-all bg-white text-teal-800 shadow-md hover:bg-teal-600 hover:text-white"
+                                :class="blockMenuAt === index ? 'bg-teal-600 text-white rotate-45' : ''"
+                                style="min-width: unset; min-height: unset; width: 36px; height: 36px;">
+                            <span class="material-symbols-outlined text-[20px]" style="font-weight: 900; line-height: 1;">add</span>
                         </button>
                     </div>
                     <figure class="rounded-2xl overflow-hidden shadow-lg w-full">
                         <img :src="block.src" class="w-full h-auto block object-contain" alt="" style="max-width:100%;height:auto;">
                     </figure>
                     <input type="text" x-model="block.caption"
-                           placeholder="Keterangan gambar (opsional)…"
+                           placeholder="Keterangan gambar (opsional)â€¦"
                            class="w-full mt-2 text-center text-sm text-outline-variant italic bg-transparent border-none outline-none placeholder:text-slate-300">
                     <button type="button" @click="removeBlock(index)"
                             class="absolute top-2 right-2 w-8 h-8 bg-black/60 hover:bg-red-500 text-white rounded-lg flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-all">
@@ -315,18 +324,19 @@
 
                 {{-- VIDEO EMBED --}}
                 <div x-show="block.type === 'video'"
-                    class="my-3 relative group/vid"
+                    class="my-3"
                     tabindex="-1"
                     @keydown.delete.prevent="removeBlock(index)"
                     @keydown.backspace.prevent="removeBlock(index)"
                     @focus="focusedIndex = index">
 
-                    <div class="absolute -left-9 top-[6px] w-7">
+                    <div style="position: absolute; left: 6px; top: 6px; width: 36px; z-index: 10;">
                         <button type="button" @click.stop="toggleBlockMenu(index, $event)"
                                 x-show="hoveredIndex === index || blockMenuAt === index"
-                                class="w-7 h-7 rounded-lg border border-outline-variant flex items-center justify-center transition-all bg-white shadow-sm hover:border-outline hover:text-on-surface-variant"
-                                :class="blockMenuAt === index ? 'border-secondary text-indigo-500 rotate-45' : 'text-outline-variant'">
-                            <span class="material-symbols-outlined text-[16px] leading-none">add</span>
+                                class="w-9 h-9 rounded-full border-2 border-teal-600 flex items-center justify-center transition-all bg-white text-teal-800 shadow-md hover:bg-teal-600 hover:text-white"
+                                :class="blockMenuAt === index ? 'bg-teal-600 text-white rotate-45' : ''"
+                                style="min-width: unset; min-height: unset; width: 36px; height: 36px;">
+                            <span class="material-symbols-outlined text-[20px]" style="font-weight: 900; line-height: 1;">add</span>
                         </button>
                     </div>
 
@@ -340,9 +350,10 @@
                                 @keydown.enter.prevent="embedVideo(block)"
                                 @click.stop
                                 class="flex-1 h-9 px-3 rounded-lg border border-outline-variant text-sm text-on-surface-variant focus:outline-none focus:border-indigo-400 bg-white">
-                            <button type="button" @click.stop="embedVideo(block)"
-                                    class="h-9 px-4 bg-inverse-surface text-white rounded-lg text-label-sm tracking-wide hover:bg-secondary transition-colors">
-                                Embed
+                                                        <button type="button" @click.stop="embedVideo(block)"
+                                    class="h-9 px-5 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-xs font-black uppercase tracking-wider transition-all shadow-sm hover:-translate-y-0.5 active:translate-y-0"
+                                    style="min-width: unset; min-height: unset; height: 36px;">
+                                Sematkan
                             </button>
                         </div>
                         <div class="flex items-center gap-3 text-xs text-outline-variant mb-2">
@@ -414,11 +425,12 @@
                         });
                     "
                     @focus="focusedIndex = index"
-                    class="relative my-6 cursor-pointer focus:outline-none"
+                    class="my-6 cursor-pointer focus:outline-none"
                     @click="$el.focus()">
-                    <div class="absolute -left-9 top-[6px] w-7 flex justify-center">
+                    <div style="position: absolute; left: 6px; top: 6px; width: 36px; z-index: 10; display: flex; justify-content: center;">
                         <button type="button" @click.stop="removeBlock(index)"
-                                class="w-5 h-5 flex items-center justify-center rounded-full bg-red-50 hover:bg-red-100 text-red-400 transition-all flex-shrink-0">
+                                class="w-5 h-5 flex items-center justify-center rounded-full bg-red-50 hover:bg-red-100 text-red-400 transition-all flex-shrink-0"
+                                style="min-width: unset; min-height: unset; width: 20px; height: 20px;">
                             <span class="material-symbols-outlined text-[12px]">close</span>
                         </button>
                     </div>
@@ -436,26 +448,26 @@
             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
             x-transition:leave="transition ease-in duration-75"
             x-transition:leave-end="opacity-0 scale-95"
-            class="fixed z-[200] bg-inverse-surface rounded-xl shadow-2xl flex items-center gap-0.5 p-1"
+            class="fixed z-[200] bg-slate-900 rounded-xl shadow-2xl flex items-center gap-1.5 p-1.5 border border-slate-700" style="display:none;"
             :style="formatBarStyle"
             style="display:none"
             @mousedown.prevent
         >
             <button type="button" @click="formatText('bold')"
-                    class="w-8 h-7 rounded-lg flex items-center justify-center text-white hover:bg-white/20 transition-colors font-bold text-sm">B</button>
+                    class="w-8 h-8 rounded-lg flex items-center justify-center text-white hover:bg-slate-700 transition-colors font-bold text-sm" style="min-width: unset; min-height: unset;">B</button>
             <button type="button" @click="formatText('italic')"
-                    class="w-8 h-7 rounded-lg flex items-center justify-center text-white hover:bg-white/20 transition-colors italic text-sm">I</button>
+                    class="w-8 h-8 rounded-lg flex items-center justify-center text-white hover:bg-slate-700 transition-colors italic text-sm" style="min-width: unset; min-height: unset;">I</button>
             <button type="button" @click="formatText('underline')"
-                    class="w-8 h-7 rounded-lg flex items-center justify-center text-white hover:bg-white/20 transition-colors underline text-sm">U</button>
+                    class="w-8 h-8 rounded-lg flex items-center justify-center text-white hover:bg-slate-700 transition-colors underline text-sm" style="min-width: unset; min-height: unset;">U</button>
             <button type="button" @click="formatText('strikethrough')"
-                    class="w-8 h-7 rounded-lg flex items-center justify-center text-white hover:bg-white/20 transition-colors line-through text-sm">S</button>
-            <div class="w-px h-5 bg-white/20 mx-0.5"></div>
+                    class="w-8 h-8 rounded-lg flex items-center justify-center text-white hover:bg-slate-700 transition-colors line-through text-sm" style="min-width: unset; min-height: unset;">S</button>
+            <div class="w-px h-5 bg-slate-700 mx-0.5"></div>
             <button type="button" @click="convertBlockType('h1')"
-                    class="px-2 h-7 rounded-lg flex items-center justify-center text-white hover:bg-white/20 transition-colors text-xs font-black">H1</button>
+                    class="px-2 h-8 rounded-lg flex items-center justify-center text-white hover:bg-slate-700 transition-colors text-xs font-black" style="min-width: unset; min-height: unset;">H1</button>
             <button type="button" @click="convertBlockType('h2')"
-                    class="px-2 h-7 rounded-lg flex items-center justify-center text-white hover:bg-white/20 transition-colors text-xs font-black">H2</button>
+                    class="px-2 h-8 rounded-lg flex items-center justify-center text-white hover:bg-slate-700 transition-colors text-xs font-black" style="min-width: unset; min-height: unset;">H2</button>
             <button type="button" @click="convertBlockType('quote')"
-                    class="w-8 h-7 rounded-lg flex items-center justify-center text-white hover:bg-white/20 transition-colors text-sm">"</button>
+                    class="w-8 h-8 rounded-lg flex items-center justify-center text-white hover:bg-slate-700 transition-colors text-sm" style="min-width: unset; min-height: unset;">"</button>
         </div>
 
         {{-- BLOCK TYPE MENU --}}
