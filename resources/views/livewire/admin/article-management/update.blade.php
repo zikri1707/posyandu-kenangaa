@@ -7,6 +7,19 @@
     @keydown.ctrl.u.window.prevent="formatText('underline')"
 >
 
+<style>
+    /* Styling placeholder untuk block editor contenteditable */
+    .ce-placeholder:empty::before {
+        content: attr(data-placeholder);
+        color: #94a3b8 !important; /* slate-400 */
+        font-weight: 500 !important;
+        font-style: italic !important;
+        font-size: 1.1rem !important;
+        pointer-events: none;
+        display: inline-block;
+    }
+</style>
+
 {{-- HIDDEN LIVEWIRE FORM --}}
 <form wire:submit.prevent="save" x-ref="lwForm" class="sr-only" aria-hidden="true">
     <input type="text"   wire:model="title"       x-ref="lwTitle">
@@ -45,7 +58,7 @@
             x-ref="titleInput"
             @input="titleValue = $el.value; isDirty = true; autoResize($el)"
             @keydown.enter.prevent="focusFirstBlock()"
-            placeholder="Judul artikel…"
+            placeholder="Judul artikel..."
             rows="1"
             x-init="$el.value = titleValue; $nextTick(() => autoResize($el))"
             class="w-full resize-none bg-transparent border-none outline-none text-4xl md:text-5xl font-black text-on-surface leading-tight tracking-tight placeholder:text-slate-300 overflow-hidden"
@@ -83,7 +96,7 @@
             <div x-show="coverUploading"
                  class="absolute inset-0 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center gap-3 z-10">
                 <div class="w-8 h-8 border-[3px] border-indigo-600 border-t-transparent rounded-lg animate-spin"></div>
-                <p class="text-xs font-bold text-secondary uppercase tracking-widest">Mengunggah…</p>
+                <p class="text-xs font-bold text-secondary uppercase tracking-widest">Mengunggah...</p>
             </div>
         </div>
         @error('cover')
@@ -118,7 +131,7 @@
                          @focus="focusedIndex = index; activeBlockId = block.id"
                          @blur="handleBlur(index)"
                          @mouseup="checkSelection()" @keyup="checkSelection()"
-                         :data-placeholder="index === 0 ? 'Mulai menulis, atau klik + untuk tambah kontenâ€¦' : 'Tulis paragrafâ€¦'"
+                         :data-placeholder="index === 0 ? 'Mulai menulis, atau klik + untuk tambah konten' : 'Tulis paragrafâ€¦'"
                          class="flex-1 min-h-[1.8em] py-2 text-[1.15rem] leading-[1.9] text-on-surface-variant ce-placeholder"
                          style="font-family:'Georgia',serif; outline: none; border: none; box-shadow: none;"></div>
                 </div>
@@ -588,25 +601,26 @@
             @enderror
         </div>
 
-        <div class="space-y-1.5">
-            <label class="text-xs font-bold text-outline uppercase tracking-wide">
+        {{-- Status --}}
+        <div class="space-y-3">
+            <label class="text-xs font-black text-slate-500 uppercase tracking-widest block">
                 Status Publikasi <span class="text-red-500">*</span>
             </label>
-            <div class="grid grid-cols-2 gap-2">
+            <div class="bg-slate-100 p-1.5 rounded-2xl border border-slate-200/60 flex items-center w-full">
                 <button type="button" @click="currentStatus = 'draft'; isDirty = true; showStatusError = false"
-                        class="h-11 flex items-center justify-center gap-2 rounded-xl border-2 text-label-sm tracking-wide transition-all"
+                        class="flex-1 h-12 flex items-center justify-center gap-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all"
                         :class="currentStatus === 'draft'
-                            ? 'border-slate-800 bg-inverse-surface text-white'
-                            : (showStatusError ? 'border-red-300 text-red-400 bg-red-50' : 'border-outline-variant text-outline hover:border-outline-variant bg-white')">
-                    <span class="material-symbols-outlined text-[15px]">draft</span>
+                            ? 'bg-slate-900 text-white shadow-md'
+                            : (showStatusError ? 'text-red-500 hover:bg-red-50' : 'text-slate-600 hover:text-slate-900 bg-transparent')">
+                    <span class="material-symbols-outlined text-[18px]">draft</span>
                     Simpan Draf
                 </button>
                 <button type="button" @click="currentStatus = 'published'; isDirty = true; showStatusError = false"
-                        class="h-11 flex items-center justify-center gap-2 rounded-xl border-2 text-label-sm tracking-wide transition-all"
+                        class="flex-1 h-12 flex items-center justify-center gap-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all"
                         :class="currentStatus === 'published'
-                            ? 'border-emerald-500 bg-primary text-white'
-                            : (showStatusError ? 'border-red-300 text-red-400 bg-red-50' : 'border-outline-variant text-outline hover:border-outline-variant bg-white')">
-                    <span class="material-symbols-outlined text-[15px]">publish</span>
+                            ? 'bg-teal-600 text-white shadow-md'
+                            : (showStatusError ? 'text-red-500 hover:bg-red-50' : 'text-slate-600 hover:text-teal-600 bg-transparent')">
+                    <span class="material-symbols-outlined text-[18px]">publish</span>
                     Terbitkan
                 </button>
             </div>
@@ -979,7 +993,7 @@ function articleEditorUpdate(contentJson, title, status, categoryId, categoryNam
                 this.isDirty = true;
                 return;
             }
-            alert('Format URL tidak dikenali.\nGunakan: youtube.com/watch?v=… atau drive.google.com/file/d/…');
+            alert('Format URL tidak dikenali.\nGunakan: youtube.com/watch?v=... atau drive.google.com/file/d/...');
         },
 
         removeBlock(index) {
