@@ -440,7 +440,6 @@
             gap: 24px;
         }
 
-
         @media (min-width: 1024px) {
             .feature-grid {
                 grid-template-columns: repeat(3, 1fr);
@@ -1188,7 +1187,7 @@
 
                 <p class="hero-desc">
                     Transformasi sistem informasi kesehatan dasar melalui manajemen data terintegrasi. Memantau tumbuh
-                    kembang anak kini lebih praktis, transparan, and akurat.
+                    kembang anak kini lebih praktis, transparan, dan akurat.
                 </p>
 
                 <div class="hero-actions">
@@ -1246,7 +1245,6 @@
         {{-- ══ FITUR UTAMA ══ --}}
         <section class="section" id="fitur-section">
             <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:48px;" id="fitur-header">
-
                 <h2 class="section-heading">Fitur Unggulan <em>Posyandu Digital.</em></h2>
                 <p style="font-size:15px;color:#64748b;line-height:1.7;max-width:520px;margin:8px 0 0;">
                     Kepraktisan pencatatan data balita, jadwal pemeriksaan real-time, dan grafik perkembangan kesehatan.
@@ -1453,27 +1451,30 @@
 
             gsap.registerPlugin(ScrollTrigger);
 
-            // Safety: ensure any animated elements start visible so they are
-            // never permanently invisible if a scroll trigger misfires.
-            var scrollTargets = [
+            // ── PERBAIKAN UTAMA ──
+            // Set semua elemen animasi ke visible dulu SEBELUM gsap.fromTo() dijalankan.
+            // Ini mencegah elemen "hilang permanen" jika ScrollTrigger gagal trigger
+            // (misal: elemen sudah di viewport saat load, font belum render, dll).
+            var animatedSelectors = [
                 "#fitur-section .feature-card",
                 "#jadwal-grid > *",
                 "#artikel-section .article-card",
                 "#cta-section .cta-inner > *"
             ];
-            scrollTargets.forEach(function(sel) {
-                if (document.querySelector(sel)) {
-                    gsap.set(sel, { opacity: 1, y: 0, clearProps: "all" });
-                }
+            animatedSelectors.forEach(function(sel) {
+                document.querySelectorAll(sel).forEach(function(el) {
+                    el.style.opacity = "1";
+                    el.style.transform = "none";
+                    el.style.visibility = "visible";
+                });
             });
 
             // Defer by 1 frame so browser has painted layout before
-            // ScrollTrigger calculates offsets — critical when CSS is cached.
+            // ScrollTrigger calculates offsets.
             requestAnimationFrame(function() {
-                // Refresh now that layout is painted
                 ScrollTrigger.refresh();
 
-                // Hero text — entrance only (no scroll trigger needed)
+                // ── Hero text — entrance only (no scroll trigger needed) ──
                 gsap.from("#hero-text > *", {
                     duration: 1,
                     y: 32,
@@ -1482,7 +1483,7 @@
                     ease: "power3.out"
                 });
 
-                // Hero visual
+                // ── Hero visual ──
                 gsap.from("#hero-images", {
                     duration: 1.2,
                     y: 20,
@@ -1491,69 +1492,96 @@
                     delay: 0.25
                 });
 
-                // Feature cards
+                // ── Feature cards ──
                 if (document.querySelector("#fitur-section .feature-card")) {
-                    gsap.from("#fitur-section .feature-card", {
-                        scrollTrigger: {
-                            trigger: "#fitur-section",
-                            start: "top 85%",
-                            toggleActions: "play none none none",
-                            onEnter: function() { ScrollTrigger.refresh(); }
-                        },
-                        duration: 0.7,
-                        y: 36,
-                        opacity: 0,
-                        stagger: 0.1,
-                        ease: "power2.out"
-                    });
+                    gsap.fromTo(
+                        "#fitur-section .feature-card", {
+                            y: 36,
+                            opacity: 0
+                        }, {
+                            scrollTrigger: {
+                                trigger: "#fitur-section",
+                                start: "top 85%",
+                                once: true,
+                                invalidateOnRefresh: true,
+                            },
+                            duration: 0.7,
+                            y: 0,
+                            opacity: 1,
+                            stagger: 0.1,
+                            ease: "power2.out"
+                        }
+                    );
                 }
 
-                // Schedule cards
+                // ── Schedule cards ──
                 if (document.querySelector("#jadwal-grid")) {
-                    gsap.from("#jadwal-grid > *", {
-                        scrollTrigger: {
-                            trigger: "#jadwal",
-                            start: "top 85%",
-                            toggleActions: "play none none none"
-                        },
-                        duration: 0.8,
-                        y: 32,
-                        opacity: 0,
-                        stagger: 0.12,
-                        ease: "power2.out"
-                    });
+                    gsap.fromTo(
+                        "#jadwal-grid > *", {
+                            y: 32,
+                            opacity: 0
+                        }, {
+                            scrollTrigger: {
+                                trigger: "#jadwal",
+                                start: "top 85%",
+                                once: true,
+                                invalidateOnRefresh: true,
+                            },
+                            duration: 0.8,
+                            y: 0,
+                            opacity: 1,
+                            stagger: 0.12,
+                            ease: "power2.out"
+                        }
+                    );
                 }
 
-                // Article cards
+                // ── Article cards ──
+                // Pakai fromTo agar state awal & akhir eksplisit.
+                // once:true  → tidak reset saat scroll balik ke atas.
+                // invalidateOnRefresh:true → recalculate posisi trigger setelah
+                //   resize / font load selesai, cegah misfiring karena layout shift.
                 if (document.querySelector("#artikel-section .article-card")) {
-                    gsap.from("#artikel-section .article-card", {
-                        scrollTrigger: {
-                            trigger: "#artikel-section",
-                            start: "top 90%",
-                            toggleActions: "play none none none"
-                        },
-                        duration: 0.7,
-                        y: 28,
-                        opacity: 0,
-                        stagger: 0.1,
-                        ease: "power2.out"
-                    });
+                    gsap.fromTo(
+                        "#artikel-section .article-card", {
+                            y: 28,
+                            opacity: 0
+                        }, {
+                            scrollTrigger: {
+                                trigger: "#artikel-section",
+                                start: "top 90%",
+                                once: true,
+                                invalidateOnRefresh: true,
+                            },
+                            duration: 0.7,
+                            y: 0,
+                            opacity: 1,
+                            stagger: 0.1,
+                            ease: "power2.out"
+                        }
+                    );
                 }
 
-                // CTA
+                // ── CTA ──
                 if (document.querySelector("#cta-section")) {
-                    gsap.from("#cta-section .cta-inner > *", {
-                        scrollTrigger: {
-                            trigger: "#cta-section",
-                            start: "top 90%",
-                            toggleActions: "play none none none"
-                        },
-                        duration: 0.9,
-                        y: 28,
-                        opacity: 0,
-                        stagger: 0.12,
-                        ease: "power3.out"
-                    });
+                    gsap.fromTo(
+                        "#cta-section .cta-inner > *", {
+                            y: 28,
+                            opacity: 0
+                        }, {
+                            scrollTrigger: {
+                                trigger: "#cta-section",
+                                start: "top 90%",
+                                once: true,
+                                invalidateOnRefresh: true,
+                            },
+                            duration: 0.9,
+                            y: 0,
+                            opacity: 1,
+                            stagger: 0.12,
+                            ease: "power3.out"
+                        }
+                    );
                 }
             });
         }
@@ -1564,18 +1592,21 @@
         if (document.readyState === "complete") {
             initGsapAnimations();
         } else {
-            window.addEventListener("load", initGsapAnimations, { once: true });
+            window.addEventListener("load", initGsapAnimations, {
+                once: true
+            });
         }
 
-        // Refresh after web fonts settle to prevent typographic layout shifts
-        // from breaking ScrollTrigger position calculations.
+        // Refresh setelah web fonts settle untuk mencegah typographic layout shift
+        // yang bisa merusak kalkulasi posisi ScrollTrigger.
         if (document.fonts && document.fonts.ready) {
             document.fonts.ready.then(function() {
                 if (window.ScrollTrigger) {
-                    requestAnimationFrame(function() { ScrollTrigger.refresh(); });
+                    requestAnimationFrame(function() {
+                        ScrollTrigger.refresh();
+                    });
                 }
             });
         }
     </script>
 @endsection
-
