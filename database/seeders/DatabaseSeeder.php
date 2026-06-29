@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             MedicalRecordSeeder::class,
             BalitaKenanga1Seeder::class,  // Import data balita Kenanga 1
             DataLansiaSeeder::class,     // Import data lansia
+            IbuHamil5Seeder::class,
         ]);
     }
 }
