@@ -324,9 +324,27 @@
     .reveal-d2 { transition-delay: 180ms; }
     .reveal-d3 { transition-delay: 280ms; }
 </style>
+<noscript>
+    <style>
+        .reveal { opacity: 1 !important; transform: none !important; }
+    </style>
+</noscript>
 @endpush
 
 @section('content')
+
+@php
+    $email = 'posyanduilp_kenanga1@gmail.com';
+    $obfuscatedEmail = '';
+    for ($i = 0; $i < strlen($email); $i++) {
+        $obfuscatedEmail .= '&#' . ord($email[$i]) . ';';
+    }
+    $gmailLink = 'https://mail.google.com/mail/?view=cm&fs=1&to=' . $email;
+    $obfuscatedGmailLink = '';
+    for ($i = 0; $i < strlen($gmailLink); $i++) {
+        $obfuscatedGmailLink .= '&#' . ord($gmailLink[$i]) . ';';
+    }
+@endphp
 
 {{-- Skip link --}}
 <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-lg focus:text-sm focus:font-bold">
@@ -401,11 +419,12 @@
                 <p class="text-sm font-medium leading-relaxed mb-8" style="color:rgba(255,255,255,.7);max-width:320px">
                     Jika ada pertanyaan mengenai jadwal kegiatan, pendaftaran layanan posyandu, kerja sama, atau saran lainnya, silakan hubungi kami. Kami siap membaca dan membalas pesan Anda.
                 </p>
-                <a href="mailto:posyanduilp_kenanga1@gmail.com"
+                <a href="{!! $obfuscatedGmailLink !!}"
+                   target="_blank" rel="noopener noreferrer"
                    class="email-address-link"
-                   aria-label="Kirim email ke posyanduilp_kenanga1@gmail.com">
+                   aria-label="Kirim email ke {{ $email }} via Gmail">
                     <span class="material-symbols-outlined text-teal-300 text-[20px] shrink-0">mail</span>
-                    <span>posyanduilp_kenanga1@gmail.com</span>
+                    <span>{!! $obfuscatedEmail !!}</span>
                 </a>
             </div>
             <div class="relative z-10 flex gap-6 mt-10">
@@ -433,7 +452,7 @@
                 <div class="space-y-6 mb-10">
                     @foreach([
                         ['num'=>'1','title'=>'Tulis pesan','desc'=>'Sampaikan pertanyaan atau kebutuhan Anda dengan jelas.'],
-                        ['num'=>'2','title'=>'Kirim ke email','desc'=>'Kirim ke posyanduilp_kenanga1@gmail.com kapan saja.'],
+                        ['num'=>'2','title'=>'Kirim ke email','desc'=>'Kirim ke ' . $obfuscatedEmail . ' kapan saja.'],
                         ['num'=>'3','title'=>'Tunggu balasan','desc'=>'Tim kami merespons dalam 1 hari kerja, Senin-Jumat.'],
                     ] as $step)
                     <div class="step-card">
@@ -442,12 +461,14 @@
                         </div>
                         <div>
                             <p class="step-title font-jakarta">{{ $step['title'] }}</p>
-                            <p class="step-desc">{{ $step['desc'] }}</p>
+                            <p class="step-desc">{!! $step['desc'] !!}</p>
                         </div>
                     </div>
                     @endforeach
                 </div>
-                <a href="mailto:posyanduilp_kenanga1@gmail.com" class="btn-gradient">
+                <a href="{!! $obfuscatedGmailLink !!}"
+                   target="_blank" rel="noopener noreferrer"
+                   class="btn-gradient">
                     <span class="material-symbols-outlined text-[18px]">mail</span>
                     Kirim Email Sekarang
                 </a>
