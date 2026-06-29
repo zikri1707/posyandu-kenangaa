@@ -229,6 +229,9 @@
         box-shadow: 0 4px 14px rgba(13, 148, 136, 0.25);
         transition: all 300ms cubic-bezier(0.16, 1, 0.3, 1);
         border: 1px solid rgba(13, 148, 136, 0.1);
+        position: relative;
+        z-index: 10;
+        cursor: pointer;
     }
     .btn-gradient:hover {
         background: linear-gradient(135deg, #0f766e 0%, #005a3c 100%);
