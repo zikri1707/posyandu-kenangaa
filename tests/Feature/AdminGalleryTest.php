@@ -37,11 +37,14 @@ test('can create a new gallery folder', function () {
         'posyandu_id' => $posyandu->id,
     ]);
 
+    $coverPhoto = UploadedFile::fake()->image('cover.jpg');
+
     $this->actingAs($admin);
     $response = $this->post('/admin/gallery', [
         'name' => 'Folder Imunisasi 2026',
         'description' => 'Dokumentasi imunisasi balita',
         'posyandu_id' => $posyandu->id,
+        'cover_photo' => $coverPhoto,
     ]);
 
     $response->assertRedirect('/admin/gallery');
