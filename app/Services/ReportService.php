@@ -26,12 +26,14 @@ class ReportService
         // Date range for the month
         $startDate = sprintf('%04d-%02d-01', $year, $month);
         $endDate = date('Y-m-t', strtotime($startDate)); // Last day of month
+        $startDateTime = $startDate . ' 00:00:00';
+        $endDateTime = $endDate . ' 23:59:59';
 
         // 1. Kunjungan per kategori
         $visitsByCategory = MedicalRecord::query()
             ->join('patients', 'medical_records.patient_id', '=', 'patients.id')
             ->where('patients.posyandu_id', $posyanduId)
-            ->whereBetween('medical_records.visit_date', [$startDate, $endDate])
+            ->whereBetween('medical_records.visit_date', [$startDateTime, $endDateTime])
             ->select('patients.category', DB::raw('COUNT(*) as total'))
             ->groupBy('patients.category')
             ->get()
@@ -51,7 +53,7 @@ class ReportService
             ->join('patients', 'medical_records.patient_id', '=', 'patients.id')
             ->where('patients.posyandu_id', $posyanduId)
             ->where('patients.category', 'balita')
-            ->whereBetween('medical_records.visit_date', [$startDate, $endDate])
+            ->whereBetween('medical_records.visit_date', [$startDateTime, $endDateTime])
             ->whereNotNull('medical_records.nutrition_status')
             ->select('medical_records.nutrition_status', DB::raw('COUNT(*) as total'))
             ->groupBy('medical_records.nutrition_status')
@@ -63,7 +65,7 @@ class ReportService
         $vitaminACount = MedicalRecord::query()
             ->join('patients', 'medical_records.patient_id', '=', 'patients.id')
             ->where('patients.posyandu_id', $posyanduId)
-            ->whereBetween('medical_records.visit_date', [$startDate, $endDate])
+            ->whereBetween('medical_records.visit_date', [$startDateTime, $endDateTime])
             ->where(function ($q) {
                 $q->where('medical_records.vitamin_a', true)
                     ->orWhere('medical_records.vitamin_a_color', '!=', 'none');
@@ -74,7 +76,7 @@ class ReportService
         $pillFeCount = MedicalRecord::query()
             ->join('patients', 'medical_records.patient_id', '=', 'patients.id')
             ->where('patients.posyandu_id', $posyanduId)
-            ->whereBetween('medical_records.visit_date', [$startDate, $endDate])
+            ->whereBetween('medical_records.visit_date', [$startDateTime, $endDateTime])
             ->where('medical_records.pill_fe', true)
             ->count();
 
@@ -114,7 +116,7 @@ class ReportService
         $rawRecords = MedicalRecord::query()
             ->join('patients', 'medical_records.patient_id', '=', 'patients.id')
             ->where('patients.posyandu_id', $posyanduId)
-            ->whereBetween('medical_records.visit_date', [$startDate, $endDate])
+            ->whereBetween('medical_records.visit_date', [$startDateTime, $endDateTime])
             ->select('medical_records.*', 'patients.full_name', 'patients.id_number', 'patients.category', 'patients.gender')
             ->orderBy('medical_records.visit_date')
             ->get()
@@ -170,7 +172,7 @@ class ReportService
             ->join('patients', 'medical_records.patient_id', '=', 'patients.id')
             ->where('patients.posyandu_id', $posyanduId)
             ->where('patients.category', 'balita')
-            ->whereBetween('medical_records.visit_date', [$startDate, $endDate])
+            ->whereBetween('medical_records.visit_date', [$startDateTime, $endDateTime])
             ->select('medical_records.*', 'patients.birth_date', 'patients.gender')
             ->get();
 
@@ -405,7 +407,7 @@ class ReportService
 
         // Get medical records within range
         $records = MedicalRecord::where('patient_id', $patient->id)
-            ->whereBetween('visit_date', [$startDate, $endDate])
+            ->whereBetween('visit_date', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
             ->orderBy('visit_date', 'asc')
             ->get();
 

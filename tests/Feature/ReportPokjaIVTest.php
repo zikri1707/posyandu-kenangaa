@@ -66,14 +66,14 @@ class ReportPokjaIVTest extends TestCase
     {
         $patient = Patient::factory()->create([
             'posyandu_id' => $this->posyandu->id,
-            'birth_date' => Carbon::now()->subMonths($months),
+            'birth_date' => Carbon::now()->subMonths($months)->toDateString(),
             'gender' => $gender,
             'category' => 'balita',
         ]);
 
         MedicalRecord::factory()->create([
             'patient_id' => $patient->id,
-            'visit_date' => Carbon::now(),
+            'visit_date' => Carbon::now()->toDateString(),
         ]);
     }
 }
