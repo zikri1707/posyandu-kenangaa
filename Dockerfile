@@ -44,5 +44,5 @@ RUN composer install
 # Expose port yang digunakan oleh aplikasi Laravel
 EXPOSE 8080
 
-# Perintah untuk menjalankan php-fpm, artisan serve, dan npm secara bersamaan
-CMD ["bash", "-c", "php artisan serve --host=0.0.0.0 --port=8080 & php-fpm"]
+# Perintah untuk menjalankan migrasi dan menjalankan server Laravel
+CMD ["bash", "-c", "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"]
