@@ -16,11 +16,11 @@ RUN apt-get update && apt-get install -y \
 
 # ... (kode sebelumnya) ...
 
-# 1. Konfigurasi GD
-RUN docker-php-ext-configure gd
+# 1. Konfigurasi GD dengan dukungan freetype dan jpeg
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 
-# 2. Install GD (dan ekstensi lain yang mungkin sudah ada, seperti pdo_pgsql)
-RUN docker-php-ext-install gd pdo pdo_pgsql pgsql
+# 2. Install GD, zip, dan ekstensi PostgreSQL
+RUN docker-php-ext-install gd zip pdo pdo_pgsql pgsql
 
 # ... (kode selanjutnya) ...
 # Install Node.js v18.x dan npm
@@ -45,7 +45,7 @@ COPY . .
 
 # Install dependensi PHP dan optimasi autoloader
 # RUN composer install --no-dev --optimize-autoloader
-RUN composer install --ignore-platform-req=ext-gd
+RUN composer install --no-dev --optimize-autoloader
 
 # Expose port yang digunakan oleh aplikasi Laravel
 EXPOSE 8080
