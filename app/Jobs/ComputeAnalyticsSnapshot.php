@@ -583,9 +583,12 @@ class ComputeAnalyticsSnapshot implements ShouldQueue
 
         $startDate = now()->subMonths(11)->startOfMonth();
 
-        $dateFormat = config('database.default') === 'sqlite'
-            ? "strftime('%m %Y', visit_date)"
-            : "DATE_FORMAT(visit_date, '%m %Y')";
+        $dbDriver = config('database.default');
+        $dateFormat = match ($dbDriver) {
+            'sqlite' => "strftime('%m %Y', visit_date)",
+            'pgsql' => "TO_CHAR(visit_date, 'MM YYYY')",
+            default => "DATE_FORMAT(visit_date, '%m %Y')",
+        };
 
         $trends = (clone $medicalRecordQuery)
             ->where('visit_date', '>=', $startDate)
