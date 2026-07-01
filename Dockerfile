@@ -42,6 +42,10 @@ RUN rm -rf node_modules package-lock.json && npm install
 # Salin semua file proyek setelah dependensi terinstal
 COPY . .
 
+# Buat direktori storage dan cache yang mungkin di-ignore oleh .dockerignore
+RUN mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
+
 # Install dependensi PHP dan optimasi autoloader (HARUS sebelum npm run build agar vendor tersedia untuk Vite)
 RUN composer install --no-dev --optimize-autoloader
 
