@@ -146,9 +146,13 @@ return new class extends Migration
             ],
         ];
 
+        // 1. Hapus constraint cukup sekali saja di luar looping
+        DB::statement('ALTER TABLE users DROP CONSTRAINT IF EXISTS users_role_check');
+
         foreach ($kaders as $k) {
             $username = strtolower(explode(' ', $k['name'])[0]).'_'.rand(100, 999);
-            // Check if email or username already exists
+            
+            // Check if email already exists
             if (! DB::table('users')->where('email', $k['email'])->exists()) {
                 DB::table('users')->insert([
                     'name' => $k['name'],
@@ -163,14 +167,13 @@ return new class extends Migration
                     'alamat' => $k['alamat'],
                     'hp' => $k['hp'],
                     'image' => $k['image'],
-                    'posyandu_id' => 3, // Default to Kenanga 1
+                    'posyandu_id' => 3, 
                     'is_active' => true,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
             }
         }
-
         Schema::enableForeignKeyConstraints();
     }
 
