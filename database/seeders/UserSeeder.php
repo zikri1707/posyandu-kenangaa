@@ -78,21 +78,22 @@ class UserSeeder extends Seeder
         ];
 
         foreach ($posyanduUsers as $data) {
-            $posyandu = Posyandu::where('unique_code', $data['posyandu_code'])->firstOrFail();
+            // Cari atau buat Posyandu-nya dulu biar aman
+            $posyandu = Posyandu::updateOrCreate(
+                ['unique_code' => $data['posyandu_code']],
+                ['name' => str_replace('Kader ', '', $data['name'])] // Contoh penamaan
+            );
 
             User::updateOrCreate(
                 ['username' => $data['username']],
                 [
                     'name' => $data['name'],
                     'email' => $data['email'],
-                    'username' => $data['username'],
                     'password' => Hash::make('password123'),
                     'role' => $data['role'],
-                    'posyandu_id' => $posyandu->id,
+                    'posyandu_id' => $posyandu->id, // Sekarang pasti ada ID-nya
                     'is_active' => true,
                     'verified_email' => true,
-                    'attempt_login' => 0,
-                    'block_expires' => null,
                     'email_verified_at' => now(),
                 ]
             );
