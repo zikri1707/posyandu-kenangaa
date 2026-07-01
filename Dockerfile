@@ -23,8 +23,8 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 RUN docker-php-ext-install gd zip pdo pdo_pgsql pgsql
 
 # ... (kode selanjutnya) ...
-# Install Node.js v18.x dan npm
-RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - && \
+# Install Node.js v20.x dan npm
+RUN curl -sL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install -y nodejs
 
 # Install Composer
