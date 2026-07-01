@@ -239,11 +239,16 @@
         }
     });
 
+    let isMobile = window.innerWidth < 1024;
     window.addEventListener('resize', () => {
-        if (window.innerWidth < 1024) {
-            collapsed = true;
+        const currentlyMobile = window.innerWidth < 1024;
+        if (currentlyMobile !== isMobile) {
+            isMobile = currentlyMobile;
+            if (isMobile) {
+                collapsed = true;
+            }
+            apply(false);
         }
-        apply(false);
     });
 })();
 </script>
