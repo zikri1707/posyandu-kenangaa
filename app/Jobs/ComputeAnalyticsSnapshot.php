@@ -594,7 +594,7 @@ class ComputeAnalyticsSnapshot implements ShouldQueue
             ->where('visit_date', '>=', $startDate)
             ->selectRaw("$dateFormat as month_year")
             ->selectRaw('COUNT(*) as total')
-            ->groupBy('month_year')
+            ->groupByRaw($dateFormat)
             ->get()
             ->pluck('total', 'month_year');
 

@@ -370,7 +370,7 @@ class AdminDashboard extends BaseAdminComponent
         };
         $trends = (clone $medicalRecordQuery)->when($this->filterPeriode === 'semua', function ($query) use ($startDate) {
             return $query->where('visit_date', '>=', $startDate);
-        })->selectRaw("$dateFormat as month_year")->selectRaw('COUNT(*) as total')->groupBy('month_year')->get()->pluck('total', 'month_year');
+        })->selectRaw("$dateFormat as month_year")->selectRaw('COUNT(*) as total')->groupByRaw($dateFormat)->get()->pluck('total', 'month_year');
         $labels = [];
         $data = [];
         for ($i = 11; $i >= 0; $i--) {
