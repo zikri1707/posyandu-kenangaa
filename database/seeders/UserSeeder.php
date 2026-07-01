@@ -81,7 +81,11 @@ class UserSeeder extends Seeder
             // Cari atau buat Posyandu-nya dulu biar aman
             $posyandu = Posyandu::updateOrCreate(
                 ['unique_code' => $data['posyandu_code']],
-                ['name' => str_replace('Kader ', '', $data['name'])] // Contoh penamaan
+                [
+                    'name' => str_replace('Kader ', '', $data['name']),
+                    'pedukuhan_id' => 1,
+                    'address' => '-'
+                ]
             );
 
             User::updateOrCreate(
