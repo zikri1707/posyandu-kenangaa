@@ -59,6 +59,10 @@ class AppServiceProvider extends ServiceProvider
             return $user->isSuperAdmin() ? true : null;
         });
 
+        if (config('app.env') === 'production') {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
+
         // Register model policies
         Gate::policy(Patient::class, PatientPolicy::class);
         Gate::policy(MedicalRecord::class, MedicalRecordPolicy::class);
