@@ -893,7 +893,6 @@
         </div>
     </div>
     @endif
-</div>
 
 @script
 <script>
@@ -1620,3 +1619,4 @@ $wire.on('charts-updated', (event) => {
 });
 </script>
 @endscript
+</div>
