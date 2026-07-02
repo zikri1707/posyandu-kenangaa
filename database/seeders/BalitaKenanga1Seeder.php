@@ -14,8 +14,8 @@ class BalitaKenanga1Seeder extends Seeder
      */
     public function run(): void
     {
-        // Find or create Posyandu Kenanga 1 by unique_code (PSY003)
-        $posyandu = Posyandu::where('unique_code', 'PSY003')->first();
+        // Find or create Posyandu Kenanga 1
+        $posyandu = Posyandu::where('name', 'KENANGA 1')->first();
 
         if (! $posyandu) {
             $this->command->error('Posyandu KENANGA 1 tidak ditemukan. Silakan buat posyandu terlebih dahulu.');

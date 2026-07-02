@@ -10,7 +10,7 @@ class PosyanduSeeder extends Seeder
 {
     public function run(): void
     {
-        $arenJaya = Pedukuhan::firstOrCreate(['name' => 'Aren Jaya']);
+        $arenJaya = Pedukuhan::where('name', 'Aren Jaya')->firstOrFail();
 
         $posyandus = [
             [

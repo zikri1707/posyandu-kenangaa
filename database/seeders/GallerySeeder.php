@@ -9,16 +9,10 @@ class GallerySeeder extends Seeder
 {
     public function run()
     {
-        $user = \App\Models\User::first();
-        $userId = $user ? $user->id : 1;
-
-        $posyandu = \App\Models\Posyandu::first();
-        $posyanduId = $posyandu ? $posyandu->id : 1;
-
         DB::table('galleries')->insert([
             [
-                'posyandu_id' => $posyanduId,
-                'user_id' => $userId,
+                'posyandu_id' => 1,
+                'user_id' => 2,
                 'title' => 'Kegiatan Posyandu Januari',
                 'description' => 'Foto-foto kegiatan posyandu bulan Januari',
                 'photo' => 'kegiatan-januari.jpg',
@@ -27,8 +21,8 @@ class GallerySeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'posyandu_id' => $posyanduId,
-                'user_id' => $userId,
+                'posyandu_id' => 1,
+                'user_id' => 2,
                 'title' => 'Imunisasi Campak',
                 'description' => 'Foto kegiatan imunisasi campak',
                 'photo' => 'imunisasi-campak.jpg',
@@ -37,8 +31,8 @@ class GallerySeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'posyandu_id' => $posyanduId,
-                'user_id' => $userId,
+                'posyandu_id' => 2,
+                'user_id' => 2,
                 'title' => 'Penyuluhan Gizi',
                 'description' => 'Foto kegiatan penyuluhan gizi',
                 'photo' => 'penyuluhan-gizi.jpg',
