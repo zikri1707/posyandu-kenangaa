@@ -294,7 +294,8 @@ class Analytics extends BaseAdminComponent
             } else {
                 // Fallback to legacy computation if no snapshot exists
                 $data = $this->fetchAnalyticsData();
-                $this->lastUpdated = 'Live (Memproses Snapshot...)';
+                $this->lastUpdated = 'Live';
+
 
                 // Dispatch job to create snapshot for next time
                 ComputeAnalyticsSnapshot::dispatch($posyanduId, $this->selectedYear, $this->selectedMonth);
