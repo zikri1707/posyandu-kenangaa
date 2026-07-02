@@ -1,0 +1,25 @@
+# Disable directory listing
+Options -Indexes
+
+# Block access to sensitive Laravel folders and files
+RedirectMatch 404 ^/\.env
+RedirectMatch 404 ^/app/
+RedirectMatch 404 ^/bootstrap/
+RedirectMatch 404 ^/config/
+RedirectMatch 404 ^/database/
+RedirectMatch 404 ^/resources/
+RedirectMatch 404 ^/routes/
+RedirectMatch 404 ^/tests/
+RedirectMatch 404 ^/vendor/
+RedirectMatch 404 ^/composer\.(json|lock)
+RedirectMatch 404 ^/package\.(json|lock)
+RedirectMatch 404 ^/vite\.config\.js
+RedirectMatch 404 ^/artisan
+RedirectMatch 404 ^/Dockerfile
+RedirectMatch 404 ^/render\.yaml
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^$ public/ [L]
+    RewriteRule (.*) public/$1 [L]
+</IfModule>
