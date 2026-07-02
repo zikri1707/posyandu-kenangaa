@@ -24,15 +24,15 @@
 <form method="POST" action="{{ route('login') }}" class="space-y-8">
     @csrf
 
-    {{-- ── Email Input Field ── --}}
+    {{-- ── Email/Username Input Field ── --}}
     <div class="group">
         <label for="email" class="ml-1 font-bold text-slate-700 text-base flex items-center gap-2 mb-3 group-focus-within:text-teal-700 transition-colors">
             <span class="material-symbols-outlined text-[20px] text-teal-600">alternate_email</span>
-            Alamat Email Resmi
+            Email / Username
         </label>
         <div class="relative">
-            <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus
-                   placeholder="nama@posyandu.com"
+            <input id="email" type="text" name="email" value="{{ old('email') }}" required autofocus
+                   placeholder="nama@posyandu.com atau admin_kenanga1"
                    class="w-full h-16 px-6 rounded-2xl bg-slate-50 border border-slate-300 text-lg font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-teal-600 focus:ring-4 focus:ring-teal-100 transition-all"
                    style="border: 1px solid #cbd5e1; outline: none;">
             <div class="absolute inset-y-0 right-6 flex items-center text-slate-400 group-focus-within:text-teal-600 transition-colors">
