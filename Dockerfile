@@ -12,10 +12,9 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     zlib1g-dev \
     libpq-dev \
-    && apt-get clean
-
-# Install ekstensi PHP untuk PostgreSQL
-RUN docker-php-ext-install pdo pdo_pgsql pgsql
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd pdo pdo_pgsql pgsql \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Node.js v18.x dan npm
 RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - && \
