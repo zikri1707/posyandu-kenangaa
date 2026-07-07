@@ -38,10 +38,10 @@
                                 <span class="material-symbols-outlined text-[32px]">photo_camera_back</span>
                             </div>
                             <p class="text-base font-black text-slate-700">Klik atau geser file gambar/video ke sini</p>
-                            <p class="text-xs text-slate-400 mt-2 font-bold uppercase tracking-wider">Bisa pilih sekaligus banyak file | Maks. 20MB per file</p>
+                            <p class="text-xs text-slate-400 mt-2 font-bold uppercase tracking-wider">Bisa pilih sekaligus banyak file | Maks. 1GB per file</p>
                         </div>
 
-                        <input type="file" name="photos[]" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" id="imageUpload" accept="image/*,video/*" required multiple onchange="previewFiles(event)">
+                        <input type="file" name="photos[]" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" id="imageUpload" accept="image/*,video/*" multiple onchange="previewFiles(event)">
                     </div>
                     @error('photos') 
                         <p class="mt-3 text-xs text-red-500 font-bold flex items-center gap-1">
@@ -78,7 +78,23 @@
 </div>
 
 <script>
+    let selectedFiles = [];
+
     function handleFormSubmit(event) {
+        if (selectedFiles.length === 0) {
+            event.preventDefault();
+            alert('Wajib memilih minimal satu file media.');
+            return;
+        }
+
+        // Sync selectedFiles back to the input element files
+        const input = document.getElementById('imageUpload');
+        const dataTransfer = new DataTransfer();
+        selectedFiles.forEach(file => {
+            dataTransfer.items.add(file);
+        });
+        input.files = dataTransfer.files;
+
         const btn = document.getElementById('submitBtn');
         if (btn) {
             btn.disabled = true;
@@ -95,16 +111,33 @@
 
     function previewFiles(event) {
         const input = event.target;
+        
+        if (input.files && input.files.length > 0) {
+            Array.from(input.files).forEach(file => {
+                const isDuplicate = selectedFiles.some(f => f.name === file.name && f.size === file.size);
+                if (!isDuplicate) {
+                    selectedFiles.push(file);
+                }
+            });
+        }
+        
+        // Reset the value so the input's onchange fires even if selecting the same file
+        input.value = '';
+        
+        renderPreviews();
+    }
+
+    function renderPreviews() {
         const previewsGrid = document.getElementById('mediaPreviewsGrid');
         const placeholder = document.getElementById('placeholder');
         
         previewsGrid.innerHTML = '';
         
-        if(input.files && input.files.length > 0) {
+        if (selectedFiles.length > 0) {
             previewsGrid.classList.remove('hidden');
             placeholder.classList.add('hidden');
             
-            Array.from(input.files).forEach(file => {
+            selectedFiles.forEach((file, index) => {
                 const reader = new FileReader();
                 const isVideo = file.type.startsWith('video/');
                 
@@ -120,14 +153,12 @@
                         video.muted = true;
                         video.playsInline = true;
                         
-                        // Capture seeked non-black frame
                         video.addEventListener('loadeddata', () => {
                             video.currentTime = 0.5;
                         });
                         
                         card.appendChild(video);
                         
-                        // Video icon indicator
                         const badge = document.createElement('div');
                         badge.className = 'absolute top-1.5 right-1.5 bg-indigo-600 text-white rounded-md p-1 flex items-center justify-center';
                         badge.innerHTML = '<span class="material-symbols-outlined text-[12px]">videocam</span>';
@@ -139,6 +170,18 @@
                         card.appendChild(img);
                     }
                     
+                    // Delete Button
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.type = 'button';
+                    deleteBtn.className = 'absolute top-1.5 right-1.5 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-md transition-all opacity-90 hover:scale-110 z-20';
+                    deleteBtn.innerHTML = '<span class="material-symbols-outlined text-[14px] font-bold">close</span>';
+                    deleteBtn.onclick = function(e) {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        removeFile(index);
+                    };
+                    card.appendChild(deleteBtn);
+                    
                     previewsGrid.appendChild(card);
                 };
                 
@@ -148,6 +191,11 @@
             previewsGrid.classList.add('hidden');
             placeholder.classList.remove('hidden');
         }
+    }
+
+    function removeFile(index) {
+        selectedFiles.splice(index, 1);
+        renderPreviews();
     }
 </script>
 @endsection

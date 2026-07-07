@@ -49,7 +49,7 @@
                         {{ $article->title }}
                     </h3>
                     <p class="text-slate-500 text-sm font-medium leading-relaxed line-clamp-2">
-                        {{ Str::limit(strip_tags($article->content), 160) }}
+                        {{ \App\Services\ArticleService::getExcerpt($article->content, 160) }}
                     </p>
                 </a>
 
@@ -63,7 +63,7 @@
                         <span class="w-1 h-1 rounded-full bg-slate-200"></span>
                         <span class="flex items-center gap-1.5">
                             <span class="material-symbols-outlined text-[14px]">schedule</span>
-                            {{ ceil(str_word_count(strip_tags($article->content)) / 200) }} mnt baca
+                            {{ ceil(str_word_count(\App\Services\ArticleService::getExcerpt($article->content, 999999)) / 200) }} mnt baca
                         </span>
                     </div>
                     

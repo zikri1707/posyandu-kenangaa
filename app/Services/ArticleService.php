@@ -132,6 +132,11 @@ class ArticleService
         foreach ($blocks as $block) {
             $type = $block['type'] ?? 'paragraph';
             $blockContent = $block['content'] ?? '';
+            
+            // Bersihkan inline style, class, dan id dari HTML untuk mencegah polusi layout (misal copy-paste dari Google Docs)
+            if (is_string($blockContent)) {
+                $blockContent = preg_replace('/\s*(style|class|id)\s*=\s*(["\'])(.*?)\2/i', '', $blockContent);
+            }
 
             if ($type !== 'numbered') {
                 $numberedSeq = 0;

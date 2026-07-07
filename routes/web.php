@@ -106,6 +106,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('admin/gallery/{folder}/media/create', [GalleryController::class, 'create'])->name('admin.gallery.media.create');
     Route::post('admin/gallery/{folder}/media', [GalleryController::class, 'store'])->name('admin.gallery.media.store');
     Route::delete('admin/gallery/{folder}/media/{gallery}', [GalleryController::class, 'destroy'])->name('admin.gallery.media.destroy');
+    Route::put('admin/gallery/{folder}/media/{gallery}', [GalleryController::class, 'update'])->name('admin.gallery.media.update');
 
     // 5. ARTICLES
     Route::get('admin/articles', ArticleManagement::class)->name('admin.articles.index');

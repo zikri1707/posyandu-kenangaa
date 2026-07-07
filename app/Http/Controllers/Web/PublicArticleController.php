@@ -27,7 +27,7 @@ class PublicArticleController extends Controller
         $articles = $query->paginate(4)->withQueryString();
         $categories = Category::withCount(['articles' => fn ($q) => $q->where('status', 'published')])->get();
 
-        $popularArticles = Article::with(['category'])
+        $popularArticles = Article::with(['category', 'user'])
             ->where('status', 'published')
             ->latest('published_at')
             ->skip(1)

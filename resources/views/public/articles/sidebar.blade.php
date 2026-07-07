@@ -14,8 +14,8 @@
     {{-- Popular Stream --}}
     <div class="space-y-10">
         <h4 class="text-[11px] font-black text-slate-900 uppercase tracking-[0.3em] flex items-center gap-3">
-            <span class="w-6 h-6 rounded-lg bg-indigo-600 flex items-center justify-center text-white"><span class="material-symbols-outlined text-[14px]">trending_up</span></span>
-            Paling Banyak Dibaca
+            <span class="w-6 h-6 rounded-lg bg-indigo-600 flex items-center justify-center text-white"><span class="material-symbols-outlined text-[14px]">new_releases</span></span>
+            Artikel Terbaru
         </h4>
         <div class="space-y-10">
             @foreach($popularArticles as $index => $pop)
@@ -23,7 +23,7 @@
                 <span class="text-4xl font-black text-slate-100 group-hover:text-indigo-50 transition-colors leading-none">0{{ $index + 1 }}</span>
                 <div class="space-y-2">
                     <div class="flex items-center gap-2">
-                        <span class="text-[10px] font-black text-slate-900 uppercase tracking-tighter">{{ $article->user->name ?? 'Admin' }}</span>
+                        <span class="text-[10px] font-black text-slate-900 uppercase tracking-tighter">{{ $pop->user->name ?? 'Admin' }}</span>
                         <span class="w-0.5 h-0.5 rounded-full bg-slate-300"></span>
                         <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{{ $pop->category->name ?? 'Umum' }}</span>
                     </div>

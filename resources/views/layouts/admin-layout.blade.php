@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="w-full pt-4 pb-8">
+<div class="w-full pt-1 sm:pt-4 pb-8">
     <!-- Admin Header -->
     @hasSection('admin-title')
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-6 w-full">
