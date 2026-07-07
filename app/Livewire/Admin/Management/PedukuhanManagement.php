@@ -4,7 +4,9 @@ namespace App\Livewire\Admin\Management;
 
 use App\Livewire\Shared\BaseAdminComponent;
 use App\Models\Pedukuhan;
+use Livewire\Attributes\Layout;
 
+#[Layout('layouts.admin-layout')]
 class PedukuhanManagement extends BaseAdminComponent
 {
     public string $search = '';
