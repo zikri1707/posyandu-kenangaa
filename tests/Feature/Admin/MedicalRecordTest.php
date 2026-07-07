@@ -26,6 +26,11 @@ beforeEach(function () {
         'posyandu_id' => $this->posyandu->id,
     ]);
 
+    $this->kader = User::factory()->create([
+        'role' => 'kader',
+        'posyandu_id' => $this->posyandu->id,
+    ]);
+
     // Create patient (balita)
     $this->patient = Patient::factory()->create([
         'posyandu_id' => $this->posyandu->id,
@@ -570,7 +575,126 @@ describe('log aktivitas', function () {
 });
 
 describe('otorisasi', function () {
-    it('staff dapat menambahkan rekam medis', function () {
+    it('kader dapat melihat daftar rekam medis', function () {
+        $this->actingAs($this->kader);
+
+        $response = $this->get('/admin/medical-records');
+
+        $response->assertStatus(200);
+    });
+
+    it('kader dapat melihat detail rekam medis', function () {
+        $this->actingAs($this->admin);
+        // Buat rekam medis terlebih dahulu
+        $this->post('/admin/medical-records', [
+            'patient_id' => $this->patient->id,
+            'visit_date' => now()->format('Y-m-d'),
+            'weight' => 10.0,
+            'height' => 75.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
+        ]);
+        $record = MedicalRecord::latest()->first();
+
+        $this->actingAs($this->kader);
+        $response = $this->get("/admin/medical-records/{$record->id}");
+
+        $response->assertStatus(200);
+    });
+
+    it('kader tidak dapat mengakses halaman tambah rekam medis', function () {
+        $this->actingAs($this->kader);
+
+        $response = $this->get('/admin/medical-records/create');
+
+        $response->assertStatus(403);
+    });
+
+    it('kader tidak dapat menambahkan rekam medis', function () {
+        $this->actingAs($this->kader);
+
+        $response = $this->post('/admin/medical-records', [
+            'patient_id' => $this->patient->id,
+            'visit_date' => now()->format('Y-m-d'),
+            'weight' => 10.0,
+            'height' => 75.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
+        ]);
+
+        $response->assertStatus(403);
+    });
+
+    it('kader tidak dapat mengakses halaman edit rekam medis', function () {
+        $this->actingAs($this->admin);
+        $this->post('/admin/medical-records', [
+            'patient_id' => $this->patient->id,
+            'visit_date' => now()->format('Y-m-d'),
+            'weight' => 10.0,
+            'height' => 75.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
+        ]);
+        $record = MedicalRecord::latest()->first();
+
+        $this->actingAs($this->kader);
+        $response = $this->get("/admin/medical-records/{$record->id}/edit");
+
+        $response->assertStatus(403);
+    });
+
+    it('kader tidak dapat mengubah rekam medis', function () {
+        $this->actingAs($this->admin);
+        $this->post('/admin/medical-records', [
+            'patient_id' => $this->patient->id,
+            'visit_date' => now()->format('Y-m-d'),
+            'weight' => 10.0,
+            'height' => 75.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
+        ]);
+        $record = MedicalRecord::latest()->first();
+
+        $this->actingAs($this->kader);
+        $response = $this->put("/admin/medical-records/{$record->id}", [
+            'patient_id' => $this->patient->id,
+            'visit_date' => now()->format('Y-m-d'),
+            'weight' => 12.0,
+            'height' => 76.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
+        ]);
+
+        $response->assertStatus(403);
+    });
+
+    it('kader tidak dapat menghapus rekam medis', function () {
+        $this->actingAs($this->admin);
+        $this->post('/admin/medical-records', [
+            'patient_id' => $this->patient->id,
+            'visit_date' => now()->format('Y-m-d'),
+            'weight' => 10.0,
+            'height' => 75.0,
+            'measurement_method' => 'standing',
+            'diagnosis' => 'Sehat',
+        ]);
+        $record = MedicalRecord::latest()->first();
+
+        $this->actingAs($this->kader);
+        $response = $this->delete("/admin/medical-records/{$record->id}");
+
+        $response->assertStatus(403);
+    });
+
+    it('kader tidak dapat mengakses halaman bulk measurement entry', function () {
+        $this->actingAs($this->kader);
+
+        $response = $this->get('/admin/medical-records/bulk');
+
+        $response->assertStatus(403);
+    });
+
+    it('staff tidak dapat menambahkan rekam medis', function () {
         $this->actingAs($this->staff);
 
         $response = $this->post('/admin/medical-records', [
@@ -582,7 +706,7 @@ describe('otorisasi', function () {
             'diagnosis' => 'Sehat',
         ]);
 
-        $response->assertSessionDoesntHaveErrors();
+        $response->assertStatus(403);
     });
 
     it('admin dapat menambahkan rekam medis', function () {
@@ -597,7 +721,11 @@ describe('otorisasi', function () {
             'diagnosis' => 'Sehat',
         ]);
 
-        $response->assertSessionDoesntHaveErrors();
+        $response->assertRedirect(route('admin.medical-records.index'));
+        $this->assertDatabaseHas('medical_records', [
+            'patient_id' => $this->patient->id,
+            'weight' => 10.0,
+        ]);
     });
 });
 

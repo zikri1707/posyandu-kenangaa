@@ -38,7 +38,7 @@ class MedicalRecordPolicy
             return true;
         }
 
-        return ($user->isAdmin() || $user->isKader()) && $user->posyandu_id !== null;
+        return $user->isAdmin() && $user->posyandu_id !== null;
     }
 
     /**
@@ -50,7 +50,7 @@ class MedicalRecordPolicy
             return true;
         }
 
-        return ($user->isAdmin() || $user->isKader()) && $user->posyandu_id === $medicalRecord->patient->posyandu_id;
+        return $user->isAdmin() && $user->posyandu_id === $medicalRecord->patient->posyandu_id;
     }
 
     /**
@@ -62,7 +62,7 @@ class MedicalRecordPolicy
             return true;
         }
 
-        return ($user->isAdmin() || $user->isKader()) && $user->posyandu_id === $medicalRecord->patient->posyandu_id;
+        return $user->isAdmin() && $user->posyandu_id === $medicalRecord->patient->posyandu_id;
     }
 
     /**
