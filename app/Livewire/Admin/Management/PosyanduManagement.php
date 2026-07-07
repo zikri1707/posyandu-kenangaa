@@ -50,9 +50,9 @@ class PosyanduManagement extends BaseAdminComponent
     {
         $posyandus = Posyandu::withCount([
                 'patients',
-                'patients as balita_count'   => fn($q) => $q->where('category', 'balita'),
-                'patients as ibu_hamil_count' => fn($q) => $q->where('category', 'ibu_hamil'),
-                'patients as lansia_count'    => fn($q) => $q->where('category', 'lansia'),
+                'patients as balita_count'    => fn ($q) => $q->where('category', 'balita'),
+                'patients as ibu_hamil_count' => fn ($q) => $q->where('category', 'ibu_hamil'),
+                'patients as lansia_count'    => fn ($q) => $q->where('category', 'lansia'),
             ])
             ->when($this->search, function ($q) {
                 $q->where('name', 'like', '%'.$this->search.'%')
@@ -63,7 +63,12 @@ class PosyanduManagement extends BaseAdminComponent
             ->paginate(10);
 
         return view('livewire.admin.posyandu-management.index', [
-            'posyandus' => $posyandus,
+            'posyandus'      => $posyandus,
+            'totalPosyandu'  => $posyandus->total(),
+            'totalWarga'     => \App\Models\Patient::count(),
+            'totalBalita'    => \App\Models\Patient::where('category', 'balita')->count(),
+            'totalBumil'     => \App\Models\Patient::where('category', 'ibu_hamil')->count(),
+            'totalLansia'    => \App\Models\Patient::where('category', 'lansia')->count(),
         ]);
     }
 }
