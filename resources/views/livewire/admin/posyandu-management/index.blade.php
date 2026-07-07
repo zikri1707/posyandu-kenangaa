@@ -1,12 +1,4 @@
 <div class="space-y-8 p-6 md:p-8 pt-2 md:pt-4">
-    @php
-        $totalPosyandu = $posyandus->total();
-        $totalWarga    = \App\Models\Patient::count();
-        $totalBalita   = \App\Models\Patient::where('category', 'balita')->count();
-        $totalBumil    = \App\Models\Patient::where('category', 'ibu_hamil')->count();
-        $totalLansia   = \App\Models\Patient::where('category', 'lansia')->count();
-    @endphp
-
     {{-- Header Section --}}
     <div class="flex flex-col md:flex-row md:items-start justify-between gap-6">
         <div class="relative pl-6">
