@@ -168,7 +168,7 @@
                                     <div class="font-black text-slate-900">{{ $record->patient->full_name ?? 'Tidak Diketahui' }}</div>
                                     <div class="flex items-center gap-2 mt-1">
                                         @php
-                                            $cat = $record->patient->category ?? 'balita';
+                                            $cat = $record->patient->computed_category ?? 'balita';
                                             $catLabels = [
                                                 'ibu_hamil' => 'Ibu Hamil',
                                                 'lansia' => 'Lansia',

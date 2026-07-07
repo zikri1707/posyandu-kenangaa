@@ -40,8 +40,10 @@ class PublicController extends Controller
         $misis = $aboutPageService->getMissions();
         $tujuans = $aboutPageService->getGoals();
         $kaders = $aboutPageService->getCadres();
+        $sasaranCount = $aboutPageService->getSasaranCount();
+        $posyanduCount = $aboutPageService->getPosyanduCount();
 
-        return view('public.about.about', compact('misis', 'tujuans', 'kaders'));
+        return view('public.about.about', compact('misis', 'tujuans', 'kaders', 'sasaranCount', 'posyanduCount'));
     }
 
     /**

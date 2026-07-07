@@ -58,7 +58,13 @@ class PatientController extends Controller
     {
         $this->authorize('view', $patient);
 
-        $patient->load(['posyandu']);
+        $patient->load([
+            'posyandu',
+            'medicalRecords' => function ($q) {
+                $q->reorder('visit_date', 'asc');
+            },
+            'medicalRecords.user'
+        ]);
 
         $medicalRecords = $patient->medicalRecords()
             ->with('user')

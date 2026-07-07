@@ -83,7 +83,7 @@
 
 @section('admin-content')
 @php
-    $category = $medicalRecord->patient->category ?? 'balita';
+    $category = $medicalRecord->patient->computed_category ?? 'balita';
     $isChild = in_array($category, ['bayi', 'baduta', 'balita', 'anak_sekolah']);
     $isPregnancy = ($category === 'ibu_hamil');
     $isLansia = ($category === 'lansia');

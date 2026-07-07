@@ -53,6 +53,7 @@ class ReportPokjaIVTest extends TestCase
 
     public function test_it_counts_kader_correctly()
     {
+        User::query()->delete();
         User::factory()->create(['posyandu_id' => $this->posyandu->id, 'role' => 'kader']);
         User::factory()->create(['posyandu_id' => $this->posyandu->id, 'role' => 'kader']);
         User::factory()->create(['posyandu_id' => $this->posyandu->id, 'role' => 'admin']); // Should not be counted

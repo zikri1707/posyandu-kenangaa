@@ -95,6 +95,20 @@ class Patient extends Model
         return $this->birth_date ? (int) $this->birth_date->diffInMonths(now()) : 0;
     }
 
+    public function getComputedCategoryAttribute(): string
+    {
+        $dbCat = $this->category;
+        if ($dbCat === 'balita') {
+            $age = $this->age_in_months;
+            if ($age < 12) {
+                return 'bayi';
+            } elseif ($age < 24) {
+                return 'baduta';
+            }
+        }
+        return $dbCat;
+    }
+
     /**
      * Get immunization schedule and status based on Indonesian standard.
      */

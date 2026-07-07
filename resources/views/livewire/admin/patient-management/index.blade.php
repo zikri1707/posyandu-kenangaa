@@ -71,7 +71,7 @@
             <div>
                 <p class="text-xs font-semibold text-slate-500 leading-none mb-1">Bayi (0-11 bln)</p>
                 <p class="text-xl font-bold text-slate-900 leading-none" style="font-variant-numeric:tabular-nums;">
-                    {{ App\Models\Patient::where('category', 'bayi')->count() }}</p>
+                    {{ App\Models\Patient::where('category', 'bayi')->orWhere(fn($q) => $q->where('category', 'balita')->where('birth_date', '>=', now()->subMonths(12)))->count() }}</p>
             </div>
         </div>
 
@@ -84,7 +84,7 @@
             <div>
                 <p class="text-xs font-semibold text-slate-500 leading-none mb-1">Baduta (12-23 bln)</p>
                 <p class="text-xl font-bold text-slate-900 leading-none" style="font-variant-numeric:tabular-nums;">
-                    {{ App\Models\Patient::where('category', 'baduta')->count() }}</p>
+                    {{ App\Models\Patient::where('category', 'baduta')->orWhere(fn($q) => $q->where('category', 'balita')->where('birth_date', '<', now()->subMonths(12))->where('birth_date', '>=', now()->subMonths(24)))->count() }}</p>
             </div>
         </div>
 
@@ -97,7 +97,7 @@
             <div>
                 <p class="text-xs font-semibold text-slate-500 leading-none mb-1">Balita (24-59 bln)</p>
                 <p class="text-xl font-bold text-slate-900 leading-none" style="font-variant-numeric:tabular-nums;">
-                    {{ App\Models\Patient::where('category', 'balita')->count() }}</p>
+                    {{ App\Models\Patient::where('category', 'balita')->where(fn($q) => $q->whereNull('birth_date')->orWhere('birth_date', '<', now()->subMonths(24)))->count() }}</p>
             </div>
         </div>
 
@@ -278,8 +278,11 @@
                             </div>
                         </td>
                         <td class="px-5 py-3.5">
-                            <span class="badge {{ $catStyles[$patient->category] ?? 'badge-slate' }}">
-                                {{ str_replace('_', ' ', $patient->category) }}
+                            @php
+                                $dispCat = $patient->computed_category;
+                            @endphp
+                            <span class="badge {{ $catStyles[$dispCat] ?? 'badge-slate' }}">
+                                {{ str_replace('_', ' ', $dispCat) }}
                             </span>
                         </td>
                         <td class="px-5 py-3.5">

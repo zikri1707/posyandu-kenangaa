@@ -1,7 +1,7 @@
 @php
     $isBalitaGrowthCategory = in_array($patient->category, ['bayi', 'baduta', 'balita']);
     $isMale = strtoupper($patient->gender) === 'L' || strtoupper($patient->gender) === 'M';
-    $latestRecord = $patient->medicalRecords()->latest()->first();
+    $latestRecord = $patient->relationLoaded('medicalRecords') ? $patient->medicalRecords->sortByDesc('visit_date')->first() : $patient->medicalRecords()->latest()->first();
 
     $receivedCount = 0;
     $totalCount = 0;
@@ -52,7 +52,7 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-50">
-                    @forelse($patient->medicalRecords()->latest()->limit(5)->get() as $record)
+                    @forelse(($patient->relationLoaded('medicalRecords') ? $patient->medicalRecords->sortByDesc('visit_date')->take(5) : $patient->medicalRecords()->latest()->limit(5)->get()) as $record)
                     <tr class="group hover:bg-slate-50/50 transition-colors">
                         <td class="py-6 pl-4">
                             <p class="text-[12px] font-black text-slate-700 mb-0.5">{{ \Carbon\Carbon::parse($record->visit_date)->translatedFormat('d F Y') }}</p>

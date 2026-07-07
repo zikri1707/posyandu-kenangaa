@@ -414,7 +414,9 @@
 
         {{-- Pagination --}}
         @if($records instanceof \Illuminate\Pagination\LengthAwarePaginator && $records->hasPages())
-            {{ $records->links() }}
+        <div class="px-8 py-6 bg-slate-50 border-t border-slate-100">
+            <x-layouts.ui.pagination :paginator="$records" label="data" />
+        </div>
         @elseif($records->count() > 0)
         <div class="p-4 border-t border-outline-variant">
             <p class="text-sm font-medium text-outline">Menampilkan total <span class="font-bold text-on-surface-variant">{{ $total }}</span> data</p>

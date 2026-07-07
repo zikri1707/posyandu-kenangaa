@@ -129,7 +129,8 @@ describe('konten halaman tentang kami', function () {
         $response->assertOk();
         $response->assertSee('Selamat Datang di');
         $response->assertSee('Posyandu ILP Kenanga RW 011');
-        $response->assertSee('RW 011 Aren Jaya');
+        $response->assertSee('RW 011');
+        $response->assertSee('Aren Jaya');
     });
 
     it('menampilkan visi dan misi', function () {

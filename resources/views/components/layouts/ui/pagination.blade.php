@@ -10,6 +10,7 @@
     'paginator',
     'showInfo' => true,
     'simple'   => false,
+    'label'    => 'warga',
 ])
 
 @php
@@ -35,7 +36,7 @@
         -
         <span class="text-slate-900 dark:text-white font-bold">{{ number_format($to) }}</span>
         dari
-        <span class="text-slate-900 dark:text-white font-bold">{{ number_format($total) }}</span> warga
+        <span class="text-slate-900 dark:text-white font-bold">{{ number_format($total) }}</span> {{ $label }}
     </div>
     @endif
 

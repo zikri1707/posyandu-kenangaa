@@ -28,6 +28,21 @@
         .animate-ping-slow {
             animation: ping-slow 2.5s ease-in-out infinite;
         }
+
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .scrollbar-none::-webkit-scrollbar {
+            display: none;
+        }
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .scrollbar-none {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        /* Allow vertical scrolling/panning when touching charts on mobile */
+        canvas {
+            touch-action: pan-y;
+        }
     </style>
 @endpush
 
@@ -73,36 +88,36 @@
     </section>
 
     {{-- ── Accessible Tab Navigation ── --}}
-    <div class="flex flex-wrap items-center bg-slate-100/90 backdrop-blur-md p-1.5 rounded-2xl border border-slate-200 shadow-xs gap-1">
+    <div class="flex overflow-x-auto whitespace-nowrap bg-slate-100/90 backdrop-blur-md p-1.5 rounded-2xl border border-slate-200 shadow-xs gap-1.5 scrollbar-none w-full">
         <button wire:click="$set('activeTab', 'overview')" @class([
-            'flex-1 min-w-[120px] py-3.5 px-5 rounded-xl text-sm font-bold transition-all duration-200 flex items-center justify-center gap-2 border cursor-pointer',
+            'flex-1 shrink-0 min-w-max py-3.5 px-5 rounded-xl text-sm font-bold transition-all duration-200 flex items-center justify-center gap-2 border cursor-pointer',
             'bg-white text-teal-850 border-slate-200 shadow-sm font-extrabold' => $activeTab === 'overview',
             'text-slate-600 hover:text-slate-900 hover:bg-white/50 border-transparent' => $activeTab !== 'overview'
-        ])>
+        ]) style="min-width: max-content; flex-shrink: 0;">
             <span class="material-symbols-outlined text-[20px] {{ $activeTab === 'overview' ? 'text-teal-700' : 'text-slate-400' }}">dashboard</span>
             Overview Ringkasan
         </button>
         <button wire:click="$set('activeTab', 'balita')" @class([
-            'flex-1 min-w-[120px] py-3.5 px-5 rounded-xl text-sm font-bold transition-all duration-200 flex items-center justify-center gap-2 border cursor-pointer',
+            'flex-1 shrink-0 min-w-max py-3.5 px-5 rounded-xl text-sm font-bold transition-all duration-200 flex items-center justify-center gap-2 border cursor-pointer',
             'bg-white text-teal-850 border-slate-200 shadow-sm font-extrabold' => $activeTab === 'balita',
             'text-slate-600 hover:text-slate-900 hover:bg-white/50 border-transparent' => $activeTab !== 'balita'
-        ])>
+        ]) style="min-width: max-content; flex-shrink: 0;">
             <span class="material-symbols-outlined text-[20px] {{ $activeTab === 'balita' ? 'text-teal-700' : 'text-slate-400' }}">child_care</span>
             Balita &amp; Anak
         </button>
         <button wire:click="$set('activeTab', 'pregnancy')" @class([
-            'flex-1 min-w-[120px] py-3.5 px-5 rounded-xl text-sm font-bold transition-all duration-200 flex items-center justify-center gap-2 border cursor-pointer',
+            'flex-1 shrink-0 min-w-max py-3.5 px-5 rounded-xl text-sm font-bold transition-all duration-200 flex items-center justify-center gap-2 border cursor-pointer',
             'bg-white text-teal-850 border-slate-200 shadow-sm font-extrabold' => $activeTab === 'pregnancy',
             'text-slate-600 hover:text-slate-900 hover:bg-white/50 border-transparent' => $activeTab !== 'pregnancy'
-        ])>
+        ]) style="min-width: max-content; flex-shrink: 0;">
             <span class="material-symbols-outlined text-[20px] {{ $activeTab === 'pregnancy' ? 'text-teal-700' : 'text-slate-400' }}">pregnant_woman</span>
             Ibu Hamil
         </button>
         <button wire:click="$set('activeTab', 'lansia')" @class([
-            'flex-1 min-w-[120px] py-3.5 px-5 rounded-xl text-sm font-bold transition-all duration-200 flex items-center justify-center gap-2 border cursor-pointer',
+            'flex-1 shrink-0 min-w-max py-3.5 px-5 rounded-xl text-sm font-bold transition-all duration-200 flex items-center justify-center gap-2 border cursor-pointer',
             'bg-white text-teal-850 border-slate-200 shadow-sm font-extrabold' => $activeTab === 'lansia',
             'text-slate-600 hover:text-slate-900 hover:bg-white/50 border-transparent' => $activeTab !== 'lansia'
-        ])>
+        ]) style="min-width: max-content; flex-shrink: 0;">
             <span class="material-symbols-outlined text-[20px] {{ $activeTab === 'lansia' ? 'text-teal-700' : 'text-slate-400' }}">elderly</span>
             Lanjut Usia (Lansia)
         </button>

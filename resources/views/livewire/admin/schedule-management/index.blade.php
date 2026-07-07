@@ -34,32 +34,32 @@
     {{-- ── Header & Summary Bento ── --}}
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div class="lg:col-span-4 space-y-6">
-            <div class="bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-100 dark:border-slate-800/80 p-8 shadow-sm">
+            <div class="bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-100 dark:border-slate-800/80 p-6 sm:p-8 shadow-sm">
                 <div class="flex items-center gap-3 mb-6">
                     <div class="w-10 h-10 rounded-2xl bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 flex items-center justify-center">
                         <span class="material-symbols-outlined text-[20px]">analytics</span>
                     </div>
                     <h3 class="text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Ikhtisar Bulan Ini</h3>
                 </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="p-4 rounded-3xl bg-slate-50/50 dark:bg-slate-950/40 border border-transparent dark:border-slate-800/40">
+                <div class="grid grid-cols-2 gap-3 sm:gap-4">
+                    <div class="p-3 sm:p-4 rounded-3xl bg-slate-50/50 dark:bg-slate-950/40 border border-transparent dark:border-slate-800/40">
                         <span
-                            class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest block mb-1">Total</span>
+                            class="text-[9px] sm:text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-normal sm:tracking-wider block mb-1">Total</span>
                         <p class="text-2xl font-black text-slate-900 dark:text-slate-100">{{ $stats['total_month'] }}</p>
                     </div>
-                    <div class="p-4 rounded-3xl bg-blue-50/50 dark:bg-blue-950/20 border border-transparent dark:border-blue-900/20">
+                    <div class="p-3 sm:p-4 rounded-3xl bg-blue-50/50 dark:bg-blue-950/20 border border-transparent dark:border-blue-900/20">
                         <span
-                            class="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest block mb-1">Mendatang</span>
+                            class="text-[9px] sm:text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-normal sm:tracking-wider block mb-1">Mendatang</span>
                         <p class="text-2xl font-black text-slate-900 dark:text-slate-100">{{ $stats['upcoming'] }}</p>
                     </div>
-                    <div class="p-4 rounded-3xl bg-green-50/50 dark:bg-green-950/20 border border-transparent dark:border-green-900/20">
+                    <div class="p-3 sm:p-4 rounded-3xl bg-green-50/50 dark:bg-green-950/20 border border-transparent dark:border-green-900/20">
                         <span
-                            class="text-[10px] font-black text-green-600 dark:text-green-400 uppercase tracking-widest block mb-1">Selesai</span>
+                            class="text-[9px] sm:text-[10px] font-black text-green-600 dark:text-green-400 uppercase tracking-normal sm:tracking-wider block mb-1">Selesai</span>
                         <p class="text-2xl font-black text-slate-900 dark:text-slate-100">{{ $stats['completed'] }}</p>
                     </div>
-                    <div class="p-4 rounded-3xl bg-amber-50/50 dark:bg-amber-950/20 border border-transparent dark:border-amber-900/20">
+                    <div class="p-3 sm:p-4 rounded-3xl bg-amber-50/50 dark:bg-amber-950/20 border border-transparent dark:border-amber-900/20">
                         <span
-                            class="text-[10px] font-black text-amber-600 dark:text-amber-400 uppercase tracking-widest block mb-1">Berlangsung</span>
+                            class="text-[9px] sm:text-[10px] font-black text-amber-600 dark:text-amber-400 uppercase tracking-normal sm:tracking-wider block mb-1">Berlangsung</span>
                         <p class="text-2xl font-black text-slate-900 dark:text-slate-100">{{ $stats['ongoing'] }}</p>
                     </div>
                 </div>
@@ -137,36 +137,38 @@
 
     {{-- ── Filters ── --}}
     <div
-        class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800/80 p-4 shadow-sm flex flex-wrap items-center justify-between gap-4">
-        <div class="flex flex-wrap items-center gap-3 flex-1">
-            <div class="relative min-w-[300px] group">
+        class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800/80 p-4 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="flex flex-col md:flex-row md:items-center gap-3 flex-1 w-full">
+            <div class="relative w-full md:flex-1 md:min-w-[400px] lg:min-w-[480px] group">
                 <span
                     class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-600 transition-colors pointer-events-none text-[20px]">search</span>
                 <input type="text" wire:model.live.debounce.300ms="search" placeholder="Cari agenda atau lokasi..."
                     class="search-input-premium w-full">
             </div>
 
-            <x-forms.select-input wire:model.live="status" placeholder="Semua Status" :placeholderDisabled="false"
-                value="{{ $status }}" class="min-w-[150px]">
-                <option value="upcoming">Mendatang</option>
-                <option value="ongoing">Berlangsung</option>
-                <option value="completed">Selesai</option>
-                <option value="cancelled">Dibatalkan</option>
-            </x-forms.select-input>
-
-            @if (auth()->user()->isSuperAdmin())
-                <x-forms.select-input wire:model.live="posyandu_id" placeholder="Seluruh Unit" :placeholderDisabled="false"
-                    value="{{ $posyandu_id }}" class="min-w-[150px]">
-                    @foreach ($posyandus as $p)
-                        <option value="{{ $p->id }}">{{ $p->name }}</option>
-                    @endforeach
+            <div class="flex flex-row gap-3 w-full md:w-auto">
+                <x-forms.select-input wire:model.live="status" placeholder="Semua Status" :placeholderDisabled="false"
+                    value="{{ $status }}" class="flex-1 md:flex-initial md:min-w-[150px]">
+                    <option value="upcoming">Mendatang</option>
+                    <option value="ongoing">Berlangsung</option>
+                    <option value="completed">Selesai</option>
+                    <option value="cancelled">Dibatalkan</option>
                 </x-forms.select-input>
-            @endif
+
+                @if (auth()->user()->isSuperAdmin())
+                    <x-forms.select-input wire:model.live="posyandu_id" placeholder="Seluruh Unit" :placeholderDisabled="false"
+                        value="{{ $posyandu_id }}" class="flex-1 md:flex-initial md:min-w-[150px]">
+                        @foreach ($posyandus as $p)
+                            <option value="{{ $p->id }}">{{ $p->name }}</option>
+                        @endforeach
+                    </x-forms.select-input>
+                @endif
+            </div>
         </div>
 
         @if ($search || $status || $posyandu_id)
             <button wire:click="$set('search', ''); $set('status', ''); $set('posyandu_id', '');"
-                class="text-[10px] font-black text-red-500 uppercase tracking-[0.2em] hover:text-red-600 transition-colors px-4">
+                class="w-full md:w-auto text-[10px] font-black text-red-500 uppercase tracking-[0.2em] hover:text-red-600 transition-colors py-2 px-4 text-center md:text-left">
                 Reset Filter
             </button>
         @endif
@@ -174,7 +176,8 @@
 
     {{-- ── Data Table ── --}}
     <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 rounded-[2.5rem] overflow-hidden shadow-xs">
-        <table class="w-full text-left border-collapse">
+        <div class="overflow-x-auto w-full">
+            <table class="w-full text-left border-collapse min-w-[800px]">
             <thead class="bg-slate-50/75 dark:bg-slate-950/20 border-b border-slate-100 dark:border-slate-800/80">
                 <tr>
                     <th class="px-8 py-4.5 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest text-left">
@@ -284,6 +287,7 @@
                 @endforelse
             </tbody>
         </table>
+        </div>
 
         @if ($schedules->hasPages())
             <div class="px-8 py-5 border-t border-slate-100 dark:border-slate-800/80 bg-white dark:bg-slate-900">

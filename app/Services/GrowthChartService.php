@@ -19,13 +19,18 @@ class GrowthChartService
     public function getWeightForAgeData(Patient $patient): array
     {
         $gender = $this->normalizeGender($patient->gender);
-        $records = $patient->medicalRecords()->reorder('visit_date', 'asc')->get();
+        
+        $records = $patient->relationLoaded('medicalRecords')
+            ? $patient->medicalRecords->sortBy('visit_date')->values()
+            : $patient->medicalRecords()->reorder('visit_date', 'asc')->get();
 
         // Ambil referensi WHO 0-60 bulan
-        $references = WhoWeightForAge::where('gender', $gender)
-            ->where('age_months', '<=', 60)
-            ->orderBy('age_months')
-            ->get();
+        $references = \Illuminate\Support\Facades\Cache::rememberForever("who_wfa_{$gender}", function () use ($gender) {
+            return WhoWeightForAge::where('gender', $gender)
+                ->where('age_months', '<=', 60)
+                ->orderBy('age_months')
+                ->get();
+        });
 
         $fields = ['median', 'sd_plus2', 'sd_minus2', 'sd_plus3', 'sd_minus3'];
         $interpolatedRefs = $this->interpolateReferences($references, $fields);
@@ -66,12 +71,17 @@ class GrowthChartService
     public function getHeightForAgeData(Patient $patient): array
     {
         $gender = $this->normalizeGender($patient->gender);
-        $records = $patient->medicalRecords()->where('height', '>', 0)->reorder('visit_date', 'asc')->get();
+        
+        $records = $patient->relationLoaded('medicalRecords')
+            ? $patient->medicalRecords->where('height', '>', 0)->sortBy('visit_date')->values()
+            : $patient->medicalRecords()->where('height', '>', 0)->reorder('visit_date', 'asc')->get();
 
-        $references = WhoHeightForAge::where('gender', $gender)
-            ->where('age_months', '<=', 60)
-            ->orderBy('age_months')
-            ->get();
+        $references = \Illuminate\Support\Facades\Cache::rememberForever("who_hfa_{$gender}", function () use ($gender) {
+            return WhoHeightForAge::where('gender', $gender)
+                ->where('age_months', '<=', 60)
+                ->orderBy('age_months')
+                ->get();
+        });
 
         $fields = ['m_value', 'sd_plus2', 'sd_minus2', 'sd_plus3', 'sd_minus3'];
         $interpolatedRefs = $this->interpolateReferences($references, $fields);

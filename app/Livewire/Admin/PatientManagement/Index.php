@@ -85,7 +85,36 @@ class Index extends BaseAdminComponent
                         ->orWhere('id_number_hash', Patient::generateBlindIndex($this->search));
                 });
             })
-            ->when($this->category !== 'all', fn ($q) => $q->where('category', $this->category))
+            ->when($this->category !== 'all', function ($q) {
+                if ($this->category === 'bayi') {
+                    $q->where(function ($sq) {
+                        $sq->where('category', 'bayi')
+                           ->orWhere(function ($q2) {
+                               $q2->where('category', 'balita')
+                                  ->where('birth_date', '>=', now()->subMonths(12));
+                           });
+                    });
+                } elseif ($this->category === 'baduta') {
+                    $q->where(function ($sq) {
+                        $sq->where('category', 'baduta')
+                           ->orWhere(function ($q2) {
+                               $q2->where('category', 'balita')
+                                  ->where('birth_date', '<', now()->subMonths(12))
+                                  ->where('birth_date', '>=', now()->subMonths(24));
+                           });
+                    });
+                } elseif ($this->category === 'balita') {
+                    $q->where(function ($sq) {
+                        $sq->where('category', 'balita')
+                           ->where(function ($q2) {
+                               $q2->whereNull('birth_date')
+                                  ->orWhere('birth_date', '<', now()->subMonths(24));
+                           });
+                    });
+                } else {
+                    $q->where('category', $this->category);
+                }
+            })
             ->orderBy($this->sortBy === 'name' ? 'full_name' : $this->sortBy, $this->sortDirection);
 
         return view('livewire.admin.patient-management.index', [

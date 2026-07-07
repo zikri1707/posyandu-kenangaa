@@ -93,6 +93,7 @@ class AboutPageService
     {
         $kaders = \Illuminate\Support\Facades\Cache::remember('about_page_kaders', 600, function () {
             $users = \App\Models\User::whereIn('role', ['admin', 'kader'])
+                ->where('is_active', true)
                 ->orderBy('id')
                 ->get();
 
@@ -136,5 +137,25 @@ class AboutPageService
         });
 
         return array_map(fn ($k) => CadreData::fromArray($k), $kaders);
+    }
+
+    /**
+     * Get total count of target citizens (warga sasaran).
+     *
+     * @return int
+     */
+    public function getSasaranCount(): int
+    {
+        return \App\Models\Patient::count();
+    }
+
+    /**
+     * Get total count of Posyandu units.
+     *
+     * @return int
+     */
+    public function getPosyanduCount(): int
+    {
+        return \App\Models\Posyandu::count();
     }
 }
