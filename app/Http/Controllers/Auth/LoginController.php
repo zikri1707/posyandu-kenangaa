@@ -38,6 +38,6 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('public.articles.index')->with('success', 'Berhasil keluar.');
+        return redirect()->route('public.home')->with('success', 'Berhasil keluar.');
     }
 }

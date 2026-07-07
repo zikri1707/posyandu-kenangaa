@@ -85,7 +85,7 @@ describe('logout behavior', function () {
 
         $response = $this->post('/logout');
 
-        $response->assertRedirect('/articles');
+        $response->assertRedirect('/');
         $this->assertGuest();
     });
 });

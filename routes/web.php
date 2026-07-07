@@ -2,7 +2,6 @@
 
 // --- CONTROLLERS UMUM ---
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Web\ArticleController;
 // --- CONTROLLERS ADMIN (LOKASI DI FOLDER 'Web') ---
@@ -42,13 +41,6 @@ Route::middleware('guest')->group(function () {
     // Throttle: maksimal 5 percobaan login per menit per IP (anti brute-force)
     Route::post('login', [LoginController::class, 'login'])->middleware('throttle:5,1');
 
-    // Password Reset Routes
-    Route::get('password/reset', [PasswordResetController::class, 'showLinkRequestForm'])->name('password.request');
-    Route::post('password/email', [PasswordResetController::class, 'sendResetLinkEmail'])->name('password.email')->middleware('throttle:3,1');
-    Route::get('password/reset/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
-    Route::post('password/reset', [PasswordResetController::class, 'reset'])->name('password.update');
-
-    // Konfirmasi password ditangani oleh routes/auth.php via Livewire Volt
 });
 
 // Protected Routes (Require Login)
