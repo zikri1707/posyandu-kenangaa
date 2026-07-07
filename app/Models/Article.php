@@ -25,12 +25,16 @@ class Article extends Model
             \Illuminate\Support\Facades\Cache::forget('public_categories_count');
             \Illuminate\Support\Facades\Cache::forget('popular_articles');
             \Illuminate\Support\Facades\Cache::forget('featured_article');
+            \Illuminate\Support\Facades\Cache::forget('article_show_' . $article->slug);
+            \Illuminate\Support\Facades\Cache::forever('public_articles_cache_version', time());
         });
 
         static::deleted(function ($article) {
             \Illuminate\Support\Facades\Cache::forget('public_categories_count');
             \Illuminate\Support\Facades\Cache::forget('popular_articles');
             \Illuminate\Support\Facades\Cache::forget('featured_article');
+            \Illuminate\Support\Facades\Cache::forget('article_show_' . $article->slug);
+            \Illuminate\Support\Facades\Cache::forever('public_articles_cache_version', time());
         });
     }
 

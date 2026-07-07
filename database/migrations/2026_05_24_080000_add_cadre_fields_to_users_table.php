@@ -146,8 +146,10 @@ return new class extends Migration
             ],
         ];
 
-        // 1. Hapus constraint cukup sekali saja di luar looping
-        DB::statement('ALTER TABLE users DROP CONSTRAINT IF EXISTS users_role_check');
+        // 1. Hapus constraint cukup sekali saja di luar looping (hanya untuk non-sqlite)
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement('ALTER TABLE users DROP CONSTRAINT IF EXISTS users_role_check');
+        }
 
         foreach ($kaders as $k) {
             $username = strtolower(explode(' ', $k['name'])[0]).'_'.rand(100, 999);

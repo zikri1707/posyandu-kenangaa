@@ -3,10 +3,12 @@
 @section('title', 'Beranda - Posyandu Digital')
 
 @push('head')
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <!-- Preload Critical LCP Hero Image -->
+    <link rel="preload" href="{{ asset('assets/img/tim-kenanga.jpg') }}" as="image" fetchpriority="high">
+
+    <!-- Defer GSAP Scripts to prevent render-blocking -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
     <style>
         /* ── DESIGN SYSTEM ── */
@@ -1201,6 +1203,8 @@
             <div class="hero-visual" id="hero-images">
                 <div class="hero-img-main">
                     <img src="{{ asset('assets/img/tim-kenanga.jpg') }}"
+                        fetchpriority="high"
+                        loading="eager"
                         onerror="this.src='https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?q=80&w=800&auto=format&fit=crop'"
                         alt="Tim Posyandu Kenanga">
                 </div>

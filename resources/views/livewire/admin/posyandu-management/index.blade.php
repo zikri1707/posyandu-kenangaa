@@ -1,22 +1,22 @@
 <div class="space-y-8 p-6 md:p-8 pt-2 md:pt-4">
     @php
         $totalPosyandu = $posyandus->total();
-        $totalPedukuhan = \App\Models\Pedukuhan::count();
-        $totalWarga = \App\Models\Patient::count();
+        $totalWarga    = \App\Models\Patient::count();
+        $totalBalita   = \App\Models\Patient::where('category', 'balita')->count();
+        $totalBumil    = \App\Models\Patient::where('category', 'ibu_hamil')->count();
+        $totalLansia   = \App\Models\Patient::where('category', 'lansia')->count();
     @endphp
-    
+
     {{-- Header Section --}}
     <div class="flex flex-col md:flex-row md:items-start justify-between gap-6">
         <div class="relative pl-6">
-            {{-- Vertical Bar --}}
             <div class="absolute left-0 top-1 bottom-1 w-1.5 bg-gradient-to-b from-teal-500 via-emerald-400 to-transparent rounded-full"></div>
-
             <div class="flex flex-col gap-4">
                 <div>
                     <h1 class="text-4xl font-extrabold tracking-tight leading-none text-slate-900">
-                        Unit &amp; Wilayah
+                        Unit Posyandu
                     </h1>
-                    <p class="text-xs font-semibold text-slate-500 mt-2.5">Kelola data unit posyandu dan wilayah binaan secara terpusat.</p>
+                    <p class="text-xs font-semibold text-slate-500 mt-2.5">Kelola data unit posyandu dan distribusi warga per kategori secara terpusat.</p>
                 </div>
             </div>
         </div>
@@ -32,62 +32,63 @@
         </div>
     </div>
 
-    {{-- ── Summary Bento & Highlight Banner ── --}}
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {{-- Stats Bento --}}
-        <div class="lg:col-span-5 grid grid-cols-2 gap-4">
-            <div class="relative overflow-hidden bg-white rounded-[2rem] border border-slate-200/80 p-5 shadow-xs flex flex-col justify-between group hover:shadow-md hover:border-teal-500/20 hover:-translate-y-1 transition-all duration-300">
-                <div class="w-11 h-11 rounded-[0.875rem] bg-slate-50 text-slate-400 group-hover:bg-teal-600 group-hover:text-white group-hover:scale-105 group-hover:shadow-sm flex items-center justify-center transition-all duration-300">
-                    <span class="material-symbols-outlined text-[20px]">home_health</span>
-                </div>
-                <div class="mt-4">
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Total Unit</span>
-                    <p class="text-3xl font-extrabold text-slate-900 tracking-tight">{{ $totalPosyandu }}</p>
-                </div>
+    {{-- ── Summary Stats (5 cards) ── --}}
+    <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+
+        {{-- Total Unit --}}
+        <div class="relative overflow-hidden bg-white rounded-[2rem] border border-slate-200/80 p-5 shadow-xs flex flex-col justify-between group hover:shadow-md hover:border-teal-500/20 hover:-translate-y-1 transition-all duration-300">
+            <div class="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 group-hover:bg-teal-600 group-hover:text-white group-hover:scale-105 group-hover:shadow-sm flex items-center justify-center transition-all duration-300">
+                <span class="material-symbols-outlined text-[18px]">home_health</span>
             </div>
-            
-            <div class="relative overflow-hidden bg-white rounded-[2rem] border border-slate-200/80 p-5 shadow-xs flex flex-col justify-between group hover:shadow-md hover:border-indigo-500/20 hover:-translate-y-1 transition-all duration-300">
-                <div class="w-11 h-11 rounded-[0.875rem] bg-slate-50 text-slate-400 group-hover:bg-indigo-600 group-hover:text-white group-hover:scale-105 group-hover:shadow-sm flex items-center justify-center transition-all duration-300">
-                    <span class="material-symbols-outlined text-[20px]">location_city</span>
-                </div>
-                <div class="mt-4">
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Pedukuhan</span>
-                    <p class="text-3xl font-extrabold text-slate-900 tracking-tight">{{ $totalPedukuhan }}</p>
-                </div>
-            </div>
-            
-            <div class="col-span-2 relative overflow-hidden bg-gradient-to-br from-emerald-600 to-teal-500 rounded-[2rem] p-5 text-white shadow-md flex flex-col justify-between border border-white/10 group hover:-translate-y-1 transition-all duration-300">
-                <div class="absolute -bottom-8 -left-8 w-28 h-28 bg-white/10 rounded-full blur-3xl"></div>
-                <div class="relative z-10 flex items-center justify-between">
-                    <div>
-                        <span class="text-[10px] font-black text-emerald-50/80 uppercase tracking-widest block mb-1">Total Warga Binaan</span>
-                        <p class="text-3xl font-black tracking-tight">{{ number_format($totalWarga) }}</p>
-                    </div>
-                    <div class="w-12 h-12 rounded-[1rem] bg-white/15 backdrop-blur-md flex items-center justify-center border border-white/10 shadow-xs">
-                        <span class="material-symbols-outlined text-[22px] text-white">groups</span>
-                    </div>
-                </div>
+            <div class="mt-4">
+                <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Total Unit</span>
+                <p class="text-3xl font-extrabold text-slate-900 tracking-tight">{{ $totalPosyandu }}</p>
             </div>
         </div>
 
-        {{-- Hero Mesh Highlight Banner --}}
-        <div class="lg:col-span-7">
-            <div class="h-full rounded-[2.5rem] p-6 md:p-8 relative overflow-hidden text-white group shadow-md shadow-teal-900/5 border border-teal-900/10"
-                style="background-color: #0f766e; background-image: radial-gradient(at 0% 0%, hsla(168, 76%, 36%, 0.45) 0px, transparent 50%), radial-gradient(at 100% 0%, hsla(172, 66%, 50%, 0.25) 0px, transparent 50%);">
-                <div class="relative z-10 flex flex-col h-full justify-between">
-                    <div>
-                        <div class="flex items-center gap-3 mb-5">
-                            <span class="px-3 py-1 rounded-full bg-white/10 text-teal-50 text-[9px] font-black uppercase tracking-[0.2em] border border-white/10 backdrop-blur-md">Pusat Informasi</span>
-                        </div>
-                        <h2 class="text-2xl md:text-3xl font-extrabold leading-tight mb-3.5 tracking-tight text-white">
-                            Infrastruktur<br>Kesehatan Digital
-                        </h2>
-                        <p class="text-[13px] text-teal-50/85 font-semibold max-w-md leading-relaxed">
-                            Pantau distribusi unit posyandu dan wilayah binaan untuk pemerataan layanan kesehatan warga secara terpadu.
-                        </p>
-                    </div>
-                </div>
-                <div class="absolute -right-20 -bottom-20 w-40 h-40 bg-teal-400/15 rounded-full blur-3xl"></div>
+        {{-- Total Balita --}}
+        <div class="relative overflow-hidden bg-white rounded-[2rem] border border-slate-200/80 p-5 shadow-xs flex flex-col justify-between group hover:shadow-md hover:border-violet-500/20 hover:-translate-y-1 transition-all duration-300">
+            <div class="w-10 h-10 rounded-xl bg-violet-50 text-violet-600 group-hover:bg-violet-600 group-hover:text-white group-hover:scale-105 group-hover:shadow-sm flex items-center justify-center transition-all duration-300">
+                <span class="material-symbols-outlined text-[18px]">child_care</span>
+            </div>
+            <div class="mt-4">
+                <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Balita</span>
+                <p class="text-3xl font-extrabold text-slate-900 tracking-tight">{{ number_format($totalBalita) }}</p>
+            </div>
+        </div>
+
+        {{-- Ibu Hamil --}}
+        <div class="relative overflow-hidden bg-white rounded-[2rem] border border-slate-200/80 p-5 shadow-xs flex flex-col justify-between group hover:shadow-md hover:border-rose-500/20 hover:-translate-y-1 transition-all duration-300">
+            <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 group-hover:bg-rose-600 group-hover:text-white group-hover:scale-105 group-hover:shadow-sm flex items-center justify-center transition-all duration-300">
+                <span class="material-symbols-outlined text-[18px]">pregnant_woman</span>
+            </div>
+            <div class="mt-4">
+                <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Ibu Hamil</span>
+                <p class="text-3xl font-extrabold text-slate-900 tracking-tight">{{ number_format($totalBumil) }}</p>
+            </div>
+        </div>
+
+        {{-- Lansia (putih) --}}
+        <div class="relative overflow-hidden bg-white rounded-[2rem] border border-slate-200/80 p-5 shadow-xs flex flex-col justify-between group hover:shadow-md hover:border-emerald-500/20 hover:-translate-y-1 transition-all duration-300">
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white group-hover:scale-105 group-hover:shadow-sm flex items-center justify-center transition-all duration-300">
+                <span class="material-symbols-outlined text-[18px]">elderly</span>
+            </div>
+            <div class="mt-4">
+                <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Lansia</span>
+                <p class="text-3xl font-extrabold text-slate-900 tracking-tight">{{ number_format($totalLansia) }}</p>
+            </div>
+        </div>
+
+        {{-- Total Warga (hijau gradient) --}}
+        <div class="relative overflow-hidden bg-gradient-to-br from-emerald-600 to-teal-500 rounded-[2rem] p-5 text-white shadow-md border border-white/10 group hover:-translate-y-1 transition-all duration-300">
+            <div class="absolute -bottom-6 -right-6 w-24 h-24 bg-white/10 rounded-full blur-3xl"></div>
+            <div class="relative z-10 w-10 h-10 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-center border border-white/10">
+                <span class="material-symbols-outlined text-[18px] text-white">groups</span>
+            </div>
+            <div class="relative z-10 mt-4">
+                <span class="text-[9px] font-black text-emerald-50/80 uppercase tracking-widest block mb-1">Total Warga</span>
+                <p class="text-3xl font-black tracking-tight">{{ number_format($totalWarga) }}</p>
+                <span class="text-[9px] text-emerald-50/60 font-bold uppercase tracking-widest mt-1 block">semua kategori</span>
             </div>
         </div>
     </div>
@@ -103,22 +104,22 @@
         </div>
     </div>
 
-    {{-- ── Data Table (Consistent with Patients) ── --}}
+    {{-- ── Data Table ── --}}
     <div class="bg-white border border-slate-200/80 rounded-[2.5rem] overflow-hidden shadow-xs">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-slate-50/75 border-b border-slate-100">
-                        <th class="px-8 py-4.5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-left">
-                            Detail Unit
+                        <th class="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-left">
+                            Unit Posyandu
                         </th>
-                        <th class="px-6 py-4.5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">
+                        <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">
                             Kode Unik
                         </th>
-                        <th class="px-6 py-4.5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-left">
-                            Wilayah
+                        <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-left">
+                            Distribusi Warga
                         </th>
-                        <th class="px-8 py-4.5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">
+                        <th class="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">
                             Tindakan
                         </th>
                     </tr>
@@ -130,18 +131,20 @@
                             $colors = ['teal', 'blue', 'amber', 'indigo', 'emerald', 'rose', 'violet', 'orange'];
                             $color = $colors[($posyandu->id - 1) % count($colors)];
                             $colorMap = [
-                                'teal' => ['bg' => '#f0fdfa', 'text' => '#0f766e', 'border' => '#ccfbf1'],
-                                'blue' => ['bg' => '#eff6ff', 'text' => '#1d4ed8', 'border' => '#dbeafe'],
-                                'amber' => ['bg' => '#fffbeb', 'text' => '#b45309', 'border' => '#fef3c7'],
-                                'indigo' => ['bg' => '#eef2ff', 'text' => '#4338ca', 'border' => '#e0e7ff'],
+                                'teal'    => ['bg' => '#f0fdfa', 'text' => '#0f766e', 'border' => '#ccfbf1'],
+                                'blue'    => ['bg' => '#eff6ff', 'text' => '#1d4ed8', 'border' => '#dbeafe'],
+                                'amber'   => ['bg' => '#fffbeb', 'text' => '#b45309', 'border' => '#fef3c7'],
+                                'indigo'  => ['bg' => '#eef2ff', 'text' => '#4338ca', 'border' => '#e0e7ff'],
                                 'emerald' => ['bg' => '#ecfdf5', 'text' => '#047857', 'border' => '#d1fae5'],
-                                'rose' => ['bg' => '#fff1f2', 'text' => '#be123c', 'border' => '#ffe4e6'],
-                                'violet' => ['bg' => '#f5f3ff', 'text' => '#6d28d9', 'border' => '#ede9fe'],
-                                'orange' => ['bg' => '#fff7ed', 'text' => '#c2410c', 'border' => '#ffedd5'],
+                                'rose'    => ['bg' => '#fff1f2', 'text' => '#be123c', 'border' => '#ffe4e6'],
+                                'violet'  => ['bg' => '#f5f3ff', 'text' => '#6d28d9', 'border' => '#ede9fe'],
+                                'orange'  => ['bg' => '#fff7ed', 'text' => '#c2410c', 'border' => '#ffedd5'],
                             ];
                             $selectedColor = $colorMap[$color] ?? $colorMap['teal'];
+                            $total = $posyandu->patients_count ?? 0;
                         @endphp
                         <tr class="group hover:bg-slate-50/50 transition-colors duration-200" wire:key="posyandu-{{ $posyandu->id }}">
+                            {{-- Unit Info --}}
                             <td class="px-8 py-5">
                                 <div class="flex items-center gap-4">
                                     @if ($posyandu->logo_photo)
@@ -163,36 +166,55 @@
                                     </div>
                                 </div>
                             </td>
+
+                            {{-- Kode Unik --}}
                             <td class="px-6 py-5 text-center">
                                 <span class="px-2.5 py-1 bg-teal-50 border border-teal-100/60 rounded-full text-[11px] font-extrabold text-teal-700 font-mono tracking-wider">
                                     {{ $posyandu->unique_code ?? '—' }}
                                 </span>
                             </td>
+
+                            {{-- Distribusi Warga per Kategori --}}
                             <td class="px-6 py-5">
-                                <div class="flex flex-col">
-                                    <span class="text-sm font-bold text-slate-700">{{ $posyandu->pedukuhan?->name ?? '—' }}</span>
-                                    <span class="text-[10px] text-slate-400 font-black uppercase tracking-wider mt-0.5">Bekasi Timur</span>
+                                <div class="flex flex-col gap-2">
+                                    {{-- Total badge --}}
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-[11px] font-black text-slate-600">{{ number_format($total) }}</span>
+                                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">total warga</span>
+                                    </div>
+                                    {{-- Category pills --}}
+                                    <div class="flex flex-wrap gap-1.5">
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-violet-50 text-violet-700 border border-violet-100">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-violet-500 shrink-0"></span>
+                                            {{ number_format($posyandu->balita_count ?? 0) }} Balita
+                                        </span>
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-rose-50 text-rose-700 border border-rose-100">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0"></span>
+                                            {{ number_format($posyandu->ibu_hamil_count ?? 0) }} Bumil
+                                        </span>
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-100">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
+                                            {{ number_format($posyandu->lansia_count ?? 0) }} Lansia
+                                        </span>
+                                    </div>
                                 </div>
                             </td>
+
+                            {{-- Tindakan --}}
                             <td class="px-8 py-5 text-right">
                                 <div class="flex items-center justify-end gap-2">
-                                    {{-- View --}}
                                     <a href="{{ route('admin.posyandu.show', $posyandu->id) }}"
                                         class="w-9 h-9 flex items-center justify-center rounded-2xl bg-slate-50 border border-slate-200/30 text-slate-500 hover:bg-teal-600 hover:text-white hover:border-teal-600 hover:shadow-md hover:shadow-teal-600/10 transition-all duration-200"
                                         title="Lihat Detail">
                                         <span class="material-symbols-outlined text-[18px]">visibility</span>
                                     </a>
- 
-                                    {{-- Edit --}}
                                     <a href="{{ route('admin.posyandu.edit', $posyandu->id) }}"
                                         class="w-9 h-9 flex items-center justify-center rounded-2xl bg-slate-50 border border-slate-200/30 text-slate-500 hover:bg-amber-600 hover:text-white hover:border-amber-600 hover:shadow-md hover:shadow-amber-600/10 transition-all duration-200"
                                         title="Edit Data">
                                         <span class="material-symbols-outlined text-[18px]">edit</span>
                                     </a>
- 
-                                    {{-- Delete --}}
                                     <button wire:click="confirmDelete({{ $posyandu->id }})"
-                                        class="w-9 h-9 min-w-0 min-h-0 flex items-center justify-center rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200/30 dark:border-slate-700/50 text-slate-500 dark:text-slate-400 hover:bg-rose-600 hover:text-white hover:border-rose-600 hover:shadow-md hover:shadow-rose-600/10 transition-all duration-200 cursor-pointer"
+                                        class="w-9 h-9 min-w-0 min-h-0 flex items-center justify-center rounded-2xl bg-slate-50 border border-slate-200/30 text-slate-500 hover:bg-rose-600 hover:text-white hover:border-rose-600 hover:shadow-md hover:shadow-rose-600/10 transition-all duration-200 cursor-pointer"
                                         title="Hapus Unit">
                                         <span class="material-symbols-outlined text-[18px]">delete</span>
                                     </button>
@@ -213,7 +235,7 @@
                 </tbody>
             </table>
         </div>
-        
+
         {{-- Pagination --}}
         <div class="px-8 py-5 bg-white border-t border-slate-100 flex items-center justify-between">
             <div class="text-[10px] font-black text-slate-455 uppercase tracking-widest">
@@ -223,7 +245,7 @@
         </div>
     </div>
 
-    {{-- ── Delete Confirmation Modal (EXACTLY like patients) ── --}}
+    {{-- ── Delete Confirmation Modal ── --}}
     <div x-data="{ open: @entangle('showDeleteModal') }">
         <x-modals.confirm-modal title="Hapus Unit Posyandu"
             message="Apakah Anda yakin ingin menghapus unit posyandu ini?"

@@ -766,16 +766,21 @@ class Analytics extends BaseAdminComponent
 
         // Vaccine counts
         $vaccineList = ['HB-0', 'BCG', 'Polio 1', 'Polio 2', 'Polio 3', 'Polio 4', 'DPT-HB-Hib 1', 'DPT-HB-Hib 2', 'DPT-HB-Hib 3', 'PCV 1', 'PCV 2', 'PCV 3', 'RV 1', 'RV 2', 'RV 3', 'IPV 1', 'IPV 2', 'MR'];
+        $recordsForVaccines = (clone $medicalRecordQuery)
+            ->whereHas('patient', fn ($q) => $q->whereIn('category', ['balita', 'bayi', 'baduta']))
+            ->whereYear('visit_date', $selectedYear)
+            ->when($selectedMonth, fn ($q) => $q->whereMonth('visit_date', $selectedMonth))
+            ->whereNotNull('vaccine_name')
+            ->where('vaccine_name', '!=', '')
+            ->get(['patient_id', 'vaccine_name']);
+
         $vaccineCounts = [];
         foreach ($vaccineList as $vaxName) {
-            $count = (clone $medicalRecordQuery)
-                ->whereHas('patient', fn ($q) => $q->whereIn('category', ['balita', 'bayi', 'baduta']))
-                ->whereYear('visit_date', $selectedYear)
-                ->when($selectedMonth, fn ($q) => $q->whereMonth('visit_date', $selectedMonth))
-                ->where('vaccine_name', 'like', "%{$vaxName}%")
-                ->distinct('patient_id')
-                ->count('patient_id');
-            $vaccineCounts[$vaxName] = $count;
+            $vaccineCounts[$vaxName] = $recordsForVaccines
+                ->filter(fn ($r) => stripos($r->vaccine_name, $vaxName) !== false)
+                ->pluck('patient_id')
+                ->unique()
+                ->count();
         }
         $vaccineLabels = array_keys($vaccineCounts);
         $vaccineData = array_values($vaccineCounts);
@@ -806,25 +811,21 @@ class Analytics extends BaseAdminComponent
         $hypertensionRiskRate = $totalPregWithRecordsCount > 0 ? round(($pregHypertensionCount / $totalPregWithRecordsCount) * 100, 1) : 0;
         $feComplianceRate = $totalPregWithRecordsCount > 0 ? round(($pregFeComplianceCount / $totalPregWithRecordsCount) * 100, 1) : 0;
 
-        // Pregnancy trends bulanan
+        $pregRecords = (clone $medicalRecordQuery)
+            ->whereHas('patient', fn ($q) => $q->where('category', 'ibu_hamil'))
+            ->whereYear('visit_date', $selectedYear)
+            ->get(['id', 'patient_id', 'visit_date', 'systolic_bp', 'diastolic_bp', 'pill_fe']);
+
         $trendPregnancyHypertension = [];
         $trendPregnancyFe = [];
         for ($m = 1; $m <= 12; $m++) {
-            $latestRecordSubqueryPM = MedicalRecord::selectRaw('MAX(id) as id')
-                ->whereYear('visit_date', $selectedYear)
-                ->whereMonth('visit_date', $m)
-                ->groupBy('patient_id');
-            $pregWithRecordsM = (clone $patientQuery)
-                ->where('category', 'ibu_hamil')
-                ->whereHas('medicalRecords', fn ($q) => $q->whereYear('visit_date', $selectedYear)->whereMonth('visit_date', $m));
-            $totalM = $pregWithRecordsM->count();
+            $monthRecs = $pregRecords->filter(fn ($r) => Carbon::parse($r->visit_date)->month === $m);
+            $latestRecordsByPatient = $monthRecs->sortByDesc('id')->unique('patient_id');
+            $totalM = $latestRecordsByPatient->count();
+
             if ($totalM > 0) {
-                $hyperM = (clone $pregWithRecordsM)
-                    ->whereHas('medicalRecords', fn ($q) => $q->where(fn ($sq) => $sq->where('systolic_bp', '>=', 140)->orWhere('diastolic_bp', '>=', 90))->whereIn('id', $latestRecordSubqueryPM))
-                    ->count();
-                $feM = (clone $pregWithRecordsM)
-                    ->whereHas('medicalRecords', fn ($q) => $q->where('pill_fe', 1)->whereIn('id', $latestRecordSubqueryPM))
-                    ->count();
+                $hyperM = $latestRecordsByPatient->filter(fn ($r) => $r->systolic_bp >= 140 || $r->diastolic_bp >= 90)->count();
+                $feM = $latestRecordsByPatient->filter(fn ($r) => $r->pill_fe == 1)->count();
                 $trendPregnancyHypertension[] = round(($hyperM / $totalM) * 100, 1);
                 $trendPregnancyFe[] = round(($feM / $totalM) * 100, 1);
             } else {
@@ -887,28 +888,22 @@ class Analytics extends BaseAdminComponent
         $lansiaRecordsYear = $recordsYear->filter(fn ($r) => $r->patient && $r->patient->category === 'lansia');
         $pregRecordsYear = $recordsYear->filter(fn ($r) => $r->patient && $r->patient->category === 'ibu_hamil');
 
+        $lansiaRecords = (clone $medicalRecordQuery)
+            ->whereHas('patient', fn ($q) => $q->where('category', 'lansia'))
+            ->whereYear('visit_date', $selectedYear)
+            ->get(['id', 'patient_id', 'visit_date', 'systolic_bp', 'diastolic_bp', 'blood_sugar', 'cholesterol', 'uric_acid']);
+
         for ($m = 1; $m <= 12; $m++) {
-            $latestRecordSubqueryLM = MedicalRecord::selectRaw('MAX(id) as id')
-                ->whereYear('visit_date', $selectedYear)
-                ->whereMonth('visit_date', $m)
-                ->groupBy('patient_id');
-            $lansiaWithRecordsM = (clone $patientQuery)
-                ->where('category', 'lansia')
-                ->whereHas('medicalRecords', fn ($q) => $q->whereYear('visit_date', $selectedYear)->whereMonth('visit_date', $m));
-            $totalLM = $lansiaWithRecordsM->count();
+            $monthRecs = $lansiaRecords->filter(fn ($r) => Carbon::parse($r->visit_date)->month === $m);
+            $latestRecordsByPatient = $monthRecs->sortByDesc('id')->unique('patient_id');
+            $totalLM = $latestRecordsByPatient->count();
+
             if ($totalLM > 0) {
-                $hyperLM = (clone $lansiaWithRecordsM)
-                    ->whereHas('medicalRecords', fn ($q) => $q->where(fn ($sq) => $sq->where('systolic_bp', '>=', 140)->orWhere('diastolic_bp', '>=', 90))->whereIn('id', $latestRecordSubqueryLM))
-                    ->count();
-                $sugarLM = (clone $lansiaWithRecordsM)
-                    ->whereHas('medicalRecords', fn ($q) => $q->where('blood_sugar', '>=', 200)->whereIn('id', $latestRecordSubqueryLM))
-                    ->count();
-                $cholLM = (clone $lansiaWithRecordsM)
-                    ->whereHas('medicalRecords', fn ($q) => $q->where('cholesterol', '>=', 200)->whereIn('id', $latestRecordSubqueryLM))
-                    ->count();
-                $uricLM = (clone $lansiaWithRecordsM)
-                    ->whereHas('medicalRecords', fn ($q) => $q->where('uric_acid', '>=', 7.0)->whereIn('id', $latestRecordSubqueryLM))
-                    ->count();
+                $hyperLM = $latestRecordsByPatient->filter(fn ($r) => $r->systolic_bp >= 140 || $r->diastolic_bp >= 90)->count();
+                $sugarLM = $latestRecordsByPatient->filter(fn ($r) => $r->blood_sugar >= 200)->count();
+                $cholLM = $latestRecordsByPatient->filter(fn ($r) => $r->cholesterol >= 200)->count();
+                $uricLM = $latestRecordsByPatient->filter(fn ($r) => $r->uric_acid >= 7.0)->count();
+
                 $trendLansiaHypertension[] = round(($hyperLM / $totalLM) * 100, 1);
                 $trendLansiaHyperglycemia[] = round(($sugarLM / $totalLM) * 100, 1);
                 $trendLansiaHypercholesterolemia[] = round(($cholLM / $totalLM) * 100, 1);

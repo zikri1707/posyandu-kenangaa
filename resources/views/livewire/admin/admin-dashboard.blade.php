@@ -1,8 +1,6 @@
 <div class="space-y-6">
-    {{-- Material Symbols & Fonts --}}
+    {{-- Dashboard-specific styles --}}
     @push('styles')
-        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
-            rel="stylesheet" />
         <style>
             .hero-gradient {
                 background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #134e4a 100%);

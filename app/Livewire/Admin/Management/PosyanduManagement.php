@@ -48,7 +48,12 @@ class PosyanduManagement extends BaseAdminComponent
 
     public function render()
     {
-        $posyandus = Posyandu::with('pedukuhan')
+        $posyandus = Posyandu::withCount([
+                'patients',
+                'patients as balita_count'   => fn($q) => $q->where('category', 'balita'),
+                'patients as ibu_hamil_count' => fn($q) => $q->where('category', 'ibu_hamil'),
+                'patients as lansia_count'    => fn($q) => $q->where('category', 'lansia'),
+            ])
             ->when($this->search, function ($q) {
                 $q->where('name', 'like', '%'.$this->search.'%')
                     ->orWhere('unique_code', 'like', '%'.$this->search.'%')
