@@ -20,8 +20,8 @@ class DatabaseSeeder extends Seeder
             ArticleSeeder::class,
             MedicalRecordSeeder::class,
             BalitaKenanga1Seeder::class,  // Import data balita Kenanga 1
-            DataLansiaSeeder::class,     // Import data lansia
-            IbuHamil5Seeder::class,
+            // DataLansiaSeeder::class,     // Import data lansia (dimatikan agar lansia hanya 2)
+            // IbuHamil5Seeder::class,      // Jika ingin ibu hamil juga tidak pakai data dummy, bisa di-uncomment
         ]);
     }
 }

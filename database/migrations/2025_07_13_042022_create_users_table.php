@@ -19,7 +19,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
-            $table->enum('role', ['superadmin', 'admin', 'coordinator', 'staff', 'medical', 'patient', 'partner'])->default('admin');
+            $table->string('role')->default('user');            
             $table->boolean('is_active')->default(true);
             $table->boolean('verified_email')->default(false);
             $table->integer('attempt_login')->default(0);

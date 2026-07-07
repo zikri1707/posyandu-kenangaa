@@ -575,9 +575,11 @@
 {{-- Chart.js Rendering (browser only) --}}
 @push('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        if (typeof Chart === 'undefined') return;
-
+    function initCharts() {
+        if (typeof Chart === 'undefined') {
+            setTimeout(initCharts, 100);
+            return;
+        }
         const records = @json($reportData['raw_records']);
         const category = "{{ $cat }}";
         
@@ -939,7 +941,9 @@
                 });
             }
         }
-    });
+    }
+
+    document.addEventListener('DOMContentLoaded', initCharts);
 </script>
 @endpush
 @endsection

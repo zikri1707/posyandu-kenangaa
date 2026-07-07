@@ -1071,6 +1071,7 @@
                     hiddenItems: [],
                     isEmpty: false,
                     init() {
+                        if (typeof Chart === 'undefined') { setTimeout(() => this.init(), 100); return; }
                         const nd = $wire.nutritionStatusDistribution;
                         if (!nd || !nd.labels || !nd.data || nd.data.length === 0) {
                             this.isEmpty = true;
@@ -1225,6 +1226,7 @@
     <div x-data="{
         chart: null,
         init() {
+            if (typeof Chart === 'undefined') { setTimeout(() => this.init(), 100); return; }
             const wd = $wire.monthlyWeighingData;
             if (!wd || !wd.labels || !wd.data || wd.data.length === 0) return;
     

@@ -376,10 +376,15 @@ class AdminDashboard extends BaseAdminComponent
     protected function getMonthlyWeighingData(Builder $medicalRecordQuery): array
     {
         $startDate = Carbon::now()->subMonths(11)->startOfMonth();
-        $dateFormat = config('database.default') === 'sqlite' ? 'strftime("%m %Y", visit_date)' : 'DATE_FORMAT(visit_date, "%m %Y")';
+        $dbDriver = $medicalRecordQuery->getConnection()->getDriverName();
+        $dateFormat = match ($dbDriver) {
+            'sqlite' => 'strftime("%m %Y", visit_date)',
+            'pgsql' => 'TO_CHAR(visit_date, \'MM YYYY\')',
+            default => 'DATE_FORMAT(visit_date, "%m %Y")',
+        };
         $trends = (clone $medicalRecordQuery)->when($this->filterPeriode === 'semua', function ($query) use ($startDate) {
             return $query->where('visit_date', '>=', $startDate);
-        })->selectRaw("$dateFormat as month_year")->selectRaw('COUNT(*) as total')->groupBy('month_year')->get()->pluck('total', 'month_year');
+        })->selectRaw("$dateFormat as month_year")->selectRaw('COUNT(*) as total')->groupByRaw($dateFormat)->get()->pluck('total', 'month_year');
         $labels = [];
         $data = [];
         for ($i = 11; $i >= 0; $i--) {

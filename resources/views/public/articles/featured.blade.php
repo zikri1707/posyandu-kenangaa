@@ -10,7 +10,7 @@
         </h1>
         
         <p class="text-lg text-slate-500 font-medium leading-relaxed max-w-2xl">
-            {{ Str::limit(strip_tags($featured->content), 180) }}
+            {{ \App\Services\ArticleService::getExcerpt($featured->content, 180) }}
         </p>
 
         <div class="flex items-center gap-6 pt-6">
@@ -19,7 +19,7 @@
                 Mulai Membaca
             </a>
             <span class="text-slate-400 text-[11px] font-bold uppercase tracking-widest flex items-center gap-2">
-                {{ ceil(str_word_count(strip_tags($featured->content)) / 200) }} mnt baca
+                {{ ceil(str_word_count(\App\Services\ArticleService::getExcerpt($featured->content, 999999)) / 200) }} mnt baca
             </span>
         </div>
     </div>

@@ -147,11 +147,23 @@ class MedicalRecordController extends Controller
     {
         $this->authorize('update', $medicalRecord);
 
-        $this->medicalRecordService->updateRecord($medicalRecord, $request->validated(), auth()->user());
+        try {
+            $this->medicalRecordService->updateRecord($medicalRecord, $request->validated(), auth()->user());
 
-        return redirect()
-            ->route('admin.medical-records.index')
-            ->with('success', 'Rekam medis berhasil diperbarui.');
+            return redirect()
+                ->route('admin.medical-records.index')
+                ->with('success', 'Rekam medis berhasil diperbarui.');
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Gagal memperbarui rekam medis: '.$e->getMessage(), [
+                'user_id' => auth()->id(),
+                'record_id' => $medicalRecord->id,
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Gagal memperbarui rekam medis. Silakan coba lagi.');
+        }
     }
 
     /**
@@ -161,11 +173,22 @@ class MedicalRecordController extends Controller
     {
         $this->authorize('delete', $medicalRecord);
 
-        $this->medicalRecordService->deleteRecord($medicalRecord);
+        try {
+            $this->medicalRecordService->deleteRecord($medicalRecord);
 
-        return redirect()
-            ->route('admin.medical-records.index')
-            ->with('success', 'Rekam medis berhasil dihapus.');
+            return redirect()
+                ->route('admin.medical-records.index')
+                ->with('success', 'Rekam medis berhasil dihapus.');
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Gagal menghapus rekam medis: '.$e->getMessage(), [
+                'user_id' => auth()->id(),
+                'record_id' => $medicalRecord->id,
+            ]);
+
+            return redirect()
+                ->route('admin.medical-records.index')
+                ->with('error', 'Gagal menghapus rekam medis. Silakan coba lagi.');
+        }
     }
 
     /**

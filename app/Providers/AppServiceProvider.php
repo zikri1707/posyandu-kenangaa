@@ -59,6 +59,10 @@ class AppServiceProvider extends ServiceProvider
             return $user->isSuperAdmin() ? true : null;
         });
 
+        if (config('app.env') !== 'local' || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')) {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
+
         // Register model policies
         Gate::policy(Patient::class, PatientPolicy::class);
         Gate::policy(MedicalRecord::class, MedicalRecordPolicy::class);

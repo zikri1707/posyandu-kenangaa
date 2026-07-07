@@ -38,9 +38,12 @@ class UserController extends Controller
 
     public function store(UserRequest $request, \App\Services\UserService $userService)
     {
-        $userService->createUser($request->validated(), $request->has('is_active'));
-
-        return redirect()->route('admin.users.index')->with('success', 'Pengguna berhasil ditambahkan.');
+        try {
+            $userService->createUser($request->validated(), $request->has('is_active'));
+            return redirect()->route('admin.users.index')->with('success', 'Pengguna berhasil ditambahkan.');
+        } catch (\Exception $e) {
+            return redirect()->back()->withInput()->with('error', 'Gagal menambahkan pengguna: ' . $e->getMessage());
+        }
     }
 
     public function show(User $user)
@@ -55,15 +58,21 @@ class UserController extends Controller
 
     public function update(UserRequest $request, User $user, \App\Services\UserService $userService)
     {
-        $userService->updateUser($user, $request->validated(), $request->has('is_active'));
-
-        return redirect()->route('admin.users.index')->with('success', 'Pengguna berhasil diperbarui.');
+        try {
+            $userService->updateUser($user, $request->validated(), $request->has('is_active'));
+            return redirect()->route('admin.users.index')->with('success', 'Pengguna berhasil diperbarui.');
+        } catch (\Exception $e) {
+            return redirect()->back()->withInput()->with('error', 'Gagal memperbarui pengguna: ' . $e->getMessage());
+        }
     }
 
     public function destroy(User $user, \App\Services\UserService $userService)
     {
-        $userService->deleteUser($user);
-
-        return redirect()->route('admin.users.index')->with('success', 'Pengguna berhasil dihapus.');
+        try {
+            $userService->deleteUser($user);
+            return redirect()->route('admin.users.index')->with('success', 'Pengguna berhasil dihapus.');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.users.index')->with('error', 'Gagal menghapus pengguna: ' . $e->getMessage());
+        }
     }
 }

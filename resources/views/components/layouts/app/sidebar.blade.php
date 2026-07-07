@@ -187,6 +187,11 @@
     const EXP = '260px', COL = '64px';
 
     let collapsed = localStorage.getItem(KEY) === 'true';
+    
+    // Force collapsed on mobile by default to prevent blocking the screen
+    if (window.innerWidth < 1024) {
+        collapsed = true;
+    }
 
     function apply(animate) {
         const isDesktop = window.innerWidth >= 1024;
@@ -234,6 +239,16 @@
         }
     });
 
-    window.addEventListener('resize', () => apply(false));
+    let isMobile = window.innerWidth < 1024;
+    window.addEventListener('resize', () => {
+        const currentlyMobile = window.innerWidth < 1024;
+        if (currentlyMobile !== isMobile) {
+            isMobile = currentlyMobile;
+            if (isMobile) {
+                collapsed = true;
+            }
+            apply(false);
+        }
+    });
 })();
 </script>

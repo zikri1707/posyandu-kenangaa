@@ -121,18 +121,12 @@ class ScheduleManagement extends BaseAdminComponent
     private function getStats(Builder $query): array
     {
         $now = now();
-        $stats = (clone $query)
-            ->selectRaw('COUNT(CASE WHEN MONTH(start_time) = ? AND YEAR(start_time) = ? THEN 1 END) as total_month', [$now->month, $now->year])
-            ->selectRaw('COUNT(CASE WHEN status = "completed" THEN 1 END) as completed')
-            ->selectRaw('COUNT(CASE WHEN status = "upcoming" THEN 1 END) as upcoming')
-            ->selectRaw('COUNT(CASE WHEN status = "ongoing" THEN 1 END) as ongoing')
-            ->first();
-
+        
         return [
-            'total_month' => $stats->total_month ?? 0,
-            'completed' => $stats->completed ?? 0,
-            'upcoming' => $stats->upcoming ?? 0,
-            'ongoing' => $stats->ongoing ?? 0,
+            'total_month' => (clone $query)->whereMonth('start_time', $now->month)->whereYear('start_time', $now->year)->count(),
+            'completed' => (clone $query)->where('status', 'completed')->count(),
+            'upcoming' => (clone $query)->where('status', 'upcoming')->count(),
+            'ongoing' => (clone $query)->where('status', 'ongoing')->count(),
         ];
     }
 

@@ -19,12 +19,27 @@
         pointer-events: none;
         display: inline-block;
     }
+    [contenteditable="true"] {
+        -webkit-user-select: text !important;
+        user-select: text !important;
+    }
+    #blocks-container .group\/row > div > div[style*="position: absolute"] {
+        left: 2px !important;
+    }
+    @media (min-width: 640px) {
+        #blocks-container .group\/row > div > div[style*="position: absolute"] {
+            left: 6px !important;
+        }
+    }
 </style>
 
 {{-- Cover upload (Livewire) --}}
 <div class="sr-only" aria-hidden="true">
     <input type="file" wire:model="cover" accept="image/*" x-ref="lwCoverInput"
-           @change="handleCoverChange($event)">
+           @change="handleCoverChange($event)"
+           x-on:livewire-upload-start="coverUploading = true"
+           x-on:livewire-upload-finish="coverUploading = false"
+           x-on:livewire-upload-error="coverUploading = false; alert('Gagal mengunggah gambar.')">
 </div>
 
 {{-- Image insert hidden input --}}
@@ -38,7 +53,7 @@
 {{-- ══════════════════════════════════════════
      CANVAS
 ══════════════════════════════════════════ --}}
-<div class="max-w-[860px] mx-auto px-8 pt-8 pb-40">
+<div class="max-w-[860px] mx-auto px-4 sm:px-8 pt-2 sm:pt-8 pb-40">
 
     {{-- Tombol Kembali --}}
     <div class="mb-8 flex items-center justify-between">
@@ -54,7 +69,8 @@
     <div class="mb-8">
         <textarea
             x-ref="titleInput"
-            @input="titleValue = $el.value; isDirty = true; autoResize($el)"
+            x-model="titleValue"
+            @input="isDirty = true; autoResize($el)"
             @keydown.enter.prevent="focusFirstBlock()"
             placeholder="Judul artikel..."
             rows="1"
@@ -115,7 +131,7 @@
     <div id="blocks-container" wire:ignore class="relative mb-12" @input="showContentError = false">
 
         <template x-for="(block, index) in blocks" :key="block.id">
-            <div class="relative group/row -ml-12 pl-12"
+            <div class="relative group/row -ml-10 sm:-ml-12 pl-10 sm:pl-12"
                  @mouseenter="hoveredIndex = index"
                  @mouseleave="hoveredIndex = (hoveredIndex === index) ? -1 : hoveredIndex">
 
@@ -131,14 +147,14 @@
                         </button>
                     </div>
                     <div :id="'block-' + block.id" contenteditable="true"
-                         x-init="$el.innerHTML = block.content || ''; $el.addEventListener('input', () => {block.content = $el.innerHTML;});"
+                         x-init="$el.innerHTML = block.content || ''"
                          @keydown="handleKeydown($event, index)"
                          @focus="focusedIndex = index; activeBlockId = block.id"
                          @blur="handleBlur(index)"
                          @mouseup="checkSelection()" @keyup="checkSelection()"
                          :data-placeholder="index === 0 ? 'Mulai menulis, atau klik + untuk tambah konten' : 'Tulis paragraf'"
                          class="flex-1 min-h-[1.8em] py-2 text-[1.15rem] leading-[1.9] text-on-surface-variant ce-placeholder"
-                         style="font-family:'Georgia',serif; outline: none; border: none; box-shadow: none;"></div>
+                         style="font-family:'Georgia',serif; text-align: justify; outline: none; border: none; box-shadow: none;"></div>
                 </div>
 
                 {{-- HEADING 1 --}}
@@ -153,7 +169,7 @@
                         </button>
                     </div>
                     <div :id="'block-' + block.id" contenteditable="true"
-                         x-init="$el.innerHTML = block.content || ''; $el.addEventListener('input', () => {block.content = $el.innerHTML;});"
+                         x-init="$el.innerHTML = block.content || ''"
                          @keydown="handleKeydown($event, index)"
                          @focus="focusedIndex = index; activeBlockId = block.id"
                          @blur="handleBlur(index)"
@@ -175,7 +191,7 @@
                         </button>
                     </div>
                     <div :id="'block-' + block.id" contenteditable="true"
-                         x-init="$el.innerHTML = block.content || ''; $el.addEventListener('input', () => { block.content = $el.innerHTML; isDirty = true; });"
+                         x-init="$el.innerHTML = block.content || ''"
                          @keydown="handleKeydown($event, index)"
                          @focus="focusedIndex = index; activeBlockId = block.id"
                          @blur="handleBlur(index)"
@@ -197,7 +213,7 @@
                         </button>
                     </div>
                     <div :id="'block-' + block.id" contenteditable="true"
-                         x-init="$el.innerHTML = block.content || ''; $el.addEventListener('input', () => { block.content = $el.innerHTML; isDirty = true; });"
+                         x-init="$el.innerHTML = block.content || ''"
                          @keydown="handleKeydown($event, index)"
                          @focus="focusedIndex = index; activeBlockId = block.id"
                          @blur="handleBlur(index)"
@@ -221,14 +237,14 @@
                     <div class="flex-1 flex gap-3">
                         <div class="w-1 rounded-lg bg-inverse-surface flex-shrink-0 self-stretch"></div>
                         <div :id="'block-' + block.id" contenteditable="true"
-                             x-init="$el.innerHTML = block.content || ''; $el.addEventListener('input', () => {block.content = $el.innerHTML;});"
+                             x-init="$el.innerHTML = block.content || ''"
                              @keydown="handleKeydown($event, index)"
                              @focus="focusedIndex = index; activeBlockId = block.id"
                              @blur="handleBlur(index)"
                              @mouseup="checkSelection()" @keyup="checkSelection()"
                              :data-placeholder="'Kutipanâ€¦'"
                              class="flex-1 min-h-[1.8em] py-1 text-[1.15rem] leading-[1.9] text-on-surface-variant italic ce-placeholder"
-                             style="font-family:'Georgia',serif; outline: none; border: none; box-shadow: none;"></div>
+                             style="font-family:'Georgia',serif; text-align: justify; outline: none; border: none; box-shadow: none;"></div>
                     </div>
                 </div>
 
@@ -246,14 +262,14 @@
                     <div class="flex-1 bg-gradient-to-r from-amber-50 to-orange-50 border-l-4 border-amber-500 rounded-2xl px-5 py-4 shadow-sm hover:shadow-md transition-all">
                         <span class="material-symbols-outlined text-amber-600">tips_and_updates</span>
                         <div :id="'block-' + block.id" contenteditable="true"
-                             x-init="$el.innerHTML = block.content || ''; $el.addEventListener('input', () => { block.content = $el.innerHTML; isDirty = true; });"
+                             x-init="$el.innerHTML = block.content || ''"
                              @keydown="handleKeydown($event, index)"
                              @focus="focusedIndex = index; activeBlockId = block.id"
                              @blur="handleBlur(index)"
                              @mouseup="checkSelection()" @keyup="checkSelection()"
                              :data-placeholder="'Catatan pentingâ€¦'"
                              class="flex-1 min-h-[1.8em] py-0.5 text-amber-900 ce-placeholder"
-                             style="font-family:'Georgia',serif; outline: none; border: none; box-shadow: none;"></div>
+                             style="font-family:'Georgia',serif; text-align: justify; outline: none; border: none; box-shadow: none;"></div>
                     </div>
                 </div>
 
@@ -271,14 +287,14 @@
                     <div class="flex-1 flex items-start gap-2 py-0.5">
                         <span class="w-1.5 h-1.5 rounded-lg bg-slate-700 flex-shrink-0 mt-3"></span>
                         <div :id="'block-' + block.id" contenteditable="true"
-                             x-init="$el.innerHTML = block.content || ''; $el.addEventListener('input', () => {block.content = $el.innerHTML;});"
+                             x-init="$el.innerHTML = block.content || ''"
                              @keydown="handleKeydown($event, index)"
                              @focus="focusedIndex = index; activeBlockId = block.id"
                              @blur="handleBlur(index)"
                              @mouseup="checkSelection()" @keyup="checkSelection()"
                              :data-placeholder="'Item listâ€¦'"
                              class="flex-1 min-h-[1.8em] text-[1.15rem] leading-[1.9] text-on-surface-variant ce-placeholder"
-                             style="font-family:'Georgia',serif; outline: none; border: none; box-shadow: none;"></div>
+                             style="font-family:'Georgia',serif; text-align: justify; outline: none; border: none; box-shadow: none;"></div>
                     </div>
                 </div>
 
@@ -296,14 +312,14 @@
                     <div class="flex-1 flex items-start gap-2 py-0.5">
                         <span class="text-sm font-bold text-outline flex-shrink-0 w-5 text-right mt-1.5" x-text="getNumberedIndex(index) + '.'"></span>
                         <div :id="'block-' + block.id" contenteditable="true"
-                             x-init="$el.innerHTML = block.content || ''; $el.addEventListener('input', () => {block.content = $el.innerHTML;});"
+                             x-init="$el.innerHTML = block.content || ''"
                              @keydown="handleKeydown($event, index)"
                              @focus="focusedIndex = index; activeBlockId = block.id"
                              @blur="handleBlur(index)"
                              @mouseup="checkSelection()" @keyup="checkSelection()"
                              :data-placeholder="'Item bernomorâ€¦'"
                              class="flex-1 min-h-[1.8em] text-[1.15rem] leading-[1.9] text-on-surface-variant ce-placeholder"
-                             style="font-family:'Georgia',serif; outline: none; border: none; box-shadow: none;"></div>
+                             style="font-family:'Georgia',serif; text-align: justify; outline: none; border: none; box-shadow: none;"></div>
                     </div>
                 </div>
 
@@ -357,14 +373,14 @@
                     <div x-show="!block.embedSrc && !block.localSrc"
                          class="rounded-xl bg-surface-container-low border border-dashed border-outline-variant p-4">
                         <p class="text-[11px] font-black text-outline-variant uppercase tracking-widest mb-3 text-center">YouTube, Google Drive, atau Upload Video</p>
-                        <div class="flex gap-2 mb-3">
+                        <div class="flex flex-col sm:flex-row gap-2 mb-3">
                             <input type="text" x-model="block.url"
                                 placeholder="https://youtube.com/watch?v=..."
                                 @keydown.enter.prevent="embedVideo(block)"
                                 @click.stop
-                                class="flex-1 h-9 px-3 rounded-lg border border-outline-variant text-sm text-on-surface-variant focus:outline-none focus:border-indigo-400 bg-white">
-                                                        <button type="button" @click.stop="embedVideo(block)"
-                                    class="h-9 px-5 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-xs font-black uppercase tracking-wider transition-all shadow-sm hover:-translate-y-0.5 active:translate-y-0"
+                                class="w-full sm:flex-1 h-9 px-3 rounded-lg border border-outline-variant text-sm text-on-surface-variant focus:outline-none focus:border-indigo-400 bg-white">
+                            <button type="button" @click.stop="embedVideo(block)"
+                                    class="w-full sm:w-auto h-9 px-5 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-xs font-black uppercase tracking-wider transition-all shadow-sm hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center shrink-0"
                                     style="min-width: unset; min-height: unset; height: 36px;">
                                 Sematkan
                             </button>
@@ -579,7 +595,7 @@
                 Kategori <span class="text-red-500">*</span>
             </label>
             <div class="relative" x-data="{ open: false }">
-                <button type="button" @click="open = !open"
+                <button type="button" @click.stop="open = !open"
                         class="w-full flex items-center justify-between h-11 px-4 rounded-xl border-2 text-sm font-bold transition-all"
                         :class="selectedCategoryId
                             ? 'border-secondary bg-secondary-container text-indigo-700'
@@ -662,7 +678,7 @@
 function articleEditor() {
     return {
         titleValue: '',
-        currentStatus: null,
+        currentStatus: 'draft',
         selectedCategoryId: null,
         selectedCategoryName: '',
         coverPreview: null,
@@ -685,6 +701,54 @@ function articleEditor() {
 
         init() {
             this.blocks = [{ id: this.nextId++, type: 'paragraph', content: '' }];
+
+            // Global event listeners for contenteditable elements inside #blocks-container
+            document.addEventListener('blur', (e) => {
+                const target = e.target;
+                if (target && target.getAttribute('contenteditable') === 'true') {
+                    const blockIdMatch = target.id.match(/^block-(\d+)$/);
+                    if (blockIdMatch) {
+                        const blockId = parseInt(blockIdMatch[1], 10);
+                        const block = this.blocks.find(b => b.id === blockId);
+                        if (block) {
+                            block.content = target.innerHTML;
+                        }
+                    }
+                }
+            }, true); // useCapture to capture blur events which don't bubble
+
+            document.addEventListener('input', (e) => {
+                const target = e.target;
+                if (target && target.getAttribute('contenteditable') === 'true') {
+                    this.isDirty = true;
+                }
+            });
+
+            document.addEventListener('paste', (e) => {
+                const target = e.target;
+                if (target && target.getAttribute('contenteditable') === 'true') {
+                    e.preventDefault();
+                    let html = (e.clipboardData || window.clipboardData).getData('text/html');
+                    if (html) {
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = html;
+                        const allElements = tempDiv.querySelectorAll('*');
+                        allElements.forEach(el => {
+                            const attributes = Array.from(el.attributes);
+                            attributes.forEach(attr => {
+                                if (attr.name !== 'href') {
+                                    el.removeAttribute(attr.name);
+                                }
+                            });
+                        });
+                        document.execCommand('insertHTML', false, tempDiv.innerHTML);
+                    } else {
+                        const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+                        document.execCommand('insertText', false, text);
+                    }
+                    this.isDirty = true;
+                }
+            });
         },
 
         closeAllMenus(e) {},
@@ -692,12 +756,10 @@ function articleEditor() {
         handleCoverChange(event) {
             const file = event.target.files[0];
             if (!file) return;
-            this.coverUploading = true;
             this.isDirty = true;
             const reader = new FileReader();
             reader.onload = (e) => { this.coverPreview = e.target.result; };
             reader.readAsDataURL(file);
-            this.$wire.$watch('cover', () => { this.coverUploading = false; });
         },
 
         autoResize(el) {

@@ -20,15 +20,17 @@ class LoginController extends Controller
     public function login(Request $request): RedirectResponse
     {
         $request->validate([
-            'email' => 'required|email',
+            'email' => 'required|string',
             'password' => 'required|string',
         ]);
 
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+        $loginField = filter_var($request->email, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+
+        if (Auth::attempt([$loginField => $request->email, 'password' => $request->password])) {
             return redirect()->route('dashboard')->with('success', 'Berhasil masuk ke sistem.');
         }
 
-        return back()->withErrors(['email' => 'Email atau password yang Anda masukkan salah.']);
+        return back()->withErrors(['email' => 'Email/Username atau password yang Anda masukkan salah.']);
     }
 
     public function logout(Request $request): RedirectResponse

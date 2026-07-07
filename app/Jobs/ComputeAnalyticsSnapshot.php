@@ -543,12 +543,12 @@ class ComputeAnalyticsSnapshot implements ShouldQueue
         $currentMonth = now()->month;
         $currentYear = now()->year;
 
-        $counts = (clone $patientQuery)
-            ->selectRaw('COUNT(CASE WHEN category IN ("balita", "bayi", "baduta") THEN 1 END) as balita')
-            ->selectRaw('COUNT(CASE WHEN category = "ibu_hamil" THEN 1 END) as ibu_hamil')
-            ->selectRaw('COUNT(CASE WHEN category = "remaja" THEN 1 END) as remaja')
-            ->selectRaw('COUNT(CASE WHEN category = "lansia" THEN 1 END) as lansia')
-            ->first();
+        $counts = (object) [
+            'balita' => (clone $patientQuery)->whereIn('category', ['balita', 'bayi', 'baduta'])->count(),
+            'ibu_hamil' => (clone $patientQuery)->where('category', 'ibu_hamil')->count(),
+            'remaja' => (clone $patientQuery)->where('category', 'remaja')->count(),
+            'lansia' => (clone $patientQuery)->where('category', 'lansia')->count(),
+        ];
 
         $kunjunganBaru = (clone $medicalRecordQuery)
             ->whereMonth('visit_date', $currentMonth)
@@ -583,15 +583,18 @@ class ComputeAnalyticsSnapshot implements ShouldQueue
 
         $startDate = now()->subMonths(11)->startOfMonth();
 
-        $dateFormat = config('database.default') === 'sqlite'
-            ? "strftime('%m %Y', visit_date)"
-            : "DATE_FORMAT(visit_date, '%m %Y')";
+        $dbDriver = $medicalRecordQuery->getConnection()->getDriverName();
+        $dateFormat = match ($dbDriver) {
+            'sqlite' => "strftime('%m %Y', visit_date)",
+            'pgsql' => "TO_CHAR(visit_date, 'MM YYYY')",
+            default => "DATE_FORMAT(visit_date, '%m %Y')",
+        };
 
         $trends = (clone $medicalRecordQuery)
             ->where('visit_date', '>=', $startDate)
             ->selectRaw("$dateFormat as month_year")
             ->selectRaw('COUNT(*) as total')
-            ->groupBy('month_year')
+            ->groupByRaw($dateFormat)
             ->get()
             ->pluck('total', 'month_year');
 

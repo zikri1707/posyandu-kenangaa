@@ -5,17 +5,21 @@
      x-data="{ 
          mediaFilter: 'all', 
          lightboxOpen: false, 
+         isEditing: false,
+         activeId: '',
          activeMedia: '', 
          activeType: 'image', 
          activeTitle: '', 
          activeDesc: '', 
          activeDate: '',
-         openLightbox(src, type, title, desc, date) {
+         openLightbox(id, src, type, title, desc, date) {
+             this.activeId = id;
              this.activeMedia = src;
              this.activeType = type;
              this.activeTitle = title;
              this.activeDesc = desc;
              this.activeDate = date;
+             this.isEditing = false;
              this.lightboxOpen = true;
          }
      }">
@@ -110,7 +114,7 @@
                 <div x-show="mediaFilter === 'all' || (mediaFilter === 'photo' && !{{ $isVideo ? 'true' : 'false' }}) || (mediaFilter === 'video' && {{ $isVideo ? 'true' : 'false' }})"
                      class="bg-white rounded-[2.25rem] overflow-hidden group hover:shadow-[0_20px_40px_rgba(13,148,136,0.1)] border border-slate-100 transition-all duration-500 flex flex-col h-full relative cursor-pointer"
                      x-data="{ playing: false }"
-                     @click="openLightbox('{{ asset('storage/' . $gallery->photo) }}', '{{ $gallery->type }}', {{ \Illuminate\Support\Js::from($gallery->title) }}, {{ \Illuminate\Support\Js::from($gallery->description ?? '') }}, '{{ \Carbon\Carbon::parse($gallery->created_at)->translatedFormat('d M Y, H:i') }}')">
+                     @click="openLightbox('{{ $gallery->id }}', '{{ asset('storage/' . $gallery->photo) }}', '{{ $gallery->type }}', {{ \Illuminate\Support\Js::from($gallery->title) }}, {{ \Illuminate\Support\Js::from($gallery->description ?? '') }}, '{{ \Carbon\Carbon::parse($gallery->created_at)->translatedFormat('d M Y, H:i') }}')">
                     
                     {{-- Media Card Container --}}
                     <div class="aspect-square relative overflow-hidden bg-slate-100 flex items-center justify-center w-full h-full">
@@ -201,23 +205,39 @@
          x-transition:leave-end="opacity-0"
          class="fixed inset-0 z-50 flex flex-col items-center justify-between bg-teal-950/70 backdrop-blur-md p-4 sm:p-8"
          style="display: none;"
-         @keydown.escape.window="lightboxOpen = false">
+         @keydown.escape.window="lightboxOpen = false"
+         @click="lightboxOpen = false">
         
-        {{-- Top Row: Type Badge + Close Button --}}
-        <div class="w-full flex items-center justify-between z-50">
+        {{-- Top Row: Type Badge, Edit/Delete, and Close Button --}}
+        <div class="w-full flex items-center justify-between z-50" @click.stop>
             <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-white/90 text-teal-800 rounded-full text-xs font-black uppercase tracking-widest border border-slate-100 shadow-sm">
                 <span class="material-symbols-outlined text-[16px] leading-none" x-text="activeType === 'video' ? 'videocam' : 'image'"></span>
                 <span class="leading-none" x-text="activeType === 'video' ? 'Video' : 'Foto'"></span>
             </span>
             
-            <button @click="lightboxOpen = false" class="w-12 h-12 rounded-full bg-teal-600 hover:bg-teal-700 text-white flex items-center justify-center transition-all shadow-lg shadow-teal-900/20 active:scale-95">
-                <span class="material-symbols-outlined text-[24px]">close</span>
-            </button>
+            <div class="flex items-center gap-3">
+                <!-- Edit Button -->
+                <button @click="isEditing = !isEditing" class="w-12 h-12 rounded-full bg-white hover:bg-slate-100 text-slate-700 flex items-center justify-center transition-all shadow-lg active:scale-95" title="Edit Judul & Keterangan">
+                    <span class="material-symbols-outlined text-[24px]" x-text="isEditing ? 'edit_off' : 'edit'"></span>
+                </button>
+                
+                <!-- Delete Button -->
+                <form :action="'{{ route('admin.gallery.media.destroy', [$folder->id, ':id']) }}'.replace(':id', activeId)" method="POST" onsubmit="return confirm('Yakin ingin menghapus media ini secara permanen?');">
+                    @csrf @method('DELETE')
+                    <button type="submit" class="w-12 h-12 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center transition-all shadow-lg active:scale-95" title="Hapus Media">
+                        <span class="material-symbols-outlined text-[24px]">delete</span>
+                    </button>
+                </form>
+
+                <button @click="lightboxOpen = false" class="w-12 h-12 rounded-full bg-teal-600 hover:bg-teal-700 text-white flex items-center justify-center transition-all shadow-lg shadow-teal-900/20 active:scale-95">
+                    <span class="material-symbols-outlined text-[24px]">close</span>
+                </button>
+            </div>
         </div>
 
         {{-- Center Row: Unified Media & Caption Card (Shrinks dynamically to fit aspect ratio!) ── --}}
-        <div class="flex-1 w-full flex items-center justify-center p-2 my-4 z-40" @click.away="lightboxOpen = false">
-            <div class="bg-white rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white flex flex-col w-fit max-w-[95vw] md:max-w-3xl max-h-[85vh] transition-all duration-300">
+        <div class="flex-1 w-full flex items-center justify-center p-2 my-4 z-40">
+            <div class="bg-white rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white flex flex-col w-fit max-w-[95vw] md:max-w-3xl max-h-[85vh] transition-all duration-300" @click.stop>
                 
                 {{-- Media Viewport (Auto-scaling canvas) --}}
                 <div class="bg-slate-50/50 flex items-center justify-center p-2 relative overflow-hidden">
@@ -233,17 +253,37 @@
                 </div>
 
                 {{-- Caption Container (Matches the media width exactly with a safe min-width) --}}
-                <div class="bg-white p-6 border-t border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 min-w-[300px] md:min-w-[500px]">
-                    <div class="space-y-1.5 flex-1 min-w-0">
-                        <h3 class="text-lg font-black text-slate-800 leading-snug truncate" x-text="activeTitle || 'Tanpa Judul'"></h3>
-                        <p class="text-sm text-slate-500 font-semibold leading-relaxed line-clamp-2" x-text="activeDesc || 'Tidak ada keterangan tambahan.'"></p>
-                    </div>
-                    <div class="shrink-0 flex flex-col items-start sm:items-end gap-1 text-[10px] text-slate-400 font-bold border-t sm:border-t-0 pt-3 sm:pt-0 w-full sm:w-auto">
-                        <div class="flex items-center gap-1.5">
-                            <span class="material-symbols-outlined text-[14px]">schedule</span>
-                            <span>Diunggah:</span>
+                <div class="bg-white p-6 border-t border-slate-100 flex flex-col justify-between gap-4 min-w-[300px] md:min-w-[500px]">
+                    <div x-show="!isEditing" class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 w-full">
+                        <div class="space-y-1.5 flex-1 min-w-0">
+                            <h3 class="text-lg font-black text-slate-800 leading-snug truncate" x-text="activeTitle || 'Tanpa Judul'"></h3>
+                            <p class="text-sm text-slate-500 font-semibold leading-relaxed line-clamp-2" x-text="activeDesc || 'Tidak ada keterangan tambahan.'"></p>
                         </div>
-                        <span class="text-slate-600 font-black" x-text="activeDate"></span>
+                        <div class="shrink-0 flex flex-col items-start sm:items-end gap-1 text-[10px] text-slate-400 font-bold border-t sm:border-t-0 pt-3 sm:pt-0 w-full sm:w-auto">
+                            <div class="flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-[14px]">schedule</span>
+                                <span>Diunggah:</span>
+                            </div>
+                            <span class="text-slate-600 font-black" x-text="activeDate"></span>
+                        </div>
+                    </div>
+                    
+                    <div x-show="isEditing" class="w-full">
+                        <form :action="'{{ route('admin.gallery.media.update', [$folder->id, ':id']) }}'.replace(':id', activeId)" method="POST" class="w-full space-y-4">
+                            @csrf @method('PUT')
+                            <div class="space-y-2">
+                                <label class="block text-xs font-black text-slate-400 uppercase tracking-widest">Judul Media</label>
+                                <input type="text" name="title" x-model="activeTitle" class="w-full h-11 bg-slate-50 focus:bg-white rounded-xl px-4 text-sm font-semibold text-slate-700 border-2 border-slate-100 focus:border-teal-500 focus:ring-0 transition-all" required>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-xs font-black text-slate-400 uppercase tracking-widest">Keterangan Media</label>
+                                <textarea name="description" x-model="activeDesc" rows="2" class="w-full bg-slate-50 focus:bg-white rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 border-2 border-slate-100 focus:border-teal-500 focus:ring-0 transition-all"></textarea>
+                            </div>
+                            <div class="flex justify-end gap-3 pt-2">
+                                <button type="button" @click="isEditing = false" class="px-5 py-2.5 bg-slate-100 text-slate-600 hover:bg-slate-200 font-black rounded-xl text-xs uppercase tracking-wider transition-all">Batal</button>
+                                <button type="submit" class="px-5 py-2.5 bg-gradient-to-r from-teal-600 to-emerald-600 text-white font-black rounded-xl text-xs uppercase tracking-wider transition-all shadow-md">Simpan Perubahan</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
 

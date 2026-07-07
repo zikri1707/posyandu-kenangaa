@@ -910,14 +910,10 @@
         </div>
     </div>
     @endif
-</div>
 
 @script
 <script>
-// ── Global Chart Defaults ──
-Chart.defaults.font.family = "'Public Sans', sans-serif";
-Chart.defaults.font.weight = '700';
-Chart.defaults.color = '#475569';
+// ── Global Chart Defaults will be applied inside initCharts ──
 
 window.visitsTrendChart = null;
 window.nutritionTrendChart = null;
@@ -1000,6 +996,16 @@ function hideChartError(canvasId) {
 }
 
 function initCharts(data = null) {
+    if (typeof Chart === 'undefined') {
+        setTimeout(() => initCharts(data), 100);
+        return;
+    }
+
+    // Apply defaults here so they are guaranteed to run when Chart is available
+    Chart.defaults.font.family = "'Public Sans', sans-serif";
+    Chart.defaults.font.weight = '700';
+    Chart.defaults.color = '#475569';
+
     // Destroy existing if they exist (safely inside try-catch)
     try { if (visitsTrendChart) { visitsTrendChart.destroy(); visitsTrendChart = null; } } catch (e) {}
     try { if (nutritionTrendChart) { nutritionTrendChart.destroy(); nutritionTrendChart = null; } } catch (e) {}
@@ -1018,40 +1024,55 @@ function initCharts(data = null) {
     hideChartError('pregnancyRiskChart');
     hideChartError('lansiaMetabolicChart');
 
-    // Fetch data arrays from event or blade json variables
-    const labels = data ? data.trendLabels : $wire.trendLabels;
+    // Helper to extract plain array from data payload or Livewire proxy
+    const getArr = (fromData, wireProp) => {
+        let val = null;
+        if (fromData && fromData[wireProp] !== undefined) {
+            val = fromData[wireProp];
+        } else {
+            val = $wire[wireProp];
+        }
+        try {
+            return JSON.parse(JSON.stringify(val || []));
+        } catch(e) {
+            return [];
+        }
+    };
+    
+    // Fetch data arrays safely avoiding Chart.js crash on Proxies
+    const labels = getArr(data, 'trendLabels');
     
     // Overview trend
-    const visitsBalita = data ? data.trendVisitsBalita : $wire.trendVisitsBalita;
-    const visitsIbuHamil = data ? data.trendVisitsIbuHamil : $wire.trendVisitsIbuHamil;
-    const visitsLansia = data ? data.trendVisitsLansia : $wire.trendVisitsLansia;
+    const visitsBalita = getArr(data, 'trendVisitsBalita');
+    const visitsIbuHamil = getArr(data, 'trendVisitsIbuHamil');
+    const visitsLansia = getArr(data, 'trendVisitsLansia');
 
     const viewMode = data ? data.viewMode : $wire.viewMode;
     const compareMode = data ? data.compareMode : $wire.compareMode;
-    const trendCompareCurrent = data ? data.trendCompareCurrent : $wire.trendCompareCurrent;
-    const trendComparePrevious = data ? data.trendComparePrevious : $wire.trendComparePrevious;
-    const trendLabelsPrevious = data ? data.trendLabelsPrevious : $wire.trendLabelsPrevious;
+    const trendCompareCurrent = getArr(data, 'trendCompareCurrent');
+    const trendComparePrevious = getArr(data, 'trendComparePrevious');
+    const trendLabelsPrevious = getArr(data, 'trendLabelsPrevious');
 
     // Balita trend
-    const normal = data ? data.trendNormal : $wire.trendNormal;
-    const stunting = data ? data.trendStunting : $wire.trendStunting;
-    const risk = data ? data.trendRisk : $wire.trendRisk;
-    const avgWeight = data ? data.trendAvgWeight : $wire.trendAvgWeight;
-    const avgHeight = data ? data.trendAvgHeight : $wire.trendAvgHeight;
-    const nutLabels = data ? data.nutritionLabels : $wire.nutritionLabels;
-    const nutData = data ? data.nutritionData : $wire.nutritionData;
-    const vaxLabels = data ? data.vaccineLabels : $wire.vaccineLabels;
-    const vaxData = data ? data.vaccineData : $wire.vaccineData;
+    const normal = getArr(data, 'trendNormal');
+    const stunting = getArr(data, 'trendStunting');
+    const risk = getArr(data, 'trendRisk');
+    const avgWeight = getArr(data, 'trendAvgWeight');
+    const avgHeight = getArr(data, 'trendAvgHeight');
+    const nutLabels = getArr(data, 'nutritionLabels');
+    const nutData = getArr(data, 'nutritionData');
+    const vaxLabels = getArr(data, 'vaccineLabels');
+    const vaxData = getArr(data, 'vaccineData');
 
     // Ibu Hamil trend
-    const pregHyper = data ? data.trendPregnancyHypertension : $wire.trendPregnancyHypertension;
-    const pregFe = data ? data.trendPregnancyFe : $wire.trendPregnancyFe;
+    const pregHyper = getArr(data, 'trendPregnancyHypertension');
+    const pregFe = getArr(data, 'trendPregnancyFe');
 
     // Lansia trend
-    const lansiaBP = data ? data.trendLansiaHypertension : $wire.trendLansiaHypertension;
-    const lansiaSugar = data ? data.trendLansiaHyperglycemia : $wire.trendLansiaHyperglycemia;
-    const lansiaChol = data ? data.trendLansiaHypercholesterolemia : $wire.trendLansiaHypercholesterolemia;
-    const lansiaUric = data ? data.trendLansiaHyperuricemia : $wire.trendLansiaHyperuricemia;
+    const lansiaBP = getArr(data, 'trendLansiaHypertension');
+    const lansiaSugar = getArr(data, 'trendLansiaHyperglycemia');
+    const lansiaChol = getArr(data, 'trendLansiaHypercholesterolemia');
+    const lansiaUric = getArr(data, 'trendLansiaHyperuricemia');
 
     // 1. Overview Visits Trend Line Chart
     const visitsCtx = document.getElementById('visitsTrendChart');
@@ -1651,3 +1672,4 @@ $wire.on('charts-updated', (event) => {
 });
 </script>
 @endscript
+</div>

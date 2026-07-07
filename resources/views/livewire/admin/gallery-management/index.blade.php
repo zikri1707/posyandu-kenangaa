@@ -91,7 +91,7 @@
                         </div>
 
                         {{-- Action Overlay --}}
-                        <div class="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-all duration-300 backdrop-blur-[2px] flex items-center justify-center gap-4 z-30">
+                        <div class="absolute inset-0 bg-slate-900/60 opacity-0 lg:group-hover:opacity-100 transition-all duration-300 backdrop-blur-[2px] hidden lg:flex items-center justify-center gap-4 z-30">
                             <a href="{{ route('admin.gallery.show', $folder->id) }}" 
                                class="w-12 h-12 bg-white text-slate-700 rounded-2xl flex items-center justify-center shadow-lg hover:bg-teal-600 hover:text-white transition-all transform translate-y-4 group-hover:translate-y-0 duration-300"
                                title="Buka Folder">
@@ -129,12 +129,26 @@
                                 {{ $folder->description ?? 'Tidak ada deskripsi folder.' }}
                             </p>
                         </div>
-                        <div class="text-[10px] text-slate-400 font-bold flex items-center justify-between pt-4 border-t border-slate-50">
+                        <div class="text-[10px] text-slate-400 font-bold flex items-center justify-between pt-4 border-t border-slate-50 flex-wrap gap-2">
                             <div class="flex items-center gap-1.5">
                                 <span class="material-symbols-outlined text-[14px]">schedule</span>
-                                Dibuat: {{ \Carbon\Carbon::parse($folder->created_at)->translatedFormat('d M Y') }}
+                                {{ \Carbon\Carbon::parse($folder->created_at)->translatedFormat('d M Y') }}
                             </div>
-                            <a href="{{ route('admin.gallery.show', $folder->id) }}" class="text-teal-600 hover:text-teal-800 flex items-center gap-0.5 font-black uppercase tracking-wider text-[9px]">
+                            
+                            {{-- Mobile & Tablet Action Buttons --}}
+                            <div class="flex items-center gap-1 lg:hidden">
+                                <a href="{{ route('admin.gallery.edit', $folder->id) }}" class="p-1 text-slate-500 hover:text-indigo-600 flex items-center justify-center transition-colors" title="Edit Folder">
+                                    <span class="material-symbols-outlined text-[18px]">edit</span>
+                                </a>
+                                <form action="{{ route('admin.gallery.destroy', $folder->id) }}" method="POST" class="inline" onsubmit="return confirm('Menghapus folder ini akan menghapus SELURUH foto dan video di dalamnya. Yakin ingin melanjutkan?');">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="p-1 text-red-500 hover:text-red-700 flex items-center justify-center transition-colors" title="Hapus Folder">
+                                        <span class="material-symbols-outlined text-[18px]">delete</span>
+                                    </button>
+                                </form>
+                            </div>
+
+                            <a href="{{ route('admin.gallery.show', $folder->id) }}" class="text-teal-600 hover:text-teal-800 flex items-center gap-0.5 font-black uppercase tracking-wider text-[9px] ml-auto lg:ml-0">
                                 Buka
                                 <span class="material-symbols-outlined text-[12px]">arrow_forward</span>
                             </a>

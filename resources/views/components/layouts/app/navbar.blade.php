@@ -139,15 +139,8 @@
 {{-- ── Mobile Search Bar (slide-down) ── --}}
 <div id="mobileSearchBar"
     class="hidden lg:hidden px-4 py-2.5 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800/80 shadow-sm">
-    <div class="relative">
-        <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none"
-           style="font-size:12px;"></i>
-        <input type="text"
-            placeholder="Cari pasien, jadwal, artikel…"
-            class="w-full h-10 pl-9 pr-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950
-                   text-slate-700 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-550 text-sm font-medium
-                   focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary/30
-                   focus:bg-white dark:focus:bg-slate-900 transition-all">
+    <div class="w-full">
+        <livewire:global-search />
     </div>
 </div>
 

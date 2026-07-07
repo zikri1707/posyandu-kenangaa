@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use App\Http\Requests\GalleryRequest;
 use App\Models\Gallery;
 use App\Models\GalleryFolder;
@@ -57,6 +58,30 @@ class GalleryController extends Controller
         }
 
         return redirect()->route('admin.gallery.show', $folder->id)->with('success', $count.' media berhasil ditambahkan ke folder.');
+    }
+
+    /**
+     * Update media inside a folder.
+     */
+    public function update(Request $request, GalleryFolder $folder, Gallery $gallery)
+    {
+        $user = auth()->user();
+        if (! $user->isSuperAdmin() && $folder->posyandu_id !== $user->posyandu_id) {
+            abort(403, 'Anda tidak memiliki akses ke folder ini.');
+        }
+
+        if ($gallery->gallery_folder_id !== $folder->id) {
+            abort(404, 'Media tidak ditemukan di folder ini.');
+        }
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        $gallery->update($validated);
+
+        return redirect()->route('admin.gallery.show', $folder->id)->with('success', 'Media berhasil diperbarui.');
     }
 
     /**

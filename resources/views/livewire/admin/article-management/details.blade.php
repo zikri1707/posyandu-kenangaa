@@ -1,7 +1,12 @@
 <div class="min-h-screen bg-[#f8f8f7]">
+<style>
+    .prose p, .prose span, .prose li {
+        text-align: justify !important;
+    }
+</style>
 
     {{-- ── Top Nav ── --}}
-    <div class="max-w-[860px] mx-auto px-6 md:px-8 pt-6 flex items-center gap-3">
+    <div class="max-w-[860px] mx-auto px-4 md:px-8 pt-2 md:pt-6 flex items-center gap-3">
         <a href="{{ route('admin.articles.index') }}"
         class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-sm font-bold text-slate-700 transition-all shadow-sm">
             <span class="material-symbols-outlined text-[18px]">arrow_back</span>
@@ -25,7 +30,7 @@
     </div>
 
     {{-- ── Article ── --}}
-    <article class="max-w-[860px] mx-auto px-6 md:px-8 py-6 space-y-8">
+    <article class="max-w-[860px] mx-auto px-4 md:px-8 py-4 space-y-6 md:space-y-8">
 
         {{-- Status Badge --}}
         <div class="flex items-center gap-3">
@@ -87,7 +92,7 @@
         {{-- Body --}}
         <div class="prose prose-lg max-w-none
                     prose-headings:font-black prose-headings:text-slate-900
-                    prose-p:text-slate-700 prose-p:leading-relaxed
+                    prose-p:text-slate-700 prose-p:leading-relaxed prose-p:text-justify
                     prose-blockquote:border-slate-300 prose-blockquote:text-slate-600">
             {!! App\Services\ArticleService::renderContent($article->content) !!}
         </div>
