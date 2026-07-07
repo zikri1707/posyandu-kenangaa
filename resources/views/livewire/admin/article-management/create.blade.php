@@ -446,6 +446,7 @@
                         const nb = { id: nextId++, type: 'paragraph', content: '' };
                         blocks.splice(index + 1, 0, nb);
                         isDirty = true;
+             
                         $nextTick(() => {
                             setTimeout(() => {
                                 const el = this.getBlockEl(nb.id);
